@@ -19,6 +19,9 @@ public class FlagsReg {
         this.f = f;
     }
 
+    public FlagsReg() {
+    }
+
     public boolean isZFlag() {
         return getByteBit(f, Z_FLAG);
     }

@@ -42,4 +42,14 @@ public class BitUtils {
         return value ? number | (1 << bit) : number & ~(1 << bit);
     }
 
+    public static int getHighByte(int value) {
+        isShort(value);
+        return (value >>> 8) & 0xFF;
+    }
+
+    public static int getLowByte(int value) {
+        isShort(value);
+        return value & 0xFF;
+    }
+
 }

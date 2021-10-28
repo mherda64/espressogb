@@ -101,4 +101,30 @@ class BitUtilsTest {
         assertThrows(IllegalArgumentException.class, () -> setShortBit(0xFF11F, 4, false));
         assertThrows(IllegalArgumentException.class, () -> setShortBit(-0x0F, 3, false));
     }
+
+    @Test
+    void getHightByte_shouldPass() {
+        assertEquals(0x03, getHighByte(0x3FF));
+        assertEquals(0x03, getHighByte(0x03FF));
+        assertEquals(0x10, getHighByte(0x10FF));
+    }
+
+    @Test
+    void getHightByte_shouldThrow() {
+        assertThrows(IllegalArgumentException.class, () -> getHighByte(-0x1));
+        assertThrows(IllegalArgumentException.class, () -> getHighByte(0xFFFF1));
+    }
+
+    @Test
+    void getLowByte_shouldPass() {
+        assertEquals(0xFF, getLowByte(0x3FF));
+        assertEquals(0x00, getLowByte(0x0300));
+        assertEquals(0x11, getLowByte(0x1011));
+    }
+
+    @Test
+    void getLowByte_shouldThrow() {
+        assertThrows(IllegalArgumentException.class, () -> getLowByte(-0x1));
+        assertThrows(IllegalArgumentException.class, () -> getLowByte(0xFFFF1));
+    }
 }
