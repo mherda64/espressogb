@@ -55,7 +55,7 @@ public class FlagsReg {
     }
 
     public int getFlagsByte() {
-        return f;
+        return f & 0xFF;
     }
 
     public void setFlagsByte(int value) {

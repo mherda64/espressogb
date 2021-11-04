@@ -21,6 +21,53 @@ public class Registers {
         f = new FlagsReg();
     }
 
+    public int get(RegEnum reg) {
+        if (reg.size == RegEnum.SINGLE) {
+            switch (reg) {
+                case A: {
+                    return getA();
+                }
+                case F: {
+                    return getFlags().getFlagsByte();
+                }
+                case B: {
+                    return getB();
+                }
+                case C: {
+                    return getC();
+                }
+                case D: {
+                    return getD();
+                }
+                case E: {
+                    return getE();
+                }
+                case H: {
+                    return getH();
+                }
+                case L: {
+                    return getL();
+                }
+            }
+        } else {
+            switch (reg) {
+                case AF: {
+                    return getAF();
+                }
+                case BC: {
+                    return getBC();
+                }
+                case DE: {
+                    return getDE();
+                }
+                case HL: {
+                    return getHL();
+                }
+            }
+        }
+        throw new IllegalStateException(String.format("There is no such register as %s!", reg));
+    }
+
     public void set(RegEnum reg, int value) {
         if (reg.size == RegEnum.SINGLE) {
             switch (reg) {
@@ -85,7 +132,7 @@ public class Registers {
     }
 
     public int getA() {
-        return a;
+        return a & 0xFF;
     }
 
     public void setA(int a) {
@@ -94,7 +141,7 @@ public class Registers {
     }
 
     public int getB() {
-        return b;
+        return b & 0xFF;
     }
 
     public void setB(int b) {
@@ -103,7 +150,7 @@ public class Registers {
     }
 
     public int getC() {
-        return c;
+        return c & 0xFF;
     }
 
     public void setC(int c) {
@@ -112,7 +159,7 @@ public class Registers {
     }
 
     public int getD() {
-        return d;
+        return d & 0xFF;
     }
 
     public void setD(int d) {
@@ -121,7 +168,7 @@ public class Registers {
     }
 
     public int getE() {
-        return e;
+        return e & 0xFF;
     }
 
     public void setE(int e) {
@@ -139,7 +186,7 @@ public class Registers {
     }
 
     public int getH() {
-        return h;
+        return h & 0xFF;
     }
 
     public void setH(int h) {
@@ -148,7 +195,7 @@ public class Registers {
     }
 
     public int getL() {
-        return l;
+        return l & 0xFF;
     }
 
     public void setL(int l) {
@@ -157,7 +204,7 @@ public class Registers {
     }
 
     public int getSP() {
-        return sp;
+        return sp & 0xFFFF;
     }
 
     public void setSP(int sp) {
@@ -166,7 +213,7 @@ public class Registers {
     }
 
     public int getPC() {
-        return pc;
+        return pc & 0xFFFF;
     }
 
     public void setPC(int pc) {
