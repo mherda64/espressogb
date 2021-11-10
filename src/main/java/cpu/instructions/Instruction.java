@@ -1,6 +1,4 @@
-package cpu;
-
-import memory.AddressSpace;
+package cpu.instructions;
 
 import java.util.List;
 

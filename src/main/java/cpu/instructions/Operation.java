@@ -1,5 +1,6 @@
-package cpu;
+package cpu.instructions;
 
+import cpu.Registers;
 import memory.AddressSpace;
 
 public interface Operation {
