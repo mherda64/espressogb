@@ -10,9 +10,7 @@ class FlagRegsTest {
 
     @Test
     void isZFlagTest_shouldPass() {
-        f = new FlagsReg(0x80);
-
-        assertEquals(true, f.isZFlag());
+        assertTrue(new FlagsReg(0x80).isZFlag());
     }
 
     @Test
