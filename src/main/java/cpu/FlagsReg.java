@@ -54,7 +54,7 @@ public class FlagsReg {
         f = setByteBit(f, C_FLAG, value);
     }
 
-    public int getFlagsByte() {
+    public int getByte() {
         return f & 0xFF;
     }
 

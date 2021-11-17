@@ -18,7 +18,7 @@ class RegistersTest {
 
         // then
         assertEquals(0x12, r.getA());
-        assertEquals(0x34, r.getFlags().getFlagsByte());
+        assertEquals(0x34, r.getFlags().getByte());
     }
 
     @Test

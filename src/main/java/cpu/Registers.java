@@ -28,7 +28,7 @@ public class Registers {
                     return getA();
                 }
                 case F: {
-                    return getFlags().getFlagsByte();
+                    return getFlags().getByte();
                 }
                 case B: {
                     return getB();
@@ -62,6 +62,12 @@ public class Registers {
                 }
                 case HL: {
                     return getHL();
+                }
+                case SP: {
+                    return getSP();
+                }
+                case PC: {
+                    return getPC();
                 }
             }
         }
@@ -122,6 +128,14 @@ public class Registers {
                     setHL(value);
                     break;
                 }
+                case SP: {
+                    setSP(value);
+                    break;
+                }
+                case PC: {
+                    setPC(value);
+                    break;
+                }
             }
         }
     }
@@ -129,6 +143,16 @@ public class Registers {
     public int incPC() {
         pc += 1;
         return pc;
+    }
+
+    public int decSP() {
+        sp -= 1;
+        return sp;
+    }
+
+    public int incSP() {
+        sp += 1;
+        return sp;
     }
 
     public int getA() {
@@ -222,7 +246,7 @@ public class Registers {
     }
 
     public int getAF() {
-        return a << 8 | f.getFlagsByte();
+        return a << 8 | f.getByte();
     }
 
     public void setAF(int af) {

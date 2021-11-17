@@ -20,6 +20,7 @@ public class Instructions {
         instructions = new HashMap<>();
 
         ByteLoadInstructions.add(instructions);
+        WordLoadInstructions.add(instructions);
     }
 
     private Instructions() {

@@ -7,10 +7,7 @@ import java.util.stream.Stream;
 
 public class ByteLoadInstructions {
 
-    private ByteLoadInstructions() {
-    }
-
-    ;
+    private ByteLoadInstructions() {}
 
     private static void put(int opcode, Map<Integer, Instruction> instructions, Instruction instruction) {
         if (instructions.containsKey(opcode))

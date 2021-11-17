@@ -1,5 +1,6 @@
 package cpu.instructions;
 
+import cpu.BitUtils;
 import cpu.RegEnum;
 import cpu.Registers;
 import memory.AddressSpace;
@@ -67,7 +68,18 @@ public class InstructionBuilder {
             @Override
             public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
                 var val = registers.get(reg);
-                addressSpace.set(accumulator, val);
+                switch (reg.size) {
+                    case RegEnum.SINGLE:
+                        addressSpace.set(accumulator, val);
+                        break;
+                    case RegEnum.DOUBLE:
+                        addressSpace.set(accumulator, BitUtils.getLowByte(val));
+                        addressSpace.set(accumulator + 1, BitUtils.getHighByte(val));
+                        break;
+                    default:
+                        throw new IllegalStateException(String.format("Illegal register size %d", reg.size));
+                }
+
                 //TODO what to return??
                 return val;
             }
@@ -127,5 +139,71 @@ public class InstructionBuilder {
         return this;
     }
 
+    public InstructionBuilder toSigned() {
+        operations.add(new Operation() {
+            @Override
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+                return (byte) accumulator;
+            }
+        });
+        return this;
+    }
+
+    /*
+    This method was writted purely for LDHL SP, n 0xF8 16 bit load and will most probably change in the future
+    as I have to work out how to handle flags
+     */
+    public InstructionBuilder addRegSetFlags(RegEnum reg) {
+        operations.add(new Operation() {
+            @Override
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+                var newSP = registers.getSP() + accumulator;
+
+                registers.getFlags().setZFlag(false);
+                registers.getFlags().setNFlag(false);
+                if (accumulator >= 0) {
+                    registers.getFlags().setHFlag(((registers.getSP() & 0xF) + (accumulator & 0xF)) > 0xF);
+                    registers.getFlags().setCFlag(((registers.getSP() & 0xFF) + (accumulator)) > 0xFF);
+                } else {
+                    registers.getFlags().setHFlag((newSP & 0xF) <= (registers.getSP() & 0xF));
+                    registers.getFlags().setCFlag((newSP & 0xFF) <= (registers.getSP() & 0xFF));
+                }
+
+                return newSP;
+            }
+        });
+        return this;
+    }
+
+    public InstructionBuilder push(RegEnum reg) {
+        operations.add(new Operation() {
+            @Override
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+                var value = registers.get(reg);
+
+                addressSpace.set(registers.decSP(), BitUtils.getHighByte(value));
+                addressSpace.set(registers.decSP(), BitUtils.getLowByte(value));
+                return value;
+            }
+        });
+        return this;
+    }
+
+    public InstructionBuilder pop(RegEnum reg) {
+        operations.add(new Operation() {
+            @Override
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+                var lo = addressSpace.get(registers.getSP());
+                var hi = addressSpace.get(registers.incSP());
+                registers.incSP();
+
+                var value = (hi << 8 | lo) & 0xFFFF;
+                registers.set(reg, value);
+
+                return value;
+            }
+        });
+        return this;
+    }
 
 }
