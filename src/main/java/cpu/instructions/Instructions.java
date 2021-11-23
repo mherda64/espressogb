@@ -21,6 +21,7 @@ public class Instructions {
 
         ByteLoadInstructions.add(instructions);
         WordLoadInstructions.add(instructions);
+        ByteAluInstructions.add(instructions);
     }
 
     private Instructions() {

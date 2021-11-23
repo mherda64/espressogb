@@ -337,7 +337,7 @@ public class ByteLoadInstructions {
                         .loadReg(RegEnum.HL)
                         .loadAddress()
                         .store(RegEnum.A)
-                        .dec(RegEnum.HL)
+                        .decrementReg(RegEnum.HL)
                         .build(2)
         );
 
@@ -350,7 +350,7 @@ public class ByteLoadInstructions {
                 Instruction.builder()
                         .loadReg(RegEnum.HL)
                         .storeAccumulatorAddressReg(RegEnum.A)
-                        .dec(RegEnum.HL)
+                        .decrementReg(RegEnum.HL)
                         .build(2)
         );
 
@@ -364,7 +364,7 @@ public class ByteLoadInstructions {
                         .loadReg(RegEnum.HL)
                         .loadAddress()
                         .store(RegEnum.A)
-                        .inc(RegEnum.HL)
+                        .incrementReg(RegEnum.HL)
                         .build(2)
         );
 
@@ -377,7 +377,7 @@ public class ByteLoadInstructions {
                 Instruction.builder()
                         .loadReg(RegEnum.HL)
                         .storeAccumulatorAddressReg(RegEnum.A)
-                        .inc(RegEnum.HL)
+                        .incrementReg(RegEnum.HL)
                         .build(2)
         );
 

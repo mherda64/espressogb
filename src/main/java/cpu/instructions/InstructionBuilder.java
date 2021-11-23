@@ -16,7 +16,7 @@ public class InstructionBuilder {
         operations = new ArrayList<>();
     }
 
-    public Instruction build (int cycles) {
+    public Instruction build(int cycles) {
         return new Instruction(operations, cycles);
     }
 
@@ -117,10 +117,11 @@ public class InstructionBuilder {
         return this;
     }
 
-    public InstructionBuilder inc(RegEnum reg) {
+    public InstructionBuilder incrementReg(RegEnum reg) {
         operations.add(new Operation() {
             @Override
             public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+                //TODO: support for reg size
                 registers.set(reg, registers.get(reg) + 1);
                 return accumulator;
             }
@@ -128,7 +129,7 @@ public class InstructionBuilder {
         return this;
     }
 
-    public InstructionBuilder dec(RegEnum reg) {
+    public InstructionBuilder decrementReg(RegEnum reg) {
         operations.add(new Operation() {
             @Override
             public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
@@ -206,4 +207,173 @@ public class InstructionBuilder {
         return this;
     }
 
+    public InstructionBuilder add(RegEnum reg, boolean addCarry) {
+        operations.add(new Operation() {
+            @Override
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+                int carry = 0;
+                if (addCarry) {
+                    carry = registers.getFlags().isCFlag() ? 1 : 0;
+                }
+                switch (reg.size) {
+                    case RegEnum.SINGLE:
+                        var newRegVal = registers.get(reg) + accumulator + carry;
+
+                        registers.getFlags().setZFlag((newRegVal & 0xFF) == 0);
+                        registers.getFlags().setNFlag(false);
+                        registers.getFlags().setHFlag(((registers.get(reg) & 0xF) + (accumulator & 0xF) + carry) > 0xF);
+                        registers.getFlags().setCFlag(((registers.get(reg) & 0xFF) + accumulator + carry) > 0xFF);
+
+                        return newRegVal & 0xFF;
+                    case RegEnum.DOUBLE:
+                        //TODO support 16-bit alu
+                        throw new RuntimeException("Not implemented!");
+                    default:
+                        throw new IllegalStateException(String.format("Illegal register size %d", reg.size));
+                }
+            }
+        });
+        return this;
+    }
+
+    public InstructionBuilder sub(RegEnum reg, boolean subCarry) {
+        operations.add(new Operation() {
+            @Override
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+                var carry = subCarry && registers.getFlags().isCFlag() ? 1 : 0;
+                return sub(accumulator, registers.get(reg), carry, registers);
+            }
+        });
+        return this;
+    }
+
+    public InstructionBuilder subFrom(RegEnum reg, boolean subCarry) {
+        operations.add(new Operation() {
+            @Override
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+                var carry = subCarry && registers.getFlags().isCFlag() ? 1 : 0;
+                return sub(registers.get(reg), accumulator, carry, registers);
+            }
+        });
+        return this;
+    }
+
+    public InstructionBuilder cp(RegEnum reg) {
+        operations.add(new Operation() {
+            @Override
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+                return sub(registers.get(reg), accumulator, 0, registers);
+            }
+        });
+        return this;
+    }
+
+    private static int sub(int byte1, int byte2, int carry, Registers registers) {
+        var result = byte1 - byte2 - carry;
+
+        registers.getFlags().setZFlag((result & 0xFF) == 0);
+        registers.getFlags().setNFlag(true);
+        registers.getFlags().setHFlag(((byte1 ^ byte2 ^ (result & 0xFF)) & 0x10) != 0);
+        registers.getFlags().setCFlag(result < 0);
+
+        return result & 0xFF;
+
+    }
+
+    public InstructionBuilder and(RegEnum reg) {
+        operations.add(new Operation() {
+            @Override
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+                var output = (registers.get(reg) & accumulator) & 0xFF;
+                registers.getFlags().setZFlag(output == 0);
+                registers.getFlags().setNFlag(false);
+                registers.getFlags().setHFlag(true);
+                registers.getFlags().setCFlag(false);
+                return output;
+            }
+        });
+        return this;
+    }
+
+    public InstructionBuilder or(RegEnum reg) {
+        operations.add(new Operation() {
+            @Override
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+                var output = (registers.get(reg) | accumulator) & 0xFF;
+                registers.getFlags().setZFlag(output == 0);
+                registers.getFlags().setNFlag(false);
+                registers.getFlags().setHFlag(false);
+                registers.getFlags().setCFlag(false);
+                return output;
+            }
+        });
+        return this;
+    }
+
+    public InstructionBuilder xor(RegEnum reg) {
+        operations.add(new Operation() {
+            @Override
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+                var output = (registers.get(reg) ^ accumulator) & 0xFF;
+                registers.getFlags().setZFlag(output == 0);
+                registers.getFlags().setNFlag(false);
+                registers.getFlags().setHFlag(false);
+                registers.getFlags().setCFlag(false);
+                return output;
+            }
+        });
+        return this;
+    }
+
+    public InstructionBuilder inc(int size) {
+        operations.add(new Operation() {
+            @Override
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+                switch (size) {
+                    case RegEnum.SINGLE:
+                        var output = (accumulator + 1) & 0xFF;
+
+                        registers.getFlags().setZFlag(output == 0);
+                        registers.getFlags().setNFlag(false);
+                        registers.getFlags().setHFlag(((accumulator & 0xF) + 1) > 0xF);
+
+                        return output;
+                    case RegEnum.DOUBLE:
+                        //TODO support 16-bit alu
+                        throw new RuntimeException("Not implemented!");
+                    default:
+                        throw new IllegalStateException(String.format("Illegal register size %d", size));
+
+                }
+            }
+        });
+        return this;
+    }
+
+    public InstructionBuilder dec(int size) {
+        operations.add(new Operation() {
+            @Override
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+                switch (size) {
+                    case RegEnum.SINGLE:
+                        var output = (accumulator - 1) & 0xFF;
+
+                        registers.getFlags().setZFlag(output == 0);
+                        registers.getFlags().setNFlag(true);
+                        registers.getFlags().setHFlag(((accumulator ^ 1 ^ (output & 0xFF)) & 0x10) != 0);
+
+                        return output;
+                    case RegEnum.DOUBLE:
+                        //TODO support 16-bit alu
+                        throw new RuntimeException("Not implemented!");
+                    default:
+                        throw new IllegalStateException(String.format("Illegal register size %d", size));
+
+                }
+            }
+        });
+        return this;
+    }
 }
+
+
