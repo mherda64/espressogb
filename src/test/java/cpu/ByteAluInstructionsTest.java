@@ -1,6 +1,6 @@
 package cpu;
 
-import cpu.instructions.Instructions;
+import cpu.instruction.Instructions;
 import memory.AddressSpace;
 import memory.Memory;
 import org.junit.jupiter.api.BeforeEach;
@@ -159,7 +159,7 @@ class ByteAluInstructionsTest {
 
         int accumulator = 0;
         for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator);
+            accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
         var flags = registers.getFlags();
@@ -183,7 +183,7 @@ class ByteAluInstructionsTest {
 
         int accumulator = 0;
         for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator);
+            accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
         var flags = registers.getFlags();
@@ -207,7 +207,7 @@ class ByteAluInstructionsTest {
 
         int accumulator = 0;
         for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator);
+            accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
         var flags = registers.getFlags();
@@ -232,7 +232,7 @@ class ByteAluInstructionsTest {
 
         int accumulator = 0;
         for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator);
+            accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
         var flags = registers.getFlags();
@@ -257,7 +257,7 @@ class ByteAluInstructionsTest {
 
         int accumulator = 0;
         for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator);
+            accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
         var flags = registers.getFlags();
@@ -282,7 +282,7 @@ class ByteAluInstructionsTest {
 
         int accumulator = 0;
         for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator);
+            accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
         var flags = registers.getFlags();
@@ -306,7 +306,7 @@ class ByteAluInstructionsTest {
 
         int accumulator = 0;
         for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator);
+            accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
         var flags = registers.getFlags();
@@ -329,7 +329,7 @@ class ByteAluInstructionsTest {
 
         int accumulator = 0;
         for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator);
+            accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
         var flags = registers.getFlags();
@@ -352,7 +352,7 @@ class ByteAluInstructionsTest {
 
         int accumulator = 0;
         for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator);
+            accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
         var flags = registers.getFlags();
@@ -375,7 +375,7 @@ class ByteAluInstructionsTest {
 
         int accumulator = 0;
         for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator);
+            accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
         var flags = registers.getFlags();
@@ -398,7 +398,7 @@ class ByteAluInstructionsTest {
 
         int accumulator = 0;
         for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator);
+            accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
         var flags = registers.getFlags();
@@ -422,7 +422,7 @@ class ByteAluInstructionsTest {
 
         int accumulator = 0;
         for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator);
+            accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
         var flags = registers.getFlags();
@@ -445,7 +445,7 @@ class ByteAluInstructionsTest {
 
         int accumulator = 0;
         for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator);
+            accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
         var flags = registers.getFlags();
@@ -469,7 +469,7 @@ class ByteAluInstructionsTest {
 
         int accumulator = 0;
         for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator);
+            accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
         var flags = registers.getFlags();
@@ -493,7 +493,7 @@ class ByteAluInstructionsTest {
 
         int accumulator = 0;
         for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator);
+            accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
         var flags = registers.getFlags();
@@ -517,7 +517,7 @@ class ByteAluInstructionsTest {
 
         int accumulator = 0;
         for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator);
+            accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
         var flags = registers.getFlags();
@@ -541,7 +541,7 @@ class ByteAluInstructionsTest {
 
         int accumulator = 0;
         for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator);
+            accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
         var flags = registers.getFlags();
@@ -564,7 +564,7 @@ class ByteAluInstructionsTest {
 
         int accumulator = 0;
         for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator);
+            accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
         var flags = registers.getFlags();
@@ -587,7 +587,7 @@ class ByteAluInstructionsTest {
 
         int accumulator = 0;
         for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator);
+            accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
         var flags = registers.getFlags();
@@ -610,7 +610,7 @@ class ByteAluInstructionsTest {
 
         int accumulator = 0;
         for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator);
+            accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
         var flags = registers.getFlags();
@@ -633,7 +633,7 @@ class ByteAluInstructionsTest {
 
         int accumulator = 0;
         for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator);
+            accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
         var flags = registers.getFlags();
@@ -656,7 +656,7 @@ class ByteAluInstructionsTest {
 
         int accumulator = 0;
         for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator);
+            accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
         var flags = registers.getFlags();
@@ -680,7 +680,7 @@ class ByteAluInstructionsTest {
 
         int accumulator = 0;
         for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator);
+            accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
         var flags = registers.getFlags();
@@ -703,7 +703,7 @@ class ByteAluInstructionsTest {
 
         int accumulator = 0;
         for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator);
+            accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
         var flags = registers.getFlags();
@@ -725,7 +725,7 @@ class ByteAluInstructionsTest {
 
         int accumulator = 0;
         for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator);
+            accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
         var flags = registers.getFlags();
@@ -746,7 +746,7 @@ class ByteAluInstructionsTest {
 
         int accumulator = 0;
         for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator);
+            accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
         var flags = registers.getFlags();

@@ -1,4 +1,6 @@
-package cpu.instructions;
+package cpu.instruction;
+
+import cpu.instruction.appender.*;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -31,7 +33,8 @@ public class Instructions {
                 new WordLoadInstructions(),
                 new ByteAluInstructions(),
                 new RotateInstructions(),
-                new MiscInstructions()
+                new MiscInstructions(),
+                new BitInstructions()
         ).forEach(instructionsAppender -> {
             instructionsAppender.add(instructions);
             instructionsAppender.addPrefixed(prefixed);

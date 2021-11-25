@@ -1,7 +1,7 @@
 package cpu;
 
-import cpu.instructions.Instruction;
-import cpu.instructions.Instructions;
+import cpu.instruction.Instruction;
+import cpu.instruction.Instructions;
 import memory.AddressSpace;
 import memory.Memory;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,7 +29,7 @@ class ByteLoadInstructionsTest {
 
         int accumulator = 0;
         for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator);
+            accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
         assertEquals(2, instr.getCycles());
         assertEquals(0x99, registers.getC());
@@ -45,7 +45,7 @@ class ByteLoadInstructionsTest {
 
         int accumulator = 0;
         for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator);
+            accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
         assertEquals(2, instr.getCycles());
         assertEquals(0x99, registers.getB());
@@ -61,7 +61,7 @@ class ByteLoadInstructionsTest {
 
         int accumulator = 0;
         for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator);
+            accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
         assertEquals(1, instr.getCycles());
         assertEquals(0xF1, registers.getA());
@@ -78,7 +78,7 @@ class ByteLoadInstructionsTest {
 
         int accumulator = 0;
         for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator);
+            accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
         assertEquals(2, instr.getCycles());
         assertEquals(0x15, registers.getA());
@@ -96,7 +96,7 @@ class ByteLoadInstructionsTest {
 
         int accumulator = 0;
         for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator);
+            accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
         assertEquals(4, instr.getCycles());
@@ -113,7 +113,7 @@ class ByteLoadInstructionsTest {
 
         int accumulator = 0;
         for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator);
+            accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
         assertEquals(1, instr.getCycles());
@@ -131,7 +131,7 @@ class ByteLoadInstructionsTest {
 
         int accumulator = 0;
         for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator);
+            accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
         assertEquals(2, instr.getCycles());
@@ -150,7 +150,7 @@ class ByteLoadInstructionsTest {
 
         int accumulator = 0;
         for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator);
+            accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
         assertEquals(4, instr.getCycles());
@@ -168,7 +168,7 @@ class ByteLoadInstructionsTest {
 
         int accumulator = 0;
         for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator);
+            accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
         assertEquals(2, instr.getCycles());
@@ -187,7 +187,7 @@ class ByteLoadInstructionsTest {
 
         int accumulator = 0;
         for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator);
+            accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
         assertEquals(2, instr.getCycles());
@@ -206,7 +206,7 @@ class ByteLoadInstructionsTest {
 
         int accumulator = 0;
         for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator);
+            accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
         assertEquals(2, instr.getCycles());
@@ -225,7 +225,7 @@ class ByteLoadInstructionsTest {
 
         int accumulator = 0;
         for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator);
+            accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
         assertEquals(2, instr.getCycles());
@@ -245,7 +245,7 @@ class ByteLoadInstructionsTest {
 
         int accumulator = 0;
         for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator);
+            accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
         assertEquals(2, instr.getCycles());
@@ -264,7 +264,7 @@ class ByteLoadInstructionsTest {
 
         int accumulator = 0;
         for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator);
+            accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
         assertEquals(2, instr.getCycles());
@@ -283,7 +283,7 @@ class ByteLoadInstructionsTest {
 
         int accumulator = 0;
         for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator);
+            accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
         assertEquals(3, instr.getCycles());
@@ -302,7 +302,7 @@ class ByteLoadInstructionsTest {
 
         int accumulator = 0;
         for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator);
+            accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
         assertEquals(3, instr.getCycles());

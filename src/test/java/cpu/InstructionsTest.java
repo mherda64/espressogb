@@ -1,7 +1,7 @@
 package cpu;
 
-import cpu.instructions.Instruction;
-import cpu.instructions.Instructions;
+import cpu.instruction.Instruction;
+import cpu.instruction.Instructions;
 import memory.AddressSpace;
 
 public class InstructionsTest {
@@ -10,8 +10,9 @@ public class InstructionsTest {
         var instr = prefixed ? Instructions.getPrefixed(opcode) : Instructions.get(opcode);
 
         int accumulator = 0;
+        Context context = new Context();
         for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator);
+            accumulator = operation.execute(registers, addressSpace, accumulator, context);
         }
         return instr;
     }

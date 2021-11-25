@@ -1,4 +1,4 @@
-package cpu.instructions;
+package cpu.instruction;
 
 import java.util.Optional;
 

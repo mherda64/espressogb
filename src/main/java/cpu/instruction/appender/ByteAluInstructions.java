@@ -1,6 +1,8 @@
-package cpu.instructions;
+package cpu.instruction.appender;
 
 import cpu.RegEnum;
+import cpu.instruction.Instruction;
+import cpu.instruction.Opcode;
 
 import java.util.Map;
 import java.util.stream.Stream;

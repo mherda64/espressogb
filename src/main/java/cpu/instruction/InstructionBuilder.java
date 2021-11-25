@@ -1,6 +1,7 @@
-package cpu.instructions;
+package cpu.instruction;
 
 import cpu.BitUtils;
+import cpu.Context;
 import cpu.RegEnum;
 import cpu.Registers;
 import memory.AddressSpace;
@@ -8,7 +9,7 @@ import memory.AddressSpace;
 import java.util.ArrayList;
 import java.util.List;
 
-import static cpu.BitUtils.isByte;
+import static cpu.BitUtils.*;
 
 public class InstructionBuilder {
 
@@ -25,7 +26,7 @@ public class InstructionBuilder {
     public InstructionBuilder loadBytes(int bytes) {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
                 switch (bytes) {
                     case 1:
                         return addressSpace.get(registers.incPC());
@@ -45,7 +46,7 @@ public class InstructionBuilder {
     public InstructionBuilder store(RegEnum reg) {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
                 registers.set(reg, accumulator);
                 return accumulator;
             }
@@ -56,7 +57,7 @@ public class InstructionBuilder {
     public InstructionBuilder storeRegAddressAccumulator(RegEnum reg) {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
                 addressSpace.set(registers.get(reg), accumulator);
                 //TODO what to return??
                 return accumulator;
@@ -68,7 +69,7 @@ public class InstructionBuilder {
     public InstructionBuilder storeAccumulatorAddressReg(RegEnum reg) {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
                 var val = registers.get(reg);
                 switch (reg.size) {
                     case RegEnum.SINGLE:
@@ -92,7 +93,7 @@ public class InstructionBuilder {
     public InstructionBuilder loadReg(RegEnum reg) {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
                 return registers.get(reg);
             }
         });
@@ -102,7 +103,7 @@ public class InstructionBuilder {
     public InstructionBuilder loadAddress() {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
                 return addressSpace.get(accumulator) & 0xFF;
             }
         });
@@ -112,7 +113,7 @@ public class InstructionBuilder {
     public InstructionBuilder add(int value) {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
                 return (accumulator + value) & 0xFFFF;
             }
         });
@@ -122,7 +123,7 @@ public class InstructionBuilder {
     public InstructionBuilder incrementReg(RegEnum reg) {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
                 //TODO: support for reg size
                 registers.set(reg, registers.get(reg) + 1);
                 return accumulator;
@@ -134,7 +135,7 @@ public class InstructionBuilder {
     public InstructionBuilder decrementReg(RegEnum reg) {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
                 registers.set(reg, registers.get(reg) - 1);
                 return accumulator;
             }
@@ -145,7 +146,7 @@ public class InstructionBuilder {
     public InstructionBuilder toSigned() {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
                 return (byte) accumulator;
             }
         });
@@ -159,7 +160,7 @@ public class InstructionBuilder {
     public InstructionBuilder addRegSetFlags(RegEnum reg) {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
                 var newSP = registers.getSP() + accumulator;
 
                 var flags = registers.getFlags();
@@ -182,7 +183,7 @@ public class InstructionBuilder {
     public InstructionBuilder push(RegEnum reg) {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
                 var value = registers.get(reg);
 
                 addressSpace.set(registers.decSP(), BitUtils.getHighByte(value));
@@ -196,7 +197,7 @@ public class InstructionBuilder {
     public InstructionBuilder pop(RegEnum reg) {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
                 var lo = addressSpace.get(registers.getSP());
                 var hi = addressSpace.get(registers.incSP());
                 registers.incSP();
@@ -213,7 +214,7 @@ public class InstructionBuilder {
     public InstructionBuilder add(RegEnum reg, boolean addCarry) {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
                 int carry = 0;
                 var flags = registers.getFlags();
                 if (addCarry) {
@@ -243,7 +244,7 @@ public class InstructionBuilder {
     public InstructionBuilder sub(RegEnum reg, boolean subCarry) {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
                 var carry = subCarry && registers.getFlags().isCFlag() ? 1 : 0;
                 return sub(accumulator, registers.get(reg), carry, registers);
             }
@@ -254,7 +255,7 @@ public class InstructionBuilder {
     public InstructionBuilder subFrom(RegEnum reg, boolean subCarry) {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
                 var carry = subCarry && registers.getFlags().isCFlag() ? 1 : 0;
                 return sub(registers.get(reg), accumulator, carry, registers);
             }
@@ -265,7 +266,7 @@ public class InstructionBuilder {
     public InstructionBuilder cp(RegEnum reg) {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
                 return sub(registers.get(reg), accumulator, 0, registers);
             }
         });
@@ -288,7 +289,7 @@ public class InstructionBuilder {
     public InstructionBuilder and(RegEnum reg) {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
                 var output = (registers.get(reg) & accumulator) & 0xFF;
 
                 var flags = registers.getFlags();
@@ -306,7 +307,7 @@ public class InstructionBuilder {
     public InstructionBuilder or(RegEnum reg) {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
                 var output = (registers.get(reg) | accumulator) & 0xFF;
 
                 var flags = registers.getFlags();
@@ -324,7 +325,7 @@ public class InstructionBuilder {
     public InstructionBuilder xor(RegEnum reg) {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
                 var output = (registers.get(reg) ^ accumulator) & 0xFF;
 
                 var flags = registers.getFlags();
@@ -342,7 +343,7 @@ public class InstructionBuilder {
     public InstructionBuilder inc(int size) {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
                 switch (size) {
                     case RegEnum.SINGLE:
                         var output = (accumulator + 1) & 0xFF;
@@ -368,7 +369,7 @@ public class InstructionBuilder {
     public InstructionBuilder dec(int size) {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
                 switch (size) {
                     case RegEnum.SINGLE:
                         var output = (accumulator - 1) & 0xFF;
@@ -394,7 +395,7 @@ public class InstructionBuilder {
     public InstructionBuilder swap() {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
                 var hi = (accumulator & 0xF) << 4;
                 var output = ((accumulator & 0xF0) >> 4) | hi;
 
@@ -413,7 +414,7 @@ public class InstructionBuilder {
     public InstructionBuilder rlc() {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
                 isByte(accumulator);
                 var carry = ((accumulator >>> 7) & 0x1);
                 var output = ((accumulator << 1) & 0xFF ) | carry;
@@ -433,7 +434,7 @@ public class InstructionBuilder {
     public InstructionBuilder rl() {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
                 var flags = registers.getFlags();
 
                 isByte(accumulator);
@@ -454,7 +455,7 @@ public class InstructionBuilder {
     public InstructionBuilder rrc() {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
                 isByte(accumulator);
                 var carry = accumulator & 0x1;
                 var output = ((accumulator >> 1) & 0xFF ) | (carry << 7);
@@ -474,7 +475,7 @@ public class InstructionBuilder {
     public InstructionBuilder rr() {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
                 var flags = registers.getFlags();
 
                 isByte(accumulator);
@@ -495,7 +496,7 @@ public class InstructionBuilder {
     public InstructionBuilder sla() {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
                 var flags = registers.getFlags();
 
                 isByte(accumulator);
@@ -516,7 +517,7 @@ public class InstructionBuilder {
     public InstructionBuilder sra() {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
                 var flags = registers.getFlags();
 
                 isByte(accumulator);
@@ -538,7 +539,7 @@ public class InstructionBuilder {
     public InstructionBuilder srl() {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
                 var flags = registers.getFlags();
 
                 isByte(accumulator);
@@ -551,6 +552,52 @@ public class InstructionBuilder {
                 flags.setCFlag(carry == 1);
 
                 return output;
+            }
+        });
+        return this;
+    }
+
+    public InstructionBuilder bitTest(int bit) {
+        operations.add(new Operation() {
+            @Override
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
+                var flags = registers.getFlags();
+                if (bit < 0 || bit > 7) {
+                    throw new IllegalArgumentException(String.format("Bit %d out of range 0-7!", accumulator));
+                }
+
+                flags.setZFlag(!getByteBit(accumulator, bit));
+                flags.setNFlag(false);
+                flags.setHFlag(true);
+
+                return accumulator;
+            }
+        });
+        return this;
+    }
+
+    public InstructionBuilder setBit(int bit, boolean value) {
+        operations.add(new Operation() {
+            @Override
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
+                if (bit < 0 || bit > 7) {
+                    throw new IllegalArgumentException(String.format("Bit %d out of range 0-7!", accumulator));
+                }
+
+                accumulator = setByteBit(accumulator, bit, value);
+
+                return accumulator;
+            }
+        });
+        return this;
+    }
+
+    public InstructionBuilder setContext() {
+        operations.add(new Operation() {
+            @Override
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
+                context.set(accumulator);
+                return accumulator;
             }
         });
         return this;

@@ -1,4 +1,6 @@
-package cpu.instructions;
+package cpu.instruction.appender;
+
+import cpu.instruction.Instruction;
 
 import java.util.Map;
 
