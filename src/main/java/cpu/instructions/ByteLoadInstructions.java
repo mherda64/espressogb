@@ -5,17 +5,9 @@ import cpu.RegEnum;
 import java.util.Map;
 import java.util.stream.Stream;
 
-public class ByteLoadInstructions {
+public class ByteLoadInstructions implements InstructionAppender {
 
-    private ByteLoadInstructions() {}
-
-    private static void put(int opcode, Map<Integer, Instruction> instructions, Instruction instruction) {
-        if (instructions.containsKey(opcode))
-            throw new IllegalStateException(String.format("Opcode %02X already exists!", opcode));
-        instructions.put(opcode, instruction);
-    }
-
-    public static void add(Map<Integer, Instruction> instructions) {
+    public void add(Map<Integer, Instruction> instructions) {
         /*
          * 8-Bit Load Instructions
          * LD nn, n

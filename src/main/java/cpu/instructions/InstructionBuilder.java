@@ -8,6 +8,8 @@ import memory.AddressSpace;
 import java.util.ArrayList;
 import java.util.List;
 
+import static cpu.BitUtils.isByte;
+
 public class InstructionBuilder {
 
     private List<Operation> operations;
@@ -160,14 +162,15 @@ public class InstructionBuilder {
             public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
                 var newSP = registers.getSP() + accumulator;
 
-                registers.getFlags().setZFlag(false);
-                registers.getFlags().setNFlag(false);
+                var flags = registers.getFlags();
+                flags.setZFlag(false);
+                flags.setNFlag(false);
                 if (accumulator >= 0) {
-                    registers.getFlags().setHFlag(((registers.getSP() & 0xF) + (accumulator & 0xF)) > 0xF);
-                    registers.getFlags().setCFlag(((registers.getSP() & 0xFF) + (accumulator)) > 0xFF);
+                    flags.setHFlag(((registers.getSP() & 0xF) + (accumulator & 0xF)) > 0xF);
+                    flags.setCFlag(((registers.getSP() & 0xFF) + (accumulator)) > 0xFF);
                 } else {
-                    registers.getFlags().setHFlag((newSP & 0xF) <= (registers.getSP() & 0xF));
-                    registers.getFlags().setCFlag((newSP & 0xFF) <= (registers.getSP() & 0xFF));
+                    flags.setHFlag((newSP & 0xF) <= (registers.getSP() & 0xF));
+                    flags.setCFlag((newSP & 0xFF) <= (registers.getSP() & 0xFF));
                 }
 
                 return newSP;
@@ -212,17 +215,18 @@ public class InstructionBuilder {
             @Override
             public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
                 int carry = 0;
+                var flags = registers.getFlags();
                 if (addCarry) {
-                    carry = registers.getFlags().isCFlag() ? 1 : 0;
+                    carry = flags.isCFlag() ? 1 : 0;
                 }
                 switch (reg.size) {
                     case RegEnum.SINGLE:
                         var newRegVal = registers.get(reg) + accumulator + carry;
 
-                        registers.getFlags().setZFlag((newRegVal & 0xFF) == 0);
-                        registers.getFlags().setNFlag(false);
-                        registers.getFlags().setHFlag(((registers.get(reg) & 0xF) + (accumulator & 0xF) + carry) > 0xF);
-                        registers.getFlags().setCFlag(((registers.get(reg) & 0xFF) + accumulator + carry) > 0xFF);
+                        flags.setZFlag((newRegVal & 0xFF) == 0);
+                        flags.setNFlag(false);
+                        flags.setHFlag(((registers.get(reg) & 0xF) + (accumulator & 0xF) + carry) > 0xF);
+                        flags.setCFlag(((registers.get(reg) & 0xFF) + accumulator + carry) > 0xFF);
 
                         return newRegVal & 0xFF;
                     case RegEnum.DOUBLE:
@@ -271,10 +275,11 @@ public class InstructionBuilder {
     private static int sub(int byte1, int byte2, int carry, Registers registers) {
         var result = byte1 - byte2 - carry;
 
-        registers.getFlags().setZFlag((result & 0xFF) == 0);
-        registers.getFlags().setNFlag(true);
-        registers.getFlags().setHFlag(((byte1 ^ byte2 ^ (result & 0xFF)) & 0x10) != 0);
-        registers.getFlags().setCFlag(result < 0);
+        var flags = registers.getFlags();
+        flags.setZFlag((result & 0xFF) == 0);
+        flags.setNFlag(true);
+        flags.setHFlag(((byte1 ^ byte2 ^ (result & 0xFF)) & 0x10) != 0);
+        flags.setCFlag(result < 0);
 
         return result & 0xFF;
 
@@ -285,10 +290,13 @@ public class InstructionBuilder {
             @Override
             public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
                 var output = (registers.get(reg) & accumulator) & 0xFF;
-                registers.getFlags().setZFlag(output == 0);
-                registers.getFlags().setNFlag(false);
-                registers.getFlags().setHFlag(true);
-                registers.getFlags().setCFlag(false);
+
+                var flags = registers.getFlags();
+                flags.setZFlag(output == 0);
+                flags.setNFlag(false);
+                flags.setHFlag(true);
+                flags.setCFlag(false);
+
                 return output;
             }
         });
@@ -300,10 +308,13 @@ public class InstructionBuilder {
             @Override
             public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
                 var output = (registers.get(reg) | accumulator) & 0xFF;
-                registers.getFlags().setZFlag(output == 0);
-                registers.getFlags().setNFlag(false);
-                registers.getFlags().setHFlag(false);
-                registers.getFlags().setCFlag(false);
+
+                var flags = registers.getFlags();
+                flags.setZFlag(output == 0);
+                flags.setNFlag(false);
+                flags.setHFlag(false);
+                flags.setCFlag(false);
+
                 return output;
             }
         });
@@ -315,10 +326,13 @@ public class InstructionBuilder {
             @Override
             public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
                 var output = (registers.get(reg) ^ accumulator) & 0xFF;
-                registers.getFlags().setZFlag(output == 0);
-                registers.getFlags().setNFlag(false);
-                registers.getFlags().setHFlag(false);
-                registers.getFlags().setCFlag(false);
+
+                var flags = registers.getFlags();
+                flags.setZFlag(output == 0);
+                flags.setNFlag(false);
+                flags.setHFlag(false);
+                flags.setCFlag(false);
+
                 return output;
             }
         });
@@ -333,9 +347,10 @@ public class InstructionBuilder {
                     case RegEnum.SINGLE:
                         var output = (accumulator + 1) & 0xFF;
 
-                        registers.getFlags().setZFlag(output == 0);
-                        registers.getFlags().setNFlag(false);
-                        registers.getFlags().setHFlag(((accumulator & 0xF) + 1) > 0xF);
+                        var flags = registers.getFlags();
+                        flags.setZFlag(output == 0);
+                        flags.setNFlag(false);
+                        flags.setHFlag(((accumulator & 0xF) + 1) > 0xF);
 
                         return output;
                     case RegEnum.DOUBLE:
@@ -358,9 +373,10 @@ public class InstructionBuilder {
                     case RegEnum.SINGLE:
                         var output = (accumulator - 1) & 0xFF;
 
-                        registers.getFlags().setZFlag(output == 0);
-                        registers.getFlags().setNFlag(true);
-                        registers.getFlags().setHFlag(((accumulator ^ 1 ^ (output & 0xFF)) & 0x10) != 0);
+                        var flags = registers.getFlags();
+                        flags.setZFlag(output == 0);
+                        flags.setNFlag(true);
+                        flags.setHFlag(((accumulator ^ 1 ^ (output & 0xFF)) & 0x10) != 0);
 
                         return output;
                     case RegEnum.DOUBLE:
@@ -370,6 +386,171 @@ public class InstructionBuilder {
                         throw new IllegalStateException(String.format("Illegal register size %d", size));
 
                 }
+            }
+        });
+        return this;
+    }
+
+    public InstructionBuilder swap() {
+        operations.add(new Operation() {
+            @Override
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+                var hi = (accumulator & 0xF) << 4;
+                var output = ((accumulator & 0xF0) >> 4) | hi;
+
+                var flags = registers.getFlags();
+                flags.setZFlag(output == 0);
+                flags.setNFlag(false);
+                flags.setHFlag(false);
+                flags.setCFlag(false);
+
+                return output;
+            }
+        });
+        return this;
+    }
+
+    public InstructionBuilder rlc() {
+        operations.add(new Operation() {
+            @Override
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+                isByte(accumulator);
+                var carry = ((accumulator >>> 7) & 0x1);
+                var output = ((accumulator << 1) & 0xFF ) | carry;
+
+                var flags = registers.getFlags();
+                flags.setZFlag(output == 0);
+                flags.setNFlag(false);
+                flags.setHFlag(false);
+                flags.setCFlag(carry == 1);
+
+                return output;
+            }
+        });
+        return this;
+    }
+
+    public InstructionBuilder rl() {
+        operations.add(new Operation() {
+            @Override
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+                var flags = registers.getFlags();
+
+                isByte(accumulator);
+                var carry = ((accumulator >>> 7) & 0x1);
+                var output = ((accumulator << 1) & 0xFF) | (flags.isCFlag() ? 1 : 0);
+
+                flags.setZFlag(output == 0);
+                flags.setNFlag(false);
+                flags.setHFlag(false);
+                flags.setCFlag(carry == 1);
+
+                return output;
+            }
+        });
+        return this;
+    }
+
+    public InstructionBuilder rrc() {
+        operations.add(new Operation() {
+            @Override
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+                isByte(accumulator);
+                var carry = accumulator & 0x1;
+                var output = ((accumulator >> 1) & 0xFF ) | (carry << 7);
+
+                var flags = registers.getFlags();
+                flags.setZFlag(output == 0);
+                flags.setNFlag(false);
+                flags.setHFlag(false);
+                flags.setCFlag(carry == 1);
+
+                return output;
+            }
+        });
+        return this;
+    }
+
+    public InstructionBuilder rr() {
+        operations.add(new Operation() {
+            @Override
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+                var flags = registers.getFlags();
+
+                isByte(accumulator);
+                var carry = accumulator & 0x1;
+                var output = ((accumulator >> 1) & 0xFF ) | ((flags.isCFlag() ? 1 : 0) << 7);
+
+                flags.setZFlag(output == 0);
+                flags.setNFlag(false);
+                flags.setHFlag(false);
+                flags.setCFlag(carry == 1);
+
+                return output;
+            }
+        });
+        return this;
+    }
+
+    public InstructionBuilder sla() {
+        operations.add(new Operation() {
+            @Override
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+                var flags = registers.getFlags();
+
+                isByte(accumulator);
+                var carry = ((accumulator >>> 7) & 0x1);
+                var output = (accumulator << 1) & 0xFE;
+
+                flags.setZFlag(output == 0);
+                flags.setNFlag(false);
+                flags.setHFlag(false);
+                flags.setCFlag(carry == 1);
+
+                return output;
+            }
+        });
+        return this;
+    }
+
+    public InstructionBuilder sra() {
+        operations.add(new Operation() {
+            @Override
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+                var flags = registers.getFlags();
+
+                isByte(accumulator);
+                var carry = accumulator & 0x1;
+                var msb = (accumulator & 0x80) >> 7;
+                var output = ((accumulator >> 1) & 0x7F) | (msb << 7);
+
+                flags.setZFlag(output == 0);
+                flags.setNFlag(false);
+                flags.setHFlag(false);
+                flags.setCFlag(carry == 1);
+
+                return output;
+            }
+        });
+        return this;
+    }
+
+    public InstructionBuilder srl() {
+        operations.add(new Operation() {
+            @Override
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator) {
+                var flags = registers.getFlags();
+
+                isByte(accumulator);
+                var carry = accumulator & 0x1;
+                var output = (accumulator >> 1) & 0x7F;
+
+                flags.setZFlag(output == 0);
+                flags.setNFlag(false);
+                flags.setHFlag(false);
+                flags.setCFlag(carry == 1);
+
+                return output;
             }
         });
         return this;

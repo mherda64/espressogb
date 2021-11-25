@@ -1,13 +1,19 @@
 package cpu.instructions;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 public class Instructions {
 
     public static final Map<Integer, Instruction> instructions;
+    public static final Map<Integer, Instruction> prefixed;
 
     public static Instruction get(int opcode) {
         return instructions.get(opcode);
+    }
+
+    public static Instruction getPrefixed(int opcode) {
+        return prefixed.get(opcode);
     }
 
     private static void put(int opcode, Instruction instruction) {
@@ -18,10 +24,19 @@ public class Instructions {
 
     static {
         instructions = new HashMap<>();
+        prefixed = new HashMap<>();
 
-        ByteLoadInstructions.add(instructions);
-        WordLoadInstructions.add(instructions);
-        ByteAluInstructions.add(instructions);
+        Stream.of(
+                new ByteLoadInstructions(),
+                new WordLoadInstructions(),
+                new ByteAluInstructions(),
+                new RotateInstructions(),
+                new MiscInstructions()
+        ).forEach(instructionsAppender -> {
+            instructionsAppender.add(instructions);
+            instructionsAppender.addPrefixed(prefixed);
+        });
+
     }
 
     private Instructions() {
