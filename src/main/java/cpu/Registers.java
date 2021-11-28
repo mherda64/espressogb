@@ -140,114 +140,83 @@ public class Registers {
         }
     }
 
-    public int incPC() {
-        pc += 1;
-        return pc;
-    }
+    public int incPC() { return pc++; }
 
-    public int decSP() {
-        sp -= 1;
-        return sp;
-    }
+    public int decSP() { return sp--; }
 
-    public int incSP() {
-        sp += 1;
-        return sp;
-    }
+    public int incSP() { return sp++; }
 
-    public int getA() {
-        return a & 0xFF;
-    }
+    public int getA() { return a & 0xFF; }
 
     public void setA(int a) {
         isByte(a);
         this.a = a;
     }
 
-    public int getB() {
-        return b & 0xFF;
-    }
+    public int getB() { return b & 0xFF; }
 
     public void setB(int b) {
         isByte(b);
         this.b = b;
     }
 
-    public int getC() {
-        return c & 0xFF;
-    }
+    public int getC() { return c & 0xFF; }
 
     public void setC(int c) {
         isByte(c);
         this.c = c;
     }
 
-    public int getD() {
-        return d & 0xFF;
-    }
+    public int getD() { return d & 0xFF; }
 
     public void setD(int d) {
         isByte(d);
         this.d = d;
     }
 
-    public int getE() {
-        return e & 0xFF;
-    }
+    public int getE() { return e & 0xFF; }
 
     public void setE(int e) {
         isByte(e);
         this.e = e;
     }
 
-    public FlagsReg getFlags() {
-        return f;
-    }
+    public FlagsReg getFlags() { return f; }
 
     public void setFlags(int f) {
         isByte(f);
         this.f.setFlagsByte(f);
     }
 
-    public int getH() {
-        return h & 0xFF;
-    }
+    public int getH() { return h & 0xFF; }
 
     public void setH(int h) {
         isByte(h);
         this.h = h;
     }
 
-    public int getL() {
-        return l & 0xFF;
-    }
+    public int getL() { return l & 0xFF; }
 
     public void setL(int l) {
         isByte(l);
         this.l = l;
     }
 
-    public int getSP() {
-        return sp & 0xFFFF;
-    }
+    public int getSP() { return sp & 0xFFFF; }
 
     public void setSP(int sp) {
         isShort(sp);
         this.sp = sp;
     }
 
-    public int getPC() {
-        return pc & 0xFFFF;
-    }
+    public int getPC() { return pc & 0xFFFF; }
 
     public void setPC(int pc) {
         isShort(pc);
         this.pc = pc;
     }
 
-    public int getAF() {
-        return a << 8 | f.getByte();
-    }
+    public int getAF() { return a << 8 | f.getByte(); }
 
     public void setAF(int af) {
         isShort(af);
@@ -255,9 +224,7 @@ public class Registers {
         f.setFlagsByte(af & 0xFF);
     }
 
-    public int getBC() {
-        return b << 8 | c;
-    }
+    public int getBC() { return b << 8 | c; }
 
     public void setBC(int bc) {
         isShort(bc);
@@ -265,9 +232,7 @@ public class Registers {
         c = bc & 0xFF;
     }
 
-    public int getDE() {
-        return d << 8 | e;
-    }
+    public int getDE() { return d << 8 | e; }
 
     public void setDE(int de) {
         isShort(de);
@@ -275,9 +240,7 @@ public class Registers {
         e = de & 0xFF;
     }
 
-    public int getHL() {
-        return h << 8 | l;
-    }
+    public int getHL() { return h << 8 | l; }
 
     public void setHL(int hl) {
         isShort(hl);
