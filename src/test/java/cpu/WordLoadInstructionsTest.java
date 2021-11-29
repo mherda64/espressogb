@@ -7,6 +7,7 @@ import memory.Memory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static cpu.InstructionsTest.executeInstruction;
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -27,12 +28,8 @@ class WordLoadInstructionsTest {
         addressSpace.set(0x2001, 0x99);
         addressSpace.set(0x2002, 0xA0);
 
-        Instruction instr = Instructions.get(0x01);
+        var instr = executeInstruction(0x01, false, registers, addressSpace);
 
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
         assertEquals(3, instr.getCycles(instr.getContext()));
         assertEquals(0xA099, registers.getBC());
         assertEquals(0x2002, registers.getPC());
@@ -44,12 +41,8 @@ class WordLoadInstructionsTest {
         addressSpace.set(0x2001, 0x99);
         addressSpace.set(0x2002, 0xA0);
 
-        Instruction instr = Instructions.get(0x31);
+        var instr = executeInstruction(0x31, false, registers, addressSpace);
 
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
         assertEquals(3, instr.getCycles(instr.getContext()));
         assertEquals(0xA099, registers.getSP());
         assertEquals(0x2002, registers.getPC());
@@ -61,12 +54,8 @@ class WordLoadInstructionsTest {
         registers.setSP(0x2001);
         registers.setHL(0x1111);
 
-        Instruction instr = Instructions.get(0xF9);
+        var instr = executeInstruction(0xF9, false, registers, addressSpace);
 
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
         assertEquals(2, instr.getCycles(instr.getContext()));
         assertEquals(0x1111, registers.getSP());
         assertEquals(0x2000, registers.getPC());
@@ -79,12 +68,8 @@ class WordLoadInstructionsTest {
         registers.setHL(0x1111);
         addressSpace.set(0x2001, 0x01);
 
-        Instruction instr = Instructions.get(0xF8);
+        var instr = executeInstruction(0xF8, false, registers, addressSpace);
 
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
         assertEquals(3, instr.getCycles(instr.getContext()));
         assertEquals(0x00FF, registers.getSP());
         assertEquals(0x2001, registers.getPC());
@@ -102,12 +87,8 @@ class WordLoadInstructionsTest {
         registers.setHL(0x1111);
         addressSpace.set(0x2001, 0x01);
 
-        Instruction instr = Instructions.get(0xF8);
+        var instr = executeInstruction(0xF8, false, registers, addressSpace);
 
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
         assertEquals(3, instr.getCycles(instr.getContext()));
         assertEquals(0x001F, registers.getSP());
         assertEquals(0x2001, registers.getPC());
@@ -125,12 +106,8 @@ class WordLoadInstructionsTest {
         registers.setHL(0x1111);
         addressSpace.set(0x2001, 0x01);
 
-        Instruction instr = Instructions.get(0xF8);
+        var instr = executeInstruction(0xF8, false, registers, addressSpace);
 
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
         assertEquals(3, instr.getCycles(instr.getContext()));
         assertEquals(0x001E, registers.getSP());
         assertEquals(0x2001, registers.getPC());
@@ -145,12 +122,8 @@ class WordLoadInstructionsTest {
         addressSpace.set(0x2001, 0x11);
         addressSpace.set(0x2002, 0xFC);
 
-        Instruction instr = Instructions.get(0x08);
+        var instr = executeInstruction(0x08, false, registers, addressSpace);
 
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
         assertEquals(5, instr.getCycles(instr.getContext()));
         assertEquals(0xAB1F, registers.getSP());
         assertEquals(0x2002, registers.getPC());
@@ -164,12 +137,8 @@ class WordLoadInstructionsTest {
         registers.setSP(0x221F);
         registers.setAF(0x1234);
 
-        Instruction instr = Instructions.get(0xF5);
+        var instr = executeInstruction(0xF5, false, registers, addressSpace);
 
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
         assertEquals(4, instr.getCycles(instr.getContext()));
         assertEquals(0x221D, registers.getSP());
         assertEquals(0x2000, registers.getPC());
@@ -185,12 +154,8 @@ class WordLoadInstructionsTest {
         addressSpace.set(0x221E, 0x12);
         addressSpace.set(0x221D, 0x34);
 
-        Instruction instr = Instructions.get(0xF1);
+        var instr = executeInstruction(0xF1, false, registers, addressSpace);
 
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
         assertEquals(3, instr.getCycles(instr.getContext()));
         assertEquals(0x221F, registers.getSP());
         assertEquals(0x2000, registers.getPC());
