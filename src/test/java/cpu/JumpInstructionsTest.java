@@ -195,6 +195,8 @@ class JumpInstructionsTest {
         assertEquals(6, instr.getCycles(instr.getContext()));
         assertEquals(0x3180, registers.getPC());
         assertEquals(0xDFFE, registers.getSP());
+        assertEquals(0x20, addressSpace.get(0xDFFF));
+        assertEquals(0x02, addressSpace.get(0xDFFE));
     }
 
     @Test
@@ -210,8 +212,8 @@ class JumpInstructionsTest {
         assertEquals(6, instr.getCycles(instr.getContext()));
         assertEquals(0x3180, registers.getPC());
         assertEquals(0xDFFE, registers.getSP());
-        assertEquals(0x80, addressSpace.get(0xDFFF));
-        assertEquals(0x31, addressSpace.get(0xDFFE));
+        assertEquals(0x20, addressSpace.get(0xDFFF));
+        assertEquals(0x02, addressSpace.get(0xDFFE));
 
     }
 
