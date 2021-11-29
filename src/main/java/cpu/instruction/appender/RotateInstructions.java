@@ -21,7 +21,7 @@ public class RotateInstructions implements InstructionAppender {
                         .loadReg(RegEnum.A)
                         .rlc()
                         .store(RegEnum.A)
-                        .build(1)
+                        .build(context -> 1)
         );
 
         /*
@@ -33,7 +33,7 @@ public class RotateInstructions implements InstructionAppender {
                         .loadReg(RegEnum.A)
                         .rl()
                         .store(RegEnum.A)
-                        .build(1)
+                        .build(context -> 1)
         );
 
         /*
@@ -45,7 +45,7 @@ public class RotateInstructions implements InstructionAppender {
                         .loadReg(RegEnum.A)
                         .rrc()
                         .store(RegEnum.A)
-                        .build(1)
+                        .build(context -> 1)
         );
 
         /*
@@ -57,7 +57,7 @@ public class RotateInstructions implements InstructionAppender {
                         .loadReg(RegEnum.A)
                         .rr()
                         .store(RegEnum.A)
-                        .build(1)
+                        .build(context -> 1)
         );
 
     }
@@ -83,7 +83,7 @@ public class RotateInstructions implements InstructionAppender {
                                 .loadReg(opcode.getTarget().get())
                                 .rlc()
                                 .store(opcode.getTarget().get())
-                                .build(opcode.getCycles()))
+                                .build(opcode.getCyclesFun()))
         );
 
         put(0x06,
@@ -93,7 +93,7 @@ public class RotateInstructions implements InstructionAppender {
                         .loadAddress()
                         .rlc()
                         .storeRegAddressAccumulator(RegEnum.HL)
-                        .build(4)
+                        .build(context -> 4)
         );
 
         /*
@@ -114,7 +114,7 @@ public class RotateInstructions implements InstructionAppender {
                                 .loadReg(opcode.getTarget().get())
                                 .rl()
                                 .store(opcode.getTarget().get())
-                                .build(opcode.getCycles()))
+                                .build(opcode.getCyclesFun()))
         );
 
         put(0x16,
@@ -124,7 +124,7 @@ public class RotateInstructions implements InstructionAppender {
                         .loadAddress()
                         .rl()
                         .storeRegAddressAccumulator(RegEnum.HL)
-                        .build(4)
+                        .build(context -> 4)
         );
 
 
@@ -146,7 +146,7 @@ public class RotateInstructions implements InstructionAppender {
                                 .loadReg(opcode.getTarget().get())
                                 .rrc()
                                 .store(opcode.getTarget().get())
-                                .build(opcode.getCycles()))
+                                .build(opcode.getCyclesFun()))
         );
 
         put(0x0E,
@@ -156,7 +156,7 @@ public class RotateInstructions implements InstructionAppender {
                         .loadAddress()
                         .rrc()
                         .storeRegAddressAccumulator(RegEnum.HL)
-                        .build(4)
+                        .build(context -> 4)
         );
 
         /*
@@ -177,7 +177,7 @@ public class RotateInstructions implements InstructionAppender {
                                 .loadReg(opcode.getTarget().get())
                                 .rr()
                                 .store(opcode.getTarget().get())
-                                .build(opcode.getCycles()))
+                                .build(opcode.getCyclesFun()))
         );
 
         put(0x1E,
@@ -187,7 +187,7 @@ public class RotateInstructions implements InstructionAppender {
                         .loadAddress()
                         .rr()
                         .storeRegAddressAccumulator(RegEnum.HL)
-                        .build(4)
+                        .build(context -> 4)
         );
 
         /*
@@ -208,7 +208,7 @@ public class RotateInstructions implements InstructionAppender {
                                 .loadReg(opcode.getTarget().get())
                                 .sla()
                                 .store(opcode.getTarget().get())
-                                .build(opcode.getCycles()))
+                                .build(opcode.getCyclesFun()))
         );
 
         put(0x26,
@@ -218,7 +218,7 @@ public class RotateInstructions implements InstructionAppender {
                         .loadAddress()
                         .sla()
                         .storeRegAddressAccumulator(RegEnum.HL)
-                        .build(4)
+                        .build(context -> 4)
         );
 
         /*
@@ -239,7 +239,7 @@ public class RotateInstructions implements InstructionAppender {
                                 .loadReg(opcode.getTarget().get())
                                 .sra()
                                 .store(opcode.getTarget().get())
-                                .build(opcode.getCycles()))
+                                .build(opcode.getCyclesFun()))
         );
 
         put(0x2E,
@@ -249,7 +249,7 @@ public class RotateInstructions implements InstructionAppender {
                         .loadAddress()
                         .sra()
                         .storeRegAddressAccumulator(RegEnum.HL)
-                        .build(4)
+                        .build(context -> 4)
         );
 
         /*
@@ -270,7 +270,7 @@ public class RotateInstructions implements InstructionAppender {
                                 .loadReg(opcode.getTarget().get())
                                 .srl()
                                 .store(opcode.getTarget().get())
-                                .build(opcode.getCycles()))
+                                .build(opcode.getCyclesFun()))
         );
 
         put(0x3E,
@@ -280,7 +280,7 @@ public class RotateInstructions implements InstructionAppender {
                         .loadAddress()
                         .srl()
                         .storeRegAddressAccumulator(RegEnum.HL)
-                        .build(4)
+                        .build(context -> 4)
         );
     }
 

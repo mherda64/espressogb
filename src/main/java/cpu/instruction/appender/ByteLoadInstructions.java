@@ -28,7 +28,7 @@ public class ByteLoadInstructions implements InstructionAppender {
                         Instruction.builder()
                                 .loadBytes(RegEnum.SINGLE)
                                 .store(opcode.getTarget().get())
-                                .build(opcode.getCycles()))
+                                .build(opcode.getCyclesFun()))
         );
 
         /*
@@ -53,7 +53,7 @@ public class ByteLoadInstructions implements InstructionAppender {
                         Instruction.builder()
                                 .loadReg(opcode.getTarget().get())
                                 .store(RegEnum.A)
-                                .build(opcode.getCycles()))
+                                .build(opcode.getCyclesFun()))
         );
 
         /*
@@ -72,7 +72,7 @@ public class ByteLoadInstructions implements InstructionAppender {
                         Instruction.builder()
                                 .loadReg(opcode.getTarget().get())
                                 .store(RegEnum.B)
-                                .build(opcode.getCycles()))
+                                .build(opcode.getCyclesFun()))
         );
 
         /*
@@ -91,7 +91,7 @@ public class ByteLoadInstructions implements InstructionAppender {
                         Instruction.builder()
                                 .loadReg(opcode.getTarget().get())
                                 .store(RegEnum.C)
-                                .build(opcode.getCycles()))
+                                .build(opcode.getCyclesFun()))
         );
 
         /*
@@ -110,7 +110,7 @@ public class ByteLoadInstructions implements InstructionAppender {
                         Instruction.builder()
                                 .loadReg(opcode.getTarget().get())
                                 .store(RegEnum.D)
-                                .build(opcode.getCycles()))
+                                .build(opcode.getCyclesFun()))
         );
 
         /*
@@ -129,7 +129,7 @@ public class ByteLoadInstructions implements InstructionAppender {
                         Instruction.builder()
                                 .loadReg(opcode.getTarget().get())
                                 .store(RegEnum.E)
-                                .build(opcode.getCycles()))
+                                .build(opcode.getCyclesFun()))
         );
 
         /*
@@ -148,7 +148,7 @@ public class ByteLoadInstructions implements InstructionAppender {
                         Instruction.builder()
                                 .loadReg(opcode.getTarget().get())
                                 .store(RegEnum.H)
-                                .build(opcode.getCycles()))
+                                .build(opcode.getCyclesFun()))
         );
 
         /*
@@ -167,7 +167,7 @@ public class ByteLoadInstructions implements InstructionAppender {
                         Instruction.builder()
                                 .loadReg(opcode.getTarget().get())
                                 .store(RegEnum.L)
-                                .build(opcode.getCycles()))
+                                .build(opcode.getCyclesFun()))
         );
 
         /*
@@ -188,7 +188,7 @@ public class ByteLoadInstructions implements InstructionAppender {
                                 .loadReg(RegEnum.HL)
                                 .loadAddress()
                                 .store(opcode.getTarget().get())
-                                .build(opcode.getCycles()))
+                                .build(opcode.getCyclesFun()))
         );
 
         /*
@@ -207,7 +207,7 @@ public class ByteLoadInstructions implements InstructionAppender {
                         Instruction.builder()
                                 .loadReg(opcode.getTarget().get())
                                 .storeRegAddressAccumulator(RegEnum.HL)
-                                .build(opcode.getCycles()))
+                                .build(opcode.getCyclesFun()))
         );
 
         /*
@@ -218,7 +218,7 @@ public class ByteLoadInstructions implements InstructionAppender {
                 Instruction.builder()
                         .loadBytes(RegEnum.SINGLE)
                         .storeRegAddressAccumulator(RegEnum.HL)
-                        .build(3)
+                        .build(context -> 3)
         );
 
 
@@ -235,7 +235,7 @@ public class ByteLoadInstructions implements InstructionAppender {
                                 .loadReg(opcode.getTarget().get())
                                 .loadAddress()
                                 .store(RegEnum.A)
-                                .build(opcode.getCycles()))
+                                .build(opcode.getCyclesFun()))
         );
 
         /*
@@ -247,7 +247,7 @@ public class ByteLoadInstructions implements InstructionAppender {
                         .loadBytes(RegEnum.DOUBLE)
                         .loadAddress()
                         .store(RegEnum.A)
-                        .build(4)
+                        .build(context -> 4)
         );
 
         /*
@@ -266,7 +266,7 @@ public class ByteLoadInstructions implements InstructionAppender {
                         Instruction.builder()
                                 .loadReg(RegEnum.A)
                                 .store(opcode.getTarget().get())
-                                .build(opcode.getCycles()))
+                                .build(opcode.getCyclesFun()))
         );
 
         /*
@@ -282,7 +282,7 @@ public class ByteLoadInstructions implements InstructionAppender {
                         Instruction.builder()
                                 .loadReg(RegEnum.A)
                                 .storeRegAddressAccumulator(opcode.getTarget().get())
-                                .build(opcode.getCycles()))
+                                .build(opcode.getCyclesFun()))
         );
 
         /*
@@ -293,7 +293,7 @@ public class ByteLoadInstructions implements InstructionAppender {
                 Instruction.builder()
                         .loadBytes(RegEnum.DOUBLE)
                         .storeAccumulatorAddressReg(RegEnum.A)
-                        .build(4)
+                        .build(context -> 4)
         );
 
         /*
@@ -306,7 +306,7 @@ public class ByteLoadInstructions implements InstructionAppender {
                         .add(0xFF00)
                         .loadAddress()
                         .store(RegEnum.A)
-                        .build(2)
+                        .build(context -> 2)
         );
 
         /*
@@ -318,7 +318,7 @@ public class ByteLoadInstructions implements InstructionAppender {
                         .loadReg(RegEnum.C)
                         .add(0xFF00)
                         .storeAccumulatorAddressReg(RegEnum.A)
-                        .build(2)
+                        .build(context -> 2)
         );
 
         /*
@@ -332,7 +332,7 @@ public class ByteLoadInstructions implements InstructionAppender {
                         .loadAddress()
                         .store(RegEnum.A)
                         .decrementReg(RegEnum.HL)
-                        .build(2)
+                        .build(context -> 2)
         );
 
         /*
@@ -345,7 +345,7 @@ public class ByteLoadInstructions implements InstructionAppender {
                         .loadReg(RegEnum.HL)
                         .storeAccumulatorAddressReg(RegEnum.A)
                         .decrementReg(RegEnum.HL)
-                        .build(2)
+                        .build(context -> 2)
         );
 
         /*
@@ -359,7 +359,7 @@ public class ByteLoadInstructions implements InstructionAppender {
                         .loadAddress()
                         .store(RegEnum.A)
                         .incrementReg(RegEnum.HL)
-                        .build(2)
+                        .build(context -> 2)
         );
 
         /*
@@ -372,7 +372,7 @@ public class ByteLoadInstructions implements InstructionAppender {
                         .loadReg(RegEnum.HL)
                         .storeAccumulatorAddressReg(RegEnum.A)
                         .incrementReg(RegEnum.HL)
-                        .build(2)
+                        .build(context -> 2)
         );
 
         /*
@@ -384,7 +384,7 @@ public class ByteLoadInstructions implements InstructionAppender {
                         .loadBytes(RegEnum.SINGLE)
                         .add(0xFF00)
                         .storeAccumulatorAddressReg(RegEnum.A)
-                        .build(3)
+                        .build(context -> 3)
         );
 
         /*
@@ -397,7 +397,7 @@ public class ByteLoadInstructions implements InstructionAppender {
                         .add(0xFF00)
                         .loadAddress()
                         .store(RegEnum.A)
-                        .build(3)
+                        .build(context -> 3)
         );
     }
 }

@@ -27,7 +27,7 @@ public class BitInstructionsTest {
 
         var instr = executeInstruction(0x57, true, registers, addressSpace);
 
-        assertEquals(2, instr.getCycles());
+        assertEquals(2, instr.getCycles(instr.getContext()));
         assertEquals(0x45, registers.getA());
         assertEquals(0x2000, registers.getPC());
         assertFalse(flags.isZFlag());
@@ -45,7 +45,7 @@ public class BitInstructionsTest {
 
         var instr = executeInstruction(0x5E, true, registers, addressSpace);
 
-        assertEquals(4, instr.getCycles());
+        assertEquals(4, instr.getCycles(instr.getContext()));
         assertEquals(0x2000, registers.getPC());
         assertTrue(flags.isZFlag());
         assertFalse(flags.isNFlag());
@@ -60,7 +60,7 @@ public class BitInstructionsTest {
 
         var instr = executeInstruction(0xD3, true, registers, addressSpace);
 
-        assertEquals(2, instr.getCycles());
+        assertEquals(2, instr.getCycles(instr.getContext()));
         assertEquals(0x04, registers.getE());
         assertEquals(0x2000, registers.getPC());
     }
@@ -73,7 +73,7 @@ public class BitInstructionsTest {
 
         var instr = executeInstruction(0xDE, true, registers, addressSpace);
 
-        assertEquals(4, instr.getCycles());
+        assertEquals(4, instr.getCycles(instr.getContext()));
         assertEquals(0x2000, registers.getPC());
         assertEquals(0xF9, addressSpace.get(0x1234));
     }
@@ -85,7 +85,7 @@ public class BitInstructionsTest {
 
         var instr = executeInstruction(0xBA, true, registers, addressSpace);
 
-        assertEquals(2, instr.getCycles());
+        assertEquals(2, instr.getCycles(instr.getContext()));
         assertEquals(0x7F, registers.getD());
         assertEquals(0x2000, registers.getPC());
     }
@@ -98,7 +98,7 @@ public class BitInstructionsTest {
 
         var instr = executeInstruction(0x86, true, registers, addressSpace);
 
-        assertEquals(4, instr.getCycles());
+        assertEquals(4, instr.getCycles(instr.getContext()));
         assertEquals(0x2000, registers.getPC());
         assertEquals(0xF0, addressSpace.get(0x1234));
     }

@@ -26,7 +26,7 @@ public class WordLoadInstructions implements InstructionAppender {
                         Instruction.builder()
                                 .loadBytes(RegEnum.DOUBLE)
                                 .store(opcode.getTarget().get())
-                                .build(opcode.getCycles()))
+                                .build(opcode.getCyclesFun()))
         );
 
         /*
@@ -37,7 +37,7 @@ public class WordLoadInstructions implements InstructionAppender {
                 Instruction.builder()
                         .loadReg(RegEnum.HL)
                         .store(RegEnum.SP)
-                        .build(2)
+                        .build(context -> 2)
         );
 
         /*
@@ -50,7 +50,7 @@ public class WordLoadInstructions implements InstructionAppender {
                         .toSigned()
                         .addRegSetFlags(RegEnum.SP)
                         .store(RegEnum.HL)
-                        .build(3)
+                        .build(context -> 3)
         );
 
         /*
@@ -61,7 +61,7 @@ public class WordLoadInstructions implements InstructionAppender {
                 Instruction.builder()
                         .loadBytes(RegEnum.DOUBLE)
                         .storeAccumulatorAddressReg(RegEnum.SP)
-                        .build(5)
+                        .build(context -> 5)
         );
 
         /*
@@ -77,7 +77,7 @@ public class WordLoadInstructions implements InstructionAppender {
                         instructions,
                         Instruction.builder()
                                 .push(opcode.getTarget().get())
-                                .build(opcode.getCycles()))
+                                .build(opcode.getCyclesFun()))
         );
 
         /*
@@ -93,7 +93,7 @@ public class WordLoadInstructions implements InstructionAppender {
                         instructions,
                         Instruction.builder()
                                 .pop(opcode.getTarget().get())
-                                .build(opcode.getCycles()))
+                                .build(opcode.getCyclesFun()))
         );
     }
 }

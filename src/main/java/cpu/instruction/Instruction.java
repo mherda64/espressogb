@@ -1,16 +1,20 @@
 package cpu.instruction;
 
+import cpu.Context;
+
 import java.util.List;
+import java.util.function.Function;
 
 public class Instruction {
 
     private List<Operation> operations;
-    // TODO ustalić gdzie nam to potrzebne jest
     private int cycles;
+    private Function<Context, Integer> cyclesFun;
+    private Context context;
 
-    public Instruction(List<Operation> operations, int cycles) {
+    public Instruction(List<Operation> operations, Function<Context, Integer> cyclesFun) {
         this.operations = operations;
-        this.cycles = cycles;
+        this.cyclesFun = cyclesFun;
     }
 
     public static InstructionBuilder builder() {
@@ -21,7 +25,15 @@ public class Instruction {
         return operations;
     }
 
-    public int getCycles() {
-        return cycles;
+    public int getCycles(Context context) {
+        return cyclesFun.apply(context);
+    }
+
+    public Context getContext() {
+        return context;
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
     }
 }

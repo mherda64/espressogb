@@ -29,7 +29,7 @@ class ByteAluInstructionsTest {
         var instr = executeInstruction(0x81, false, registers, addressSpace);
 
         var flags = registers.getFlags();
-        assertEquals(1, instr.getCycles());
+        assertEquals(1, instr.getCycles(instr.getContext()));
         assertEquals(0x1A, registers.getA());
         assertEquals(0x2000, registers.getPC());
         assertFalse(flags.isZFlag());
@@ -47,7 +47,7 @@ class ByteAluInstructionsTest {
         var instr = executeInstruction(0x84, false, registers, addressSpace);
 
         var flags = registers.getFlags();
-        assertEquals(1, instr.getCycles());
+        assertEquals(1, instr.getCycles(instr.getContext()));
         assertEquals(0x20, registers.getA());
         assertEquals(0x2000, registers.getPC());
         assertFalse(flags.isZFlag());
@@ -65,7 +65,7 @@ class ByteAluInstructionsTest {
         var instr = executeInstruction(0x85, false, registers, addressSpace);
 
         var flags = registers.getFlags();
-        assertEquals(1, instr.getCycles());
+        assertEquals(1, instr.getCycles(instr.getContext()));
         assertEquals(0x00, registers.getA());
         assertEquals(0x2000, registers.getPC());
         assertTrue(flags.isZFlag());
@@ -84,7 +84,7 @@ class ByteAluInstructionsTest {
         var instr = executeInstruction(0x86, false, registers, addressSpace);
 
         var flags = registers.getFlags();
-        assertEquals(2, instr.getCycles());
+        assertEquals(2, instr.getCycles(instr.getContext()));
         assertEquals(0x06, registers.getA());
         assertEquals(0x2000, registers.getPC());
         assertFalse(flags.isZFlag());
@@ -103,7 +103,7 @@ class ByteAluInstructionsTest {
         var instr = executeInstruction(0x86, false, registers, addressSpace);
 
         var flags = registers.getFlags();
-        assertEquals(2, instr.getCycles());
+        assertEquals(2, instr.getCycles(instr.getContext()));
         assertEquals(0x00, registers.getA());
         assertEquals(0x2000, registers.getPC());
         assertTrue(flags.isZFlag());
@@ -121,7 +121,7 @@ class ByteAluInstructionsTest {
         var instr = executeInstruction(0xC6, false, registers, addressSpace);
 
         var flags = registers.getFlags();
-        assertEquals(2, instr.getCycles());
+        assertEquals(2, instr.getCycles(instr.getContext()));
         assertEquals(0xBC, registers.getA());
         assertEquals(0x2001, registers.getPC());
         assertFalse(flags.isZFlag());
@@ -139,7 +139,7 @@ class ByteAluInstructionsTest {
         var instr = executeInstruction(0xC6, false, registers, addressSpace);
 
         var flags = registers.getFlags();
-        assertEquals(2, instr.getCycles());
+        assertEquals(2, instr.getCycles(instr.getContext()));
         assertEquals(0x0A, registers.getA());
         assertEquals(0x2001, registers.getPC());
         assertFalse(flags.isZFlag());
@@ -163,7 +163,7 @@ class ByteAluInstructionsTest {
         }
 
         var flags = registers.getFlags();
-        assertEquals(1, instr.getCycles());
+        assertEquals(1, instr.getCycles(instr.getContext()));
         assertEquals(0x1B, registers.getA());
         assertEquals(0x2000, registers.getPC());
         assertFalse(flags.isZFlag());
@@ -187,7 +187,7 @@ class ByteAluInstructionsTest {
         }
 
         var flags = registers.getFlags();
-        assertEquals(1, instr.getCycles());
+        assertEquals(1, instr.getCycles(instr.getContext()));
         assertEquals(0x21, registers.getA());
         assertEquals(0x2000, registers.getPC());
         assertFalse(flags.isZFlag());
@@ -211,7 +211,7 @@ class ByteAluInstructionsTest {
         }
 
         var flags = registers.getFlags();
-        assertEquals(1, instr.getCycles());
+        assertEquals(1, instr.getCycles(instr.getContext()));
         assertEquals(0x01, registers.getA());
         assertEquals(0x2000, registers.getPC());
         assertFalse(flags.isZFlag());
@@ -236,7 +236,7 @@ class ByteAluInstructionsTest {
         }
 
         var flags = registers.getFlags();
-        assertEquals(2, instr.getCycles());
+        assertEquals(2, instr.getCycles(instr.getContext()));
         assertEquals(0x07, registers.getA());
         assertEquals(0x2000, registers.getPC());
         assertFalse(flags.isZFlag());
@@ -261,7 +261,7 @@ class ByteAluInstructionsTest {
         }
 
         var flags = registers.getFlags();
-        assertEquals(2, instr.getCycles());
+        assertEquals(2, instr.getCycles(instr.getContext()));
         assertEquals(0x01, registers.getA());
         assertEquals(0x2000, registers.getPC());
         assertFalse(flags.isZFlag());
@@ -286,7 +286,7 @@ class ByteAluInstructionsTest {
         }
 
         var flags = registers.getFlags();
-        assertEquals(2, instr.getCycles());
+        assertEquals(2, instr.getCycles(instr.getContext()));
         assertEquals(0x07, registers.getA());
         assertEquals(0x2001, registers.getPC());
         assertFalse(flags.isZFlag());
@@ -310,7 +310,7 @@ class ByteAluInstructionsTest {
         }
 
         var flags = registers.getFlags();
-        assertEquals(2, instr.getCycles());
+        assertEquals(2, instr.getCycles(instr.getContext()));
         assertEquals(0x01, registers.getA());
         assertEquals(0x2001, registers.getPC());
         assertFalse(flags.isZFlag());
@@ -333,7 +333,7 @@ class ByteAluInstructionsTest {
         }
 
         var flags = registers.getFlags();
-        assertEquals(1, instr.getCycles());
+        assertEquals(1, instr.getCycles(instr.getContext()));
         assertEquals(0xE1, registers.getA());
         assertEquals(0x2000, registers.getPC());
         assertFalse(flags.isZFlag());
@@ -356,7 +356,7 @@ class ByteAluInstructionsTest {
         }
 
         var flags = registers.getFlags();
-        assertEquals(1, instr.getCycles());
+        assertEquals(1, instr.getCycles(instr.getContext()));
         assertEquals(0xEF, registers.getA());
         assertEquals(0x2000, registers.getPC());
         assertFalse(flags.isZFlag());
@@ -379,7 +379,7 @@ class ByteAluInstructionsTest {
         }
 
         var flags = registers.getFlags();
-        assertEquals(1, instr.getCycles());
+        assertEquals(1, instr.getCycles(instr.getContext()));
         assertEquals(0xFF, registers.getA());
         assertEquals(0x2000, registers.getPC());
         assertFalse(flags.isZFlag());
@@ -402,7 +402,7 @@ class ByteAluInstructionsTest {
         }
 
         var flags = registers.getFlags();
-        assertEquals(1, instr.getCycles());
+        assertEquals(1, instr.getCycles(instr.getContext()));
         assertEquals(0x00, registers.getA());
         assertEquals(0x2000, registers.getPC());
         assertTrue(flags.isZFlag());
@@ -426,7 +426,7 @@ class ByteAluInstructionsTest {
         }
 
         var flags = registers.getFlags();
-        assertEquals(2, instr.getCycles());
+        assertEquals(2, instr.getCycles(instr.getContext()));
         assertEquals(0xF0, registers.getA());
         assertEquals(0x2000, registers.getPC());
         assertFalse(flags.isZFlag());
@@ -449,7 +449,7 @@ class ByteAluInstructionsTest {
         }
 
         var flags = registers.getFlags();
-        assertEquals(2, instr.getCycles());
+        assertEquals(2, instr.getCycles(instr.getContext()));
         assertEquals(0xD2, registers.getA());
         assertEquals(0x2001, registers.getPC());
         assertFalse(flags.isZFlag());
@@ -473,7 +473,7 @@ class ByteAluInstructionsTest {
         }
 
         var flags = registers.getFlags();
-        assertEquals(1, instr.getCycles());
+        assertEquals(1, instr.getCycles(instr.getContext()));
         assertEquals(0xE1, registers.getA());
         assertEquals(0x2000, registers.getPC());
         assertFalse(flags.isZFlag());
@@ -497,7 +497,7 @@ class ByteAluInstructionsTest {
         }
 
         var flags = registers.getFlags();
-        assertEquals(1, instr.getCycles());
+        assertEquals(1, instr.getCycles(instr.getContext()));
         assertEquals(0xE0, registers.getA());
         assertEquals(0x2000, registers.getPC());
         assertFalse(flags.isZFlag());
@@ -521,7 +521,7 @@ class ByteAluInstructionsTest {
         }
 
         var flags = registers.getFlags();
-        assertEquals(1, instr.getCycles());
+        assertEquals(1, instr.getCycles(instr.getContext()));
         assertEquals(0xED, registers.getA());
         assertEquals(0x2000, registers.getPC());
         assertFalse(flags.isZFlag());
@@ -545,7 +545,7 @@ class ByteAluInstructionsTest {
         }
 
         var flags = registers.getFlags();
-        assertEquals(2, instr.getCycles());
+        assertEquals(2, instr.getCycles(instr.getContext()));
         assertEquals(0xE0, registers.getA());
         assertEquals(0x2001, registers.getPC());
         assertFalse(flags.isZFlag());
@@ -568,7 +568,7 @@ class ByteAluInstructionsTest {
         }
 
         var flags = registers.getFlags();
-        assertEquals(2, instr.getCycles());
+        assertEquals(2, instr.getCycles(instr.getContext()));
         assertEquals(0xC0, registers.getA());
         assertEquals(0x2001, registers.getPC());
         assertFalse(flags.isZFlag());
@@ -591,7 +591,7 @@ class ByteAluInstructionsTest {
         }
 
         var flags = registers.getFlags();
-        assertEquals(1, instr.getCycles());
+        assertEquals(1, instr.getCycles(instr.getContext()));
         assertEquals(0xC5, registers.getA());
         assertEquals(0x2000, registers.getPC());
         assertFalse(flags.isZFlag());
@@ -614,7 +614,7 @@ class ByteAluInstructionsTest {
         }
 
         var flags = registers.getFlags();
-        assertEquals(1, instr.getCycles());
+        assertEquals(1, instr.getCycles(instr.getContext()));
         assertEquals(0x00, registers.getA());
         assertEquals(0x2000, registers.getPC());
         assertTrue(flags.isZFlag());
@@ -637,7 +637,7 @@ class ByteAluInstructionsTest {
         }
 
         var flags = registers.getFlags();
-        assertEquals(1, instr.getCycles());
+        assertEquals(1, instr.getCycles(instr.getContext()));
         assertEquals(0x15, registers.getA());
         assertEquals(0x2000, registers.getPC());
         assertFalse(flags.isZFlag());
@@ -660,7 +660,7 @@ class ByteAluInstructionsTest {
         }
 
         var flags = registers.getFlags();
-        assertEquals(1, instr.getCycles());
+        assertEquals(1, instr.getCycles(instr.getContext()));
         assertEquals(0xFF, registers.getA());
         assertEquals(0xEA, registers.getC());
         assertEquals(0x2000, registers.getPC());
@@ -684,7 +684,7 @@ class ByteAluInstructionsTest {
         }
 
         var flags = registers.getFlags();
-        assertEquals(1, instr.getCycles());
+        assertEquals(1, instr.getCycles(instr.getContext()));
         assertEquals(0xEA, registers.getA());
         assertEquals(0xFF, registers.getC());
         assertEquals(0x2000, registers.getPC());
@@ -707,7 +707,7 @@ class ByteAluInstructionsTest {
         }
 
         var flags = registers.getFlags();
-        assertEquals(1, instr.getCycles());
+        assertEquals(1, instr.getCycles(instr.getContext()));
         assertEquals(0x00, registers.getA());
         assertEquals(0x2000, registers.getPC());
         assertTrue(flags.isZFlag());
@@ -729,7 +729,7 @@ class ByteAluInstructionsTest {
         }
 
         var flags = registers.getFlags();
-        assertEquals(3, instr.getCycles());
+        assertEquals(3, instr.getCycles(instr.getContext()));
         assertEquals(0x00, addressSpace.get(0x1234));
         assertEquals(0x2000, registers.getPC());
         assertTrue(flags.isZFlag());
@@ -750,7 +750,7 @@ class ByteAluInstructionsTest {
         }
 
         var flags = registers.getFlags();
-        assertEquals(1, instr.getCycles());
+        assertEquals(1, instr.getCycles(instr.getContext()));
         assertEquals(0x0F, registers.getE());
         assertEquals(0x2000, registers.getPC());
         assertFalse(flags.isZFlag());

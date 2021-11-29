@@ -40,7 +40,7 @@ public class MiscInstructions implements InstructionAppender {
                                 .loadReg(opcode.getTarget().get())
                                 .swap()
                                 .store(opcode.getTarget().get())
-                                .build(opcode.getCycles()))
+                                .build(opcode.getCyclesFun()))
         );
 
         put(0x36,
@@ -50,7 +50,7 @@ public class MiscInstructions implements InstructionAppender {
                         .loadAddress()
                         .swap()
                         .storeRegAddressAccumulator(RegEnum.HL)
-                        .build(4)
+                        .build(context -> 4)
         );
     }
 }

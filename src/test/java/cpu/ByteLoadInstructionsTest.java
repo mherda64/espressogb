@@ -31,7 +31,7 @@ class ByteLoadInstructionsTest {
         for (var operation : instr.getOperations()) {
             accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
-        assertEquals(2, instr.getCycles());
+        assertEquals(2, instr.getCycles(instr.getContext()));
         assertEquals(0x99, registers.getC());
         assertEquals(0x2002, registers.getPC());
     }
@@ -47,7 +47,7 @@ class ByteLoadInstructionsTest {
         for (var operation : instr.getOperations()) {
             accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
-        assertEquals(2, instr.getCycles());
+        assertEquals(2, instr.getCycles(instr.getContext()));
         assertEquals(0x99, registers.getB());
         assertEquals(0x2002, registers.getPC());
     }
@@ -63,7 +63,7 @@ class ByteLoadInstructionsTest {
         for (var operation : instr.getOperations()) {
             accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
-        assertEquals(1, instr.getCycles());
+        assertEquals(1, instr.getCycles(instr.getContext()));
         assertEquals(0xF1, registers.getA());
         assertEquals(0x2001, registers.getPC());
     }
@@ -80,7 +80,7 @@ class ByteLoadInstructionsTest {
         for (var operation : instr.getOperations()) {
             accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
-        assertEquals(2, instr.getCycles());
+        assertEquals(2, instr.getCycles(instr.getContext()));
         assertEquals(0x15, registers.getA());
         assertEquals(0x2001, registers.getPC());
     }
@@ -99,7 +99,7 @@ class ByteLoadInstructionsTest {
             accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
-        assertEquals(4, instr.getCycles());
+        assertEquals(4, instr.getCycles(instr.getContext()));
         assertEquals(0xFF, registers.getA());
         assertEquals(0x2002, registers.getPC());
     }
@@ -116,7 +116,7 @@ class ByteLoadInstructionsTest {
             accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
-        assertEquals(1, instr.getCycles());
+        assertEquals(1, instr.getCycles(instr.getContext()));
         assertEquals(0xFA, registers.getB());
         assertEquals(0x2000, registers.getPC());
     }
@@ -134,7 +134,7 @@ class ByteLoadInstructionsTest {
             accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
-        assertEquals(2, instr.getCycles());
+        assertEquals(2, instr.getCycles(instr.getContext()));
         assertEquals(0xFA, addressSpace.get(0x4001));
         assertEquals(0x2000, registers.getPC());
     }
@@ -153,7 +153,7 @@ class ByteLoadInstructionsTest {
             accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
-        assertEquals(4, instr.getCycles());
+        assertEquals(4, instr.getCycles(instr.getContext()));
         assertEquals(0xFA, addressSpace.get(0xC115));
         assertEquals(0xC002, registers.getPC());
     }
@@ -171,7 +171,7 @@ class ByteLoadInstructionsTest {
             accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
-        assertEquals(2, instr.getCycles());
+        assertEquals(2, instr.getCycles(instr.getContext()));
         assertEquals(0x88, registers.getA());
         assertEquals(0x2000, registers.getPC());
     }
@@ -190,7 +190,7 @@ class ByteLoadInstructionsTest {
             accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
-        assertEquals(2, instr.getCycles());
+        assertEquals(2, instr.getCycles(instr.getContext()));
         assertEquals(0xFE, addressSpace.get(0xFF15));
         assertEquals(0x2000, registers.getPC());
     }
@@ -209,7 +209,7 @@ class ByteLoadInstructionsTest {
             accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
-        assertEquals(2, instr.getCycles());
+        assertEquals(2, instr.getCycles(instr.getContext()));
         assertEquals(0x88, registers.getA());
         assertEquals(0x2000, registers.getPC());
         assertEquals(0xC122, registers.getHL());
@@ -228,7 +228,7 @@ class ByteLoadInstructionsTest {
             accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
-        assertEquals(2, instr.getCycles());
+        assertEquals(2, instr.getCycles(instr.getContext()));
         assertEquals(0xFE, addressSpace.get(0xC123));
         assertEquals(0x2000, registers.getPC());
         assertEquals(0xC122, registers.getHL());
@@ -248,7 +248,7 @@ class ByteLoadInstructionsTest {
             accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
-        assertEquals(2, instr.getCycles());
+        assertEquals(2, instr.getCycles(instr.getContext()));
         assertEquals(0x88, registers.getA());
         assertEquals(0x2000, registers.getPC());
         assertEquals(0xC124, registers.getHL());
@@ -267,7 +267,7 @@ class ByteLoadInstructionsTest {
             accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
-        assertEquals(2, instr.getCycles());
+        assertEquals(2, instr.getCycles(instr.getContext()));
         assertEquals(0xFE, addressSpace.get(0xC123));
         assertEquals(0x2000, registers.getPC());
         assertEquals(0xC124, registers.getHL());
@@ -286,7 +286,7 @@ class ByteLoadInstructionsTest {
             accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
-        assertEquals(3, instr.getCycles());
+        assertEquals(3, instr.getCycles(instr.getContext()));
         assertEquals(0x1C, addressSpace.get(0xFF12));
         assertEquals(0x2001, registers.getPC());
     }
@@ -305,7 +305,7 @@ class ByteLoadInstructionsTest {
             accumulator = operation.execute(registers, addressSpace, accumulator, null);
         }
 
-        assertEquals(3, instr.getCycles());
+        assertEquals(3, instr.getCycles(instr.getContext()));
         assertEquals(0x9A, registers.getA());
         assertEquals(0x2001, registers.getPC());
     }

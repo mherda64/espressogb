@@ -4,10 +4,14 @@ import cpu.BitUtils;
 import cpu.Context;
 import cpu.RegEnum;
 import cpu.Registers;
+import cpu.instruction.appender.JumpCondition;
 import memory.AddressSpace;
 
+import java.lang.instrument.Instrumentation;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
 
 import static cpu.BitUtils.*;
 
@@ -19,8 +23,8 @@ public class InstructionBuilder {
         operations = new ArrayList<>();
     }
 
-    public Instruction build(int cycles) {
-        return new Instruction(operations, cycles);
+    public Instruction build(Function<Context, Integer> cycleFun) {
+        return new Instruction(operations, cycleFun);
     }
 
     public InstructionBuilder loadBytes(int bytes) {
@@ -597,6 +601,42 @@ public class InstructionBuilder {
             @Override
             public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
                 context.set(accumulator);
+                return accumulator;
+            }
+        });
+        return this;
+    }
+
+    public InstructionBuilder jp(Optional<JumpCondition> conditionOpt) {
+        operations.add(new Operation() {
+            @Override
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
+                boolean shouldJump = true;
+
+                if (conditionOpt.isPresent()) {
+                    switch (conditionOpt.get()) {
+                        case NZ:
+                            shouldJump = !registers.getFlags().isZFlag();
+                            break;
+                        case Z:
+                            shouldJump = registers.getFlags().isZFlag();
+                            break;
+                        case NC:
+                            shouldJump = !registers.getFlags().isCFlag();
+                            break;
+                        case C:
+                            shouldJump = registers.getFlags().isCFlag();
+                            break;
+                        default:
+                            throw new IllegalStateException(String.format("Illegal Jump Condition %s", conditionOpt.get()));
+                    }
+                    context.setShouldJump(shouldJump);
+                }
+
+                if (shouldJump) {
+                    registers.setPC(accumulator);
+                }
+
                 return accumulator;
             }
         });

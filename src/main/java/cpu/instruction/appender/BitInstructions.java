@@ -36,7 +36,7 @@ public class BitInstructions implements InstructionAppender {
                             Instruction.builder()
                                     .loadReg(opcode.getTarget().get())
                                     .bitTest(param)
-                                    .build(opcode.getCycles()))
+                                    .build(opcode.getCyclesFun()))
             );
 
             put(baseOp + 6,
@@ -45,7 +45,7 @@ public class BitInstructions implements InstructionAppender {
                             .loadReg(RegEnum.HL)
                             .loadAddress()
                             .bitTest(param)
-                            .build(4)
+                            .build(context -> 4)
             );
         }
 
@@ -70,7 +70,7 @@ public class BitInstructions implements InstructionAppender {
                                     .loadReg(opcode.getTarget().get())
                                     .setBit(param, true)
                                     .store(opcode.getTarget().get())
-                                    .build(opcode.getCycles()))
+                                    .build(opcode.getCyclesFun()))
             );
 
             put(baseOp + 6,
@@ -80,7 +80,7 @@ public class BitInstructions implements InstructionAppender {
                             .loadAddress()
                             .setBit(param, true)
                             .storeRegAddressAccumulator(RegEnum.HL)
-                            .build(4)
+                            .build(context -> 4)
             );
         }
 
@@ -105,7 +105,7 @@ public class BitInstructions implements InstructionAppender {
                                     .loadReg(opcode.getTarget().get())
                                     .setBit(param, false)
                                     .store(opcode.getTarget().get())
-                                    .build(opcode.getCycles()))
+                                    .build(opcode.getCyclesFun()))
             );
 
             put(baseOp + 6,
@@ -115,7 +115,7 @@ public class BitInstructions implements InstructionAppender {
                             .loadAddress()
                             .setBit(param, false)
                             .storeRegAddressAccumulator(RegEnum.HL)
-                            .build(4)
+                            .build(context -> 4)
             );
         }
     }

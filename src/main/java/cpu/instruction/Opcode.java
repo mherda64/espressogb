@@ -1,22 +1,31 @@
 package cpu.instruction;
 
+import cpu.Context;
+
 import java.util.Optional;
+import java.util.function.Function;
 
 public class Opcode<K> {
     private int opcode;
     private Optional<K> target;
-    private int cycles;
+    private Function<Context, Integer> cyclesFun;
 
     public Opcode(int opcode, K target, int cycles) {
         this.opcode = opcode;
         this.target = Optional.of(target);
-        this.cycles = cycles;
+        this.cyclesFun = context -> cycles;
+    }
+
+    public Opcode(int opcode, K target, Function<Context,Integer> cyclesFun) {
+        this.opcode = opcode;
+        this.target = Optional.of(target);
+        this.cyclesFun = cyclesFun;
     }
 
     public Opcode(int opcode, int cycles) {
         this.opcode = opcode;
         this.target = Optional.empty();
-        this.cycles = cycles;
+        this.cyclesFun = context -> cycles;
     }
 
     public int getOpcode() {
@@ -27,7 +36,7 @@ public class Opcode<K> {
         return target;
     }
 
-    public int getCycles() {
-        return cycles;
+    public Function<Context, Integer> getCyclesFun() {
+        return cyclesFun;
     }
 }

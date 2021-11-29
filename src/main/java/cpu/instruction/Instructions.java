@@ -1,5 +1,6 @@
 package cpu.instruction;
 
+import cpu.Context;
 import cpu.instruction.appender.*;
 
 import java.util.*;
@@ -11,11 +12,15 @@ public class Instructions {
     public static final Map<Integer, Instruction> prefixed;
 
     public static Instruction get(int opcode) {
-        return instructions.get(opcode);
+        var instr = instructions.get(opcode);
+        instr.setContext(new Context());
+        return instr;
     }
 
     public static Instruction getPrefixed(int opcode) {
-        return prefixed.get(opcode);
+        var instr = prefixed.get(opcode);
+        instr.setContext(new Context());
+        return instr;
     }
 
     private static void put(int opcode, Instruction instruction) {

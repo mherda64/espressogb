@@ -27,7 +27,7 @@ class MiscInstructionsTest {
         var instr = executeInstruction(0x31, true, registers, addressSpace);
 
         var flags = registers.getFlags();
-        assertEquals(2, instr.getCycles());
+        assertEquals(2, instr.getCycles(instr.getContext()));
         assertEquals(0x50, registers.getC());
         assertEquals(0x2000, registers.getPC());
         assertFalse(flags.isZFlag());
@@ -45,7 +45,7 @@ class MiscInstructionsTest {
         var instr = executeInstruction(0x36, true, registers, addressSpace);
 
         var flags = registers.getFlags();
-        assertEquals(4, instr.getCycles());
+        assertEquals(4, instr.getCycles(instr.getContext()));
         assertEquals(0x1F, addressSpace.get(0x1234));
         assertEquals(0x2000, registers.getPC());
         assertFalse(flags.isZFlag());
@@ -63,7 +63,7 @@ class MiscInstructionsTest {
         var instr = executeInstruction(0x36, true, registers, addressSpace);
 
         var flags = registers.getFlags();
-        assertEquals(4, instr.getCycles());
+        assertEquals(4, instr.getCycles(instr.getContext()));
         assertEquals(0x00, addressSpace.get(0x1234));
         assertEquals(0x2000, registers.getPC());
         assertTrue(flags.isZFlag());

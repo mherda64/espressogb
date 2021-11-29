@@ -28,7 +28,7 @@ class RotateInstructionsTest {
 
         var instr = executeInstruction(0x07, false, registers, addressSpace);
 
-        assertEquals(1, instr.getCycles());
+        assertEquals(1, instr.getCycles(instr.getContext()));
         assertEquals(0x8A, registers.getA());
         assertEquals(0x2000, registers.getPC());
         assertFalse(flags.isZFlag());
@@ -46,7 +46,7 @@ class RotateInstructionsTest {
 
         var instr = executeInstruction(0x07, false, registers, addressSpace);
 
-        assertEquals(1, instr.getCycles());
+        assertEquals(1, instr.getCycles(instr.getContext()));
         assertEquals(0xFF, registers.getA());
         assertEquals(0x2000, registers.getPC());
         assertFalse(flags.isZFlag());
@@ -64,7 +64,7 @@ class RotateInstructionsTest {
 
         var instr = executeInstruction(0x07, false, registers, addressSpace);
 
-        assertEquals(1, instr.getCycles());
+        assertEquals(1, instr.getCycles(instr.getContext()));
         assertEquals(0x00, registers.getA());
         assertEquals(0x2000, registers.getPC());
         assertTrue(flags.isZFlag());
@@ -83,7 +83,7 @@ class RotateInstructionsTest {
 
         var instr = executeInstruction(0x17, false, registers, addressSpace);
 
-        assertEquals(1, instr.getCycles());
+        assertEquals(1, instr.getCycles(instr.getContext()));
         assertEquals(0xFF, registers.getA());
         assertEquals(0x2000, registers.getPC());
         assertFalse(flags.isZFlag());
@@ -102,7 +102,7 @@ class RotateInstructionsTest {
 
         var instr = executeInstruction(0x17, false, registers, addressSpace);
 
-        assertEquals(1, instr.getCycles());
+        assertEquals(1, instr.getCycles(instr.getContext()));
         assertEquals(0x2B, registers.getA());
         assertEquals(0x2000, registers.getPC());
         assertFalse(flags.isZFlag());
@@ -121,7 +121,7 @@ class RotateInstructionsTest {
 
         var instr = executeInstruction(0x17, false, registers, addressSpace);
 
-        assertEquals(1, instr.getCycles());
+        assertEquals(1, instr.getCycles(instr.getContext()));
         assertEquals(0x10, registers.getA());
         assertEquals(0x2000, registers.getPC());
         assertFalse(flags.isZFlag());
@@ -140,7 +140,7 @@ class RotateInstructionsTest {
 
         var instr = executeInstruction(0x0F, false, registers, addressSpace);
 
-        assertEquals(1, instr.getCycles());
+        assertEquals(1, instr.getCycles(instr.getContext()));
         assertEquals(0xC4, registers.getA());
         assertEquals(0x2000, registers.getPC());
         assertFalse(flags.isZFlag());
@@ -159,7 +159,7 @@ class RotateInstructionsTest {
 
         var instr = executeInstruction(0x0F, false, registers, addressSpace);
 
-        assertEquals(1, instr.getCycles());
+        assertEquals(1, instr.getCycles(instr.getContext()));
         assertEquals(0xFF, registers.getA());
         assertEquals(0x2000, registers.getPC());
         assertFalse(flags.isZFlag());
@@ -178,7 +178,7 @@ class RotateInstructionsTest {
 
         var instr = executeInstruction(0x1F, false, registers, addressSpace);
 
-        assertEquals(1, instr.getCycles());
+        assertEquals(1, instr.getCycles(instr.getContext()));
         assertEquals(0x45, registers.getA());
         assertEquals(0x2000, registers.getPC());
         assertFalse(flags.isZFlag());
@@ -197,7 +197,7 @@ class RotateInstructionsTest {
 
         var instr = executeInstruction(0x1F, false, registers, addressSpace);
 
-        assertEquals(1, instr.getCycles());
+        assertEquals(1, instr.getCycles(instr.getContext()));
         assertEquals(0x00, registers.getA());
         assertEquals(0x2000, registers.getPC());
         assertTrue(flags.isZFlag());
@@ -216,7 +216,7 @@ class RotateInstructionsTest {
 
         var instr = executeInstruction(0x00, true, registers, addressSpace);
 
-        assertEquals(2, instr.getCycles());
+        assertEquals(2, instr.getCycles(instr.getContext()));
         assertEquals(0xAA, registers.getB());
         assertEquals(0x2000, registers.getPC());
         assertFalse(flags.isZFlag());
@@ -236,7 +236,7 @@ class RotateInstructionsTest {
 
         var instr = executeInstruction(0x06, true, registers, addressSpace);
 
-        assertEquals(4, instr.getCycles());
+        assertEquals(4, instr.getCycles(instr.getContext()));
         assertEquals(0x0B, addressSpace.get(0x1234));
         assertEquals(0x2000, registers.getPC());
         assertFalse(flags.isZFlag());
@@ -255,7 +255,7 @@ class RotateInstructionsTest {
 
         var instr = executeInstruction(0x10, true, registers, addressSpace);
 
-        assertEquals(2, instr.getCycles());
+        assertEquals(2, instr.getCycles(instr.getContext()));
         assertEquals(0xAB, registers.getB());
         assertEquals(0x2000, registers.getPC());
         assertFalse(flags.isZFlag());
@@ -275,7 +275,7 @@ class RotateInstructionsTest {
 
         var instr = executeInstruction(0x16, true, registers, addressSpace);
 
-        assertEquals(4, instr.getCycles());
+        assertEquals(4, instr.getCycles(instr.getContext()));
         assertEquals(0x0A, addressSpace.get(0x1234));
         assertEquals(0x2000, registers.getPC());
         assertFalse(flags.isZFlag());
@@ -294,7 +294,7 @@ class RotateInstructionsTest {
 
         var instr = executeInstruction(0x09, true, registers, addressSpace);
 
-        assertEquals(2, instr.getCycles());
+        assertEquals(2, instr.getCycles(instr.getContext()));
         assertEquals(0xD7, registers.getC());
         assertEquals(0x2000, registers.getPC());
         assertFalse(flags.isZFlag());
@@ -314,7 +314,7 @@ class RotateInstructionsTest {
 
         var instr = executeInstruction(0x0E, true, registers, addressSpace);
 
-        assertEquals(4, instr.getCycles());
+        assertEquals(4, instr.getCycles(instr.getContext()));
         assertEquals(0xC2, addressSpace.get(0x1234));
         assertEquals(0x2000, registers.getPC());
         assertFalse(flags.isZFlag());
@@ -333,7 +333,7 @@ class RotateInstructionsTest {
 
         var instr = executeInstruction(0x1A, true, registers, addressSpace);
 
-        assertEquals(2, instr.getCycles());
+        assertEquals(2, instr.getCycles(instr.getContext()));
         assertEquals(0x7C, registers.getD());
         assertEquals(0x2000, registers.getPC());
         assertFalse(flags.isZFlag());
@@ -353,7 +353,7 @@ class RotateInstructionsTest {
 
         var instr = executeInstruction(0x1E, true, registers, addressSpace);
 
-        assertEquals(4, instr.getCycles());
+        assertEquals(4, instr.getCycles(instr.getContext()));
         assertEquals(0xC4, addressSpace.get(0x1234));
         assertEquals(0x2000, registers.getPC());
         assertFalse(flags.isZFlag());
@@ -372,7 +372,7 @@ class RotateInstructionsTest {
 
         var instr = executeInstruction(0x27, true, registers, addressSpace);
 
-        assertEquals(2, instr.getCycles());
+        assertEquals(2, instr.getCycles(instr.getContext()));
         assertEquals(0x5E, registers.getA());
         assertEquals(0x2000, registers.getPC());
         assertFalse(flags.isZFlag());
@@ -392,7 +392,7 @@ class RotateInstructionsTest {
 
         var instr = executeInstruction(0x26, true, registers, addressSpace);
 
-        assertEquals(4, instr.getCycles());
+        assertEquals(4, instr.getCycles(instr.getContext()));
         assertEquals(0x42, addressSpace.get(0x1234));
         assertEquals(0x2000, registers.getPC());
         assertFalse(flags.isZFlag());
@@ -411,7 +411,7 @@ class RotateInstructionsTest {
 
         var instr = executeInstruction(0x2F, true, registers, addressSpace);
 
-        assertEquals(2, instr.getCycles());
+        assertEquals(2, instr.getCycles(instr.getContext()));
         assertEquals(0xD7, registers.getA());
         assertEquals(0x2000, registers.getPC());
         assertFalse(flags.isZFlag());
@@ -431,7 +431,7 @@ class RotateInstructionsTest {
 
         var instr = executeInstruction(0x2E, true, registers, addressSpace);
 
-        assertEquals(4, instr.getCycles());
+        assertEquals(4, instr.getCycles(instr.getContext()));
         assertEquals(0xD0, addressSpace.get(0x1234));
         assertEquals(0x2000, registers.getPC());
         assertFalse(flags.isZFlag());
@@ -450,7 +450,7 @@ class RotateInstructionsTest {
 
         var instr = executeInstruction(0x3B, true, registers, addressSpace);
 
-        assertEquals(2, instr.getCycles());
+        assertEquals(2, instr.getCycles(instr.getContext()));
         assertEquals(0x57, registers.getE());
         assertEquals(0x2000, registers.getPC());
         assertFalse(flags.isZFlag());
@@ -470,7 +470,7 @@ class RotateInstructionsTest {
 
         var instr = executeInstruction(0x3E, true, registers, addressSpace);
 
-        assertEquals(4, instr.getCycles());
+        assertEquals(4, instr.getCycles(instr.getContext()));
         assertEquals(0x50, addressSpace.get(0x1234));
         assertEquals(0x2000, registers.getPC());
         assertFalse(flags.isZFlag());

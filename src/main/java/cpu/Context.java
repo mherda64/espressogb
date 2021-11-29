@@ -2,7 +2,9 @@ package cpu;
 
 public class Context {
 
-    int contextValue;
+    private int contextValue;
+
+    private boolean shouldJump = false;
 
     public int get() {
         return contextValue;
@@ -10,5 +12,13 @@ public class Context {
 
     public void set(int contextValue) {
         this.contextValue = contextValue;
+    }
+
+    public boolean shouldJump() {
+        return shouldJump;
+    }
+
+    public void setShouldJump(boolean shouldJump) {
+        this.shouldJump = shouldJump;
     }
 }
