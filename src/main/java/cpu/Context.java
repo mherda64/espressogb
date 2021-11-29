@@ -4,7 +4,7 @@ public class Context {
 
     private int contextValue;
 
-    private boolean shouldJump = false;
+    private boolean conditionTrue = false;
 
     public int get() {
         return contextValue;
@@ -14,11 +14,11 @@ public class Context {
         this.contextValue = contextValue;
     }
 
-    public boolean shouldJump() {
-        return shouldJump;
+    public boolean isConditionTrue() {
+        return conditionTrue;
     }
 
-    public void setShouldJump(boolean shouldJump) {
-        this.shouldJump = shouldJump;
+    public void setConditionTrue(boolean conditionTrue) {
+        this.conditionTrue = conditionTrue;
     }
 }

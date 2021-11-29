@@ -39,7 +39,8 @@ public class Instructions {
                 new ByteAluInstructions(),
                 new RotateInstructions(),
                 new MiscInstructions(),
-                new BitInstructions()
+                new BitInstructions(),
+                new JumpInstructions()
         ).forEach(instructionsAppender -> {
             instructionsAppender.add(instructions);
             instructionsAppender.addPrefixed(prefixed);

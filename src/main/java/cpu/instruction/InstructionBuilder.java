@@ -7,7 +7,6 @@ import cpu.Registers;
 import cpu.instruction.appender.JumpCondition;
 import memory.AddressSpace;
 
-import java.lang.instrument.Instrumentation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +24,16 @@ public class InstructionBuilder {
 
     public Instruction build(Function<Context, Integer> cycleFun) {
         return new Instruction(operations, cycleFun);
+    }
+
+    public InstructionBuilder load(int value) {
+        operations.add(new Operation() {
+            @Override
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
+                return value;
+            }
+        });
+        return this;
     }
 
     public InstructionBuilder loadBytes(int bytes) {
@@ -114,7 +123,7 @@ public class InstructionBuilder {
         return this;
     }
 
-    public InstructionBuilder add(int value) {
+    public InstructionBuilder add(Integer value) {
         operations.add(new Operation() {
             @Override
             public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
@@ -184,14 +193,25 @@ public class InstructionBuilder {
         return this;
     }
 
+    private void push(int value, Registers registers, AddressSpace addressSpace) {
+        addressSpace.set(registers.decSP(), BitUtils.getHighByte(value));
+        addressSpace.set(registers.decSP(), BitUtils.getLowByte(value));
+    }
+
+    private int pop(Registers registers, AddressSpace addressSpace) {
+        var lo = addressSpace.get(registers.getSP());
+        var hi = addressSpace.get(registers.incSP());
+        registers.incSP();
+
+        return (hi << 8 | lo) & 0xFFFF;
+    }
+
     public InstructionBuilder push(RegEnum reg) {
         operations.add(new Operation() {
             @Override
             public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
                 var value = registers.get(reg);
-
-                addressSpace.set(registers.decSP(), BitUtils.getHighByte(value));
-                addressSpace.set(registers.decSP(), BitUtils.getLowByte(value));
+                push(value, registers, addressSpace);
                 return value;
             }
         });
@@ -202,13 +222,8 @@ public class InstructionBuilder {
         operations.add(new Operation() {
             @Override
             public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
-                var lo = addressSpace.get(registers.getSP());
-                var hi = addressSpace.get(registers.incSP());
-                registers.incSP();
-
-                var value = (hi << 8 | lo) & 0xFFFF;
+                var value = pop(registers, addressSpace);
                 registers.set(reg, value);
-
                 return value;
             }
         });
@@ -421,7 +436,7 @@ public class InstructionBuilder {
             public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
                 isByte(accumulator);
                 var carry = ((accumulator >>> 7) & 0x1);
-                var output = ((accumulator << 1) & 0xFF ) | carry;
+                var output = ((accumulator << 1) & 0xFF) | carry;
 
                 var flags = registers.getFlags();
                 flags.setZFlag(output == 0);
@@ -462,7 +477,7 @@ public class InstructionBuilder {
             public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
                 isByte(accumulator);
                 var carry = accumulator & 0x1;
-                var output = ((accumulator >> 1) & 0xFF ) | (carry << 7);
+                var output = ((accumulator >> 1) & 0xFF) | (carry << 7);
 
                 var flags = registers.getFlags();
                 flags.setZFlag(output == 0);
@@ -484,7 +499,7 @@ public class InstructionBuilder {
 
                 isByte(accumulator);
                 var carry = accumulator & 0x1;
-                var output = ((accumulator >> 1) & 0xFF ) | ((flags.isCFlag() ? 1 : 0) << 7);
+                var output = ((accumulator >> 1) & 0xFF) | ((flags.isCFlag() ? 1 : 0) << 7);
 
                 flags.setZFlag(output == 0);
                 flags.setNFlag(false);
@@ -607,34 +622,86 @@ public class InstructionBuilder {
         return this;
     }
 
-    public InstructionBuilder jp(Optional<JumpCondition> conditionOpt) {
+    private boolean checkCondition(JumpCondition condition, Registers registers, Context context) {
+        boolean shouldJump = true;
+        switch (condition) {
+            case NZ:
+                shouldJump = !registers.getFlags().isZFlag();
+                break;
+            case Z:
+                shouldJump = registers.getFlags().isZFlag();
+                break;
+            case NC:
+                shouldJump = !registers.getFlags().isCFlag();
+                break;
+            case C:
+                shouldJump = registers.getFlags().isCFlag();
+                break;
+            default:
+                throw new IllegalStateException(String.format("Illegal Jump Condition %s", condition));
+        }
+        context.setConditionTrue(shouldJump);
+
+        return shouldJump;
+    }
+
+    public InstructionBuilder jp(Optional<JumpCondition> conditionOpt, boolean jr) {
         operations.add(new Operation() {
             @Override
             public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
                 boolean shouldJump = true;
 
                 if (conditionOpt.isPresent()) {
-                    switch (conditionOpt.get()) {
-                        case NZ:
-                            shouldJump = !registers.getFlags().isZFlag();
-                            break;
-                        case Z:
-                            shouldJump = registers.getFlags().isZFlag();
-                            break;
-                        case NC:
-                            shouldJump = !registers.getFlags().isCFlag();
-                            break;
-                        case C:
-                            shouldJump = registers.getFlags().isCFlag();
-                            break;
-                        default:
-                            throw new IllegalStateException(String.format("Illegal Jump Condition %s", conditionOpt.get()));
-                    }
-                    context.setShouldJump(shouldJump);
+                    shouldJump = checkCondition(conditionOpt.get(), registers, context);
                 }
 
                 if (shouldJump) {
+                    if (jr) {
+                        registers.setPC(registers.getPC() + accumulator);
+                    } else {
+                        registers.setPC(accumulator);
+                    }
+                }
+
+                return accumulator;
+            }
+        });
+        return this;
+    }
+
+    public InstructionBuilder call(Optional<JumpCondition> conditionOpt) {
+        operations.add(new Operation() {
+            @Override
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
+                boolean shouldCall = true;
+
+                if (conditionOpt.isPresent()) {
+                    shouldCall = checkCondition(conditionOpt.get(), registers, context);
+                }
+
+                if (shouldCall) {
+                    push(registers.get(RegEnum.PC), registers, addressSpace);
                     registers.setPC(accumulator);
+                }
+
+                return accumulator;
+            }
+        });
+        return this;
+    }
+
+    public InstructionBuilder ret(Optional<JumpCondition> conditionOpt) {
+        operations.add(new Operation() {
+            @Override
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
+                boolean shouldCall = true;
+
+                if (conditionOpt.isPresent()) {
+                    shouldCall = checkCondition(conditionOpt.get(), registers, context);
+                }
+
+                if (shouldCall) {
+                    registers.setPC(pop(registers, addressSpace));
                 }
 
                 return accumulator;
