@@ -7,6 +7,7 @@ import memory.Memory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static cpu.InstructionsTest.executeInstruction;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ByteLoadInstructionsTest {
@@ -25,12 +26,8 @@ class ByteLoadInstructionsTest {
         registers.setPC(0x2001);
         addressSpace.set(0x2002, 0x99);
 
-        Instruction instr = Instructions.get(0x0E);
+        var instr = executeInstruction(0x0E, false, registers, addressSpace);
 
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
         assertEquals(2, instr.getCycles(instr.getContext()));
         assertEquals(0x99, registers.getC());
         assertEquals(0x2002, registers.getPC());
@@ -41,12 +38,8 @@ class ByteLoadInstructionsTest {
         registers.setPC(0x2001);
         addressSpace.set(0x2002, 0x99);
 
-        Instruction instr = Instructions.get(0x06);
+        var instr = executeInstruction(0x06, false, registers, addressSpace);
 
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
         assertEquals(2, instr.getCycles(instr.getContext()));
         assertEquals(0x99, registers.getB());
         assertEquals(0x2002, registers.getPC());
@@ -57,12 +50,8 @@ class ByteLoadInstructionsTest {
         registers.setPC(0x2001);
         registers.setD(0xF1);
 
-        Instruction instr = Instructions.get(0x7A);
+        var instr = executeInstruction(0x7A, false, registers, addressSpace);
 
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
         assertEquals(1, instr.getCycles(instr.getContext()));
         assertEquals(0xF1, registers.getA());
         assertEquals(0x2001, registers.getPC());
@@ -74,12 +63,8 @@ class ByteLoadInstructionsTest {
         registers.setBC(0x2222);
         addressSpace.set(0x2222, 0x15);
 
-        Instruction instr = Instructions.get(0x0A);
+        var instr = executeInstruction(0x0A, false, registers, addressSpace);
 
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
         assertEquals(2, instr.getCycles(instr.getContext()));
         assertEquals(0x15, registers.getA());
         assertEquals(0x2001, registers.getPC());
@@ -92,12 +77,8 @@ class ByteLoadInstructionsTest {
         addressSpace.set(0x2002, 0x2A);
         addressSpace.set(0x2A15, 0xFF);
 
-        Instruction instr = Instructions.get(0xFA);
+        var instr = executeInstruction(0xFA, false, registers, addressSpace);
 
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
 
         assertEquals(4, instr.getCycles(instr.getContext()));
         assertEquals(0xFF, registers.getA());
@@ -109,12 +90,7 @@ class ByteLoadInstructionsTest {
         registers.setPC(0x2000);
         registers.setA(0xFA);
 
-        Instruction instr = Instructions.get(0x47);
-
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
+        var instr = executeInstruction(0x47, false, registers, addressSpace);
 
         assertEquals(1, instr.getCycles(instr.getContext()));
         assertEquals(0xFA, registers.getB());
@@ -127,12 +103,8 @@ class ByteLoadInstructionsTest {
         registers.setA(0xFA);
         registers.setBC(0x4001);
 
-        Instruction instr = Instructions.get(0x02);
+        var instr = executeInstruction(0x02, false, registers, addressSpace);
 
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
 
         assertEquals(2, instr.getCycles(instr.getContext()));
         assertEquals(0xFA, addressSpace.get(0x4001));
@@ -146,12 +118,8 @@ class ByteLoadInstructionsTest {
         addressSpace.set(0xC001, 0x15);
         addressSpace.set(0xC002, 0xC1);
 
-        Instruction instr = Instructions.get(0xEA);
+        var instr = executeInstruction(0xEA, false, registers, addressSpace);
 
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
 
         assertEquals(4, instr.getCycles(instr.getContext()));
         assertEquals(0xFA, addressSpace.get(0xC115));
@@ -164,12 +132,8 @@ class ByteLoadInstructionsTest {
         registers.setC(0x15);
         addressSpace.set(0xFF15, 0x88);
 
-        Instruction instr = Instructions.get(0xF2);
+        var instr = executeInstruction(0xF2, false, registers, addressSpace);
 
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
 
         assertEquals(2, instr.getCycles(instr.getContext()));
         assertEquals(0x88, registers.getA());
@@ -183,12 +147,8 @@ class ByteLoadInstructionsTest {
         registers.setC(0x15);
         addressSpace.set(0xFF15, 0x88);
 
-        Instruction instr = Instructions.get(0xE2);
+        var instr = executeInstruction(0xE2, false, registers, addressSpace);
 
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
 
         assertEquals(2, instr.getCycles(instr.getContext()));
         assertEquals(0xFE, addressSpace.get(0xFF15));
@@ -202,12 +162,8 @@ class ByteLoadInstructionsTest {
         registers.setHL(0xC123);
         addressSpace.set(0xC123, 0x88);
 
-        Instruction instr = Instructions.get(0x3A);
+        var instr = executeInstruction(0x3A, false, registers, addressSpace);
 
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
 
         assertEquals(2, instr.getCycles(instr.getContext()));
         assertEquals(0x88, registers.getA());
@@ -221,12 +177,8 @@ class ByteLoadInstructionsTest {
         registers.setA(0xFE);
         registers.setHL(0xC123);
 
-        Instruction instr = Instructions.get(0x32);
+        var instr = executeInstruction(0x32, false, registers, addressSpace);
 
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
 
         assertEquals(2, instr.getCycles(instr.getContext()));
         assertEquals(0xFE, addressSpace.get(0xC123));
@@ -241,12 +193,8 @@ class ByteLoadInstructionsTest {
         registers.setHL(0xC123);
         addressSpace.set(0xC123, 0x88);
 
-        Instruction instr = Instructions.get(0x2A);
+        var instr = executeInstruction(0x2A, false, registers, addressSpace);
 
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
 
         assertEquals(2, instr.getCycles(instr.getContext()));
         assertEquals(0x88, registers.getA());
@@ -260,12 +208,8 @@ class ByteLoadInstructionsTest {
         registers.setA(0xFE);
         registers.setHL(0xC123);
 
-        Instruction instr = Instructions.get(0x22);
+        var instr = executeInstruction(0x22, false, registers, addressSpace);
 
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
 
         assertEquals(2, instr.getCycles(instr.getContext()));
         assertEquals(0xFE, addressSpace.get(0xC123));
@@ -279,12 +223,8 @@ class ByteLoadInstructionsTest {
         registers.setA(0x1C);
         addressSpace.set(0x2001, 0x12);
 
-        Instruction instr = Instructions.get(0xE0);
+        var instr = executeInstruction(0xE0, false, registers, addressSpace);
 
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
 
         assertEquals(3, instr.getCycles(instr.getContext()));
         assertEquals(0x1C, addressSpace.get(0xFF12));
@@ -298,13 +238,8 @@ class ByteLoadInstructionsTest {
         addressSpace.set(0x2001, 0x12);
         addressSpace.set(0xFF12, 0x9A);
 
-        Instruction instr = Instructions.get(0xF0);
-
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
-
+        var instr = executeInstruction(0xF0, false, registers, addressSpace);
+        
         assertEquals(3, instr.getCycles(instr.getContext()));
         assertEquals(0x9A, registers.getA());
         assertEquals(0x2001, registers.getPC());

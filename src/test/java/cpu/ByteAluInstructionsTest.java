@@ -155,12 +155,7 @@ class ByteAluInstructionsTest {
         registers.setC(0x05);
         registers.getFlags().setCFlag(true);
 
-        var instr = Instructions.get(0x89);
-
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
+        var instr = executeInstruction(0x89, false, registers, addressSpace);
 
         var flags = registers.getFlags();
         assertEquals(1, instr.getCycles(instr.getContext()));
@@ -179,12 +174,7 @@ class ByteAluInstructionsTest {
         registers.setH(0x02);
         registers.getFlags().setCFlag(true);
 
-        var instr = Instructions.get(0x8C);
-
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
+        var instr = executeInstruction(0x8C, false, registers, addressSpace);
 
         var flags = registers.getFlags();
         assertEquals(1, instr.getCycles(instr.getContext()));
@@ -203,12 +193,7 @@ class ByteAluInstructionsTest {
         registers.setL(0x02);
         registers.getFlags().setCFlag(true);
 
-        var instr = Instructions.get(0x8D);
-
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
+        var instr = executeInstruction(0x8D, false, registers, addressSpace);
 
         var flags = registers.getFlags();
         assertEquals(1, instr.getCycles(instr.getContext()));
@@ -228,12 +213,7 @@ class ByteAluInstructionsTest {
         addressSpace.set(0x10FF, 0x05);
         registers.getFlags().setCFlag(true);
 
-        var instr = Instructions.get(0x8E);
-
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
+        var instr = executeInstruction(0x8E, false, registers, addressSpace);
 
         var flags = registers.getFlags();
         assertEquals(2, instr.getCycles(instr.getContext()));
@@ -253,12 +233,7 @@ class ByteAluInstructionsTest {
         addressSpace.set(0x10FF, 0x0F);
         registers.getFlags().setCFlag(true);
 
-        var instr = Instructions.get(0x8E);
-
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
+        var instr = executeInstruction(0x8E, false, registers, addressSpace);
 
         var flags = registers.getFlags();
         assertEquals(2, instr.getCycles(instr.getContext()));
@@ -278,12 +253,7 @@ class ByteAluInstructionsTest {
         addressSpace.set(0x2001, 0x05);
         registers.getFlags().setCFlag(true);
 
-        var instr = Instructions.get(0xCE);
-
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
+        var instr = executeInstruction(0xCE, false, registers, addressSpace);
 
         var flags = registers.getFlags();
         assertEquals(2, instr.getCycles(instr.getContext()));
@@ -302,12 +272,7 @@ class ByteAluInstructionsTest {
         addressSpace.set(0x2001, 0x0F);
         registers.getFlags().setCFlag(true);
 
-        var instr = Instructions.get(0xCE);
-
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
+        var instr = executeInstruction(0xCE, false, registers, addressSpace);
 
         var flags = registers.getFlags();
         assertEquals(2, instr.getCycles(instr.getContext()));
@@ -325,12 +290,7 @@ class ByteAluInstructionsTest {
         registers.setA(0xF1);
         registers.setB(0x10);
 
-        var instr = Instructions.get(0x90);
-
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
+        var instr = executeInstruction(0x90, false, registers, addressSpace);
 
         var flags = registers.getFlags();
         assertEquals(1, instr.getCycles(instr.getContext()));
@@ -348,12 +308,7 @@ class ByteAluInstructionsTest {
         registers.setA(0xF1);
         registers.setB(0x02);
 
-        var instr = Instructions.get(0x90);
-
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
+        var instr = executeInstruction(0x90, false, registers, addressSpace);
 
         var flags = registers.getFlags();
         assertEquals(1, instr.getCycles(instr.getContext()));
@@ -371,12 +326,7 @@ class ByteAluInstructionsTest {
         registers.setA(0xF1);
         registers.setB(0xF2);
 
-        var instr = Instructions.get(0x90);
-
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
+        var instr = executeInstruction(0x90, false, registers, addressSpace);
 
         var flags = registers.getFlags();
         assertEquals(1, instr.getCycles(instr.getContext()));
@@ -394,12 +344,7 @@ class ByteAluInstructionsTest {
         registers.setA(0xF1);
         registers.setB(0xF1);
 
-        var instr = Instructions.get(0x90);
-
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
+        var instr = executeInstruction(0x90, false, registers, addressSpace);
 
         var flags = registers.getFlags();
         assertEquals(1, instr.getCycles(instr.getContext()));
@@ -418,12 +363,7 @@ class ByteAluInstructionsTest {
         registers.setHL(0x12FF);
         addressSpace.set(0x12FF, 0x01);
 
-        var instr = Instructions.get(0x96);
-
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
+        var instr = executeInstruction(0x96, false, registers, addressSpace);
 
         var flags = registers.getFlags();
         assertEquals(2, instr.getCycles(instr.getContext()));
@@ -441,12 +381,7 @@ class ByteAluInstructionsTest {
         registers.setA(0xF1);
         addressSpace.set(0x2001, 0x1F);
 
-        var instr = Instructions.get(0xD6);
-
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
+        var instr = executeInstruction(0xD6, false, registers, addressSpace);
 
         var flags = registers.getFlags();
         assertEquals(2, instr.getCycles(instr.getContext()));
@@ -465,12 +400,7 @@ class ByteAluInstructionsTest {
         registers.setB(0x10);
         registers.getFlags().setCFlag(false);
 
-        var instr = Instructions.get(0x98);
-
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
+        var instr = executeInstruction(0x98, false, registers, addressSpace);
 
         var flags = registers.getFlags();
         assertEquals(1, instr.getCycles(instr.getContext()));
@@ -489,12 +419,7 @@ class ByteAluInstructionsTest {
         registers.setB(0x10);
         registers.getFlags().setCFlag(true);
 
-        var instr = Instructions.get(0x98);
-
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
+        var instr = executeInstruction(0x98, false, registers, addressSpace);
 
         var flags = registers.getFlags();
         assertEquals(1, instr.getCycles(instr.getContext()));
@@ -513,12 +438,7 @@ class ByteAluInstructionsTest {
         registers.setC(0x03);
         registers.getFlags().setCFlag(true);
 
-        var instr = Instructions.get(0x99);
-
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
+        var instr = executeInstruction(0x99, false, registers, addressSpace);
 
         var flags = registers.getFlags();
         assertEquals(1, instr.getCycles(instr.getContext()));
@@ -537,12 +457,7 @@ class ByteAluInstructionsTest {
         registers.getFlags().setCFlag(false);
         addressSpace.set(0x2001, 0x11);
 
-        var instr = Instructions.get(0xDE);
-
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
+        var instr = executeInstruction(0xDE, false, registers, addressSpace);
 
         var flags = registers.getFlags();
         assertEquals(2, instr.getCycles(instr.getContext()));
@@ -560,12 +475,7 @@ class ByteAluInstructionsTest {
         registers.setA(0xF1);
         addressSpace.set(0x2001, 0xC2);
 
-        var instr = Instructions.get(0xE6);
-
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
+        var instr = executeInstruction(0xE6, false, registers, addressSpace);
 
         var flags = registers.getFlags();
         assertEquals(2, instr.getCycles(instr.getContext()));
@@ -583,12 +493,7 @@ class ByteAluInstructionsTest {
         registers.setA(0x81);
         registers.setD(0x44);
 
-        var instr = Instructions.get(0xB2);
-
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
+        var instr = executeInstruction(0xB2, false, registers, addressSpace);
 
         var flags = registers.getFlags();
         assertEquals(1, instr.getCycles(instr.getContext()));
@@ -606,12 +511,7 @@ class ByteAluInstructionsTest {
         registers.setA(0x00);
         registers.setD(0x00);
 
-        var instr = Instructions.get(0xB0);
-
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
+        var instr = executeInstruction(0xB0, false, registers, addressSpace);
 
         var flags = registers.getFlags();
         assertEquals(1, instr.getCycles(instr.getContext()));
@@ -629,12 +529,7 @@ class ByteAluInstructionsTest {
         registers.setA(0xFF);
         registers.setB(0xEA);
 
-        var instr = Instructions.get(0xA8);
-
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
+        var instr = executeInstruction(0xA8, false, registers, addressSpace);
 
         var flags = registers.getFlags();
         assertEquals(1, instr.getCycles(instr.getContext()));
@@ -652,12 +547,7 @@ class ByteAluInstructionsTest {
         registers.setA(0xFF);
         registers.setC(0xEA);
 
-        var instr = Instructions.get(0xB9);
-
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
+        var instr = executeInstruction(0xB9, false, registers, addressSpace);
 
         var flags = registers.getFlags();
         assertEquals(1, instr.getCycles(instr.getContext()));
@@ -676,12 +566,7 @@ class ByteAluInstructionsTest {
         registers.setA(0xEA);
         registers.setC(0xFF);
 
-        var instr = Instructions.get(0xB9);
-
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
+        var instr = executeInstruction(0xB9, false, registers, addressSpace);
 
         var flags = registers.getFlags();
         assertEquals(1, instr.getCycles(instr.getContext()));
@@ -699,12 +584,7 @@ class ByteAluInstructionsTest {
         registers.setPC(0x2000);
         registers.setA(0xFF);
 
-        var instr = Instructions.get(0x3C);
-
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
+        var instr = executeInstruction(0x3C, false, registers, addressSpace);
 
         var flags = registers.getFlags();
         assertEquals(1, instr.getCycles(instr.getContext()));
@@ -721,12 +601,7 @@ class ByteAluInstructionsTest {
         registers.setHL(0x1234);
         addressSpace.set(0x1234, 0xFF);
 
-        var instr = Instructions.get(0x34);
-
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
+        var instr = executeInstruction(0x34, false, registers, addressSpace);
 
         var flags = registers.getFlags();
         assertEquals(3, instr.getCycles(instr.getContext()));
@@ -742,12 +617,7 @@ class ByteAluInstructionsTest {
         registers.setPC(0x2000);
         registers.setE(0x10);
 
-        var instr = Instructions.get(0x1D);
-
-        int accumulator = 0;
-        for (var operation : instr.getOperations()) {
-            accumulator = operation.execute(registers, addressSpace, accumulator, null);
-        }
+        var instr = executeInstruction(0x1D, false, registers, addressSpace);
 
         var flags = registers.getFlags();
         assertEquals(1, instr.getCycles(instr.getContext()));
