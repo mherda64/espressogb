@@ -12,11 +12,97 @@ public class MiscInstructions implements InstructionAppender {
     @Override
     public void add(Map<Integer, Instruction> instructions) {
 
-//        put(0x27,
-//                instructions,
-//                Instruction.builder()
-//                        .decimalAdjust
-//        );
+        /*
+         * DAA
+         * */
+        put(0x27,
+                instructions,
+                Instruction.builder()
+                        .daa()
+                        .build(context -> 1)
+        );
+
+        /*
+         * CPL
+         * */
+        put(0x2F,
+                instructions,
+                Instruction.builder()
+                        .cpl()
+                        .build(context -> 1)
+        );
+
+        /*
+         * CCF
+         * */
+        put(0x3F,
+                instructions,
+                Instruction.builder()
+                        .ccf()
+                        .build(context -> 1)
+        );
+
+        /*
+         * SCF
+         * */
+        put(0x37,
+                instructions,
+                Instruction.builder()
+                        .setCarry()
+                        .build(context -> 1)
+        );
+
+        /*
+         * NOP
+         * */
+        put(0x00,
+                instructions,
+                Instruction.builder()
+                        .build(context -> 1)
+        );
+
+        /*
+         * HALT
+         * */
+        put(0x76,
+                instructions,
+                Instruction.builder()
+                        .halt()
+                        .build(context -> 1)
+        );
+
+        /*
+         * STOP
+         * */
+        put(0x10,
+                instructions,
+                Instruction.builder()
+                        .stop()
+                        .build(context -> 1)
+        );
+
+        /*
+         * DI
+         * */
+        put(0xF3,
+                instructions,
+                Instruction.builder()
+                        .disableInterrupts()
+                        .build(context -> 1)
+        );
+
+        /*
+         * EI
+         * */
+        put(0xFB,
+                instructions,
+                Instruction.builder()
+                        .enableInterrupts()
+                        .build(context -> 1)
+        );
+
+
+
 
     }
 

@@ -26,6 +26,7 @@ public class ByteLoadInstructions implements InstructionAppender {
                 put(opcode.getOpcode(),
                         instructions,
                         Instruction.builder()
+                                .label(String.format("LD %s, n", opcode.getTarget().get()))
                                 .loadBytes(RegEnum.SINGLE)
                                 .store(opcode.getTarget().get())
                                 .build(opcode.getCyclesFun()))
@@ -51,6 +52,7 @@ public class ByteLoadInstructions implements InstructionAppender {
                 put(opcode.getOpcode(),
                         instructions,
                         Instruction.builder()
+                                .label(String.format("LD A, %s", opcode.getTarget().get()))
                                 .loadReg(opcode.getTarget().get())
                                 .store(RegEnum.A)
                                 .build(opcode.getCyclesFun()))
@@ -70,6 +72,7 @@ public class ByteLoadInstructions implements InstructionAppender {
                 put(opcode.getOpcode(),
                         instructions,
                         Instruction.builder()
+                                .label(String.format("LD B, %s", opcode.getTarget().get()))
                                 .loadReg(opcode.getTarget().get())
                                 .store(RegEnum.B)
                                 .build(opcode.getCyclesFun()))
@@ -89,6 +92,7 @@ public class ByteLoadInstructions implements InstructionAppender {
                 put(opcode.getOpcode(),
                         instructions,
                         Instruction.builder()
+                                .label(String.format("LD C, %s", opcode.getTarget().get()))
                                 .loadReg(opcode.getTarget().get())
                                 .store(RegEnum.C)
                                 .build(opcode.getCyclesFun()))
@@ -108,6 +112,7 @@ public class ByteLoadInstructions implements InstructionAppender {
                 put(opcode.getOpcode(),
                         instructions,
                         Instruction.builder()
+                                .label(String.format("LD D, %s", opcode.getTarget().get()))
                                 .loadReg(opcode.getTarget().get())
                                 .store(RegEnum.D)
                                 .build(opcode.getCyclesFun()))
@@ -127,6 +132,7 @@ public class ByteLoadInstructions implements InstructionAppender {
                 put(opcode.getOpcode(),
                         instructions,
                         Instruction.builder()
+                                .label(String.format("LD E, %s", opcode.getTarget().get()))
                                 .loadReg(opcode.getTarget().get())
                                 .store(RegEnum.E)
                                 .build(opcode.getCyclesFun()))
@@ -146,6 +152,7 @@ public class ByteLoadInstructions implements InstructionAppender {
                 put(opcode.getOpcode(),
                         instructions,
                         Instruction.builder()
+                                .label(String.format("LD H, %s", opcode.getTarget().get()))
                                 .loadReg(opcode.getTarget().get())
                                 .store(RegEnum.H)
                                 .build(opcode.getCyclesFun()))
@@ -165,6 +172,7 @@ public class ByteLoadInstructions implements InstructionAppender {
                 put(opcode.getOpcode(),
                         instructions,
                         Instruction.builder()
+                                .label(String.format("LD L, %s", opcode.getTarget().get()))
                                 .loadReg(opcode.getTarget().get())
                                 .store(RegEnum.L)
                                 .build(opcode.getCyclesFun()))
@@ -185,6 +193,7 @@ public class ByteLoadInstructions implements InstructionAppender {
                 put(opcode.getOpcode(),
                         instructions,
                         Instruction.builder()
+                                .label(String.format("LD %s, (HL)", opcode.getTarget().get()))
                                 .loadReg(RegEnum.HL)
                                 .loadAddress()
                                 .store(opcode.getTarget().get())
@@ -205,6 +214,7 @@ public class ByteLoadInstructions implements InstructionAppender {
                 put(opcode.getOpcode(),
                         instructions,
                         Instruction.builder()
+                                .label(String.format("LD (HL), %s", opcode.getTarget().get()))
                                 .loadReg(opcode.getTarget().get())
                                 .storeRegAddressAccumulator(RegEnum.HL)
                                 .build(opcode.getCyclesFun()))
@@ -216,6 +226,7 @@ public class ByteLoadInstructions implements InstructionAppender {
         put(0x36,
                 instructions,
                 Instruction.builder()
+                        .label("LD (HL), n")
                         .loadBytes(RegEnum.SINGLE)
                         .storeRegAddressAccumulator(RegEnum.HL)
                         .build(context -> 3)
@@ -232,6 +243,7 @@ public class ByteLoadInstructions implements InstructionAppender {
                 put(opcode.getOpcode(),
                         instructions,
                         Instruction.builder()
+                                .label(String.format("LD A, (%s)", opcode.getTarget().get()))
                                 .loadReg(opcode.getTarget().get())
                                 .loadAddress()
                                 .store(RegEnum.A)
@@ -244,6 +256,7 @@ public class ByteLoadInstructions implements InstructionAppender {
         put(0xFA,
                 instructions,
                 Instruction.builder()
+                        .label("LD A, (nn)")
                         .loadBytes(RegEnum.DOUBLE)
                         .loadAddress()
                         .store(RegEnum.A)
@@ -264,6 +277,7 @@ public class ByteLoadInstructions implements InstructionAppender {
                 put(opcode.getOpcode(),
                         instructions,
                         Instruction.builder()
+                                .label(String.format("LD %s, A", opcode.getTarget().get()))
                                 .loadReg(RegEnum.A)
                                 .store(opcode.getTarget().get())
                                 .build(opcode.getCyclesFun()))
@@ -280,6 +294,7 @@ public class ByteLoadInstructions implements InstructionAppender {
                 put(opcode.getOpcode(),
                         instructions,
                         Instruction.builder()
+                                .label(String.format("LD (%s), A", opcode.getTarget().get()))
                                 .loadReg(RegEnum.A)
                                 .storeRegAddressAccumulator(opcode.getTarget().get())
                                 .build(opcode.getCyclesFun()))
@@ -291,6 +306,7 @@ public class ByteLoadInstructions implements InstructionAppender {
         put(0xEA,
                 instructions,
                 Instruction.builder()
+                        .label("LD (nn), A")
                         .loadBytes(RegEnum.DOUBLE)
                         .storeAccumulatorAddressReg(RegEnum.A)
                         .build(context -> 4)
@@ -302,6 +318,7 @@ public class ByteLoadInstructions implements InstructionAppender {
         put(0xF2,
                 instructions,
                 Instruction.builder()
+                        .label("LD A, (0xFF00 + C)")
                         .loadReg(RegEnum.C)
                         .add(0xFF00)
                         .loadAddress()
@@ -315,6 +332,7 @@ public class ByteLoadInstructions implements InstructionAppender {
         put(0xE2,
                 instructions,
                 Instruction.builder()
+                        .label("LD (0xFF00 + C), A")
                         .loadReg(RegEnum.C)
                         .add(0xFF00)
                         .storeAccumulatorAddressReg(RegEnum.A)
@@ -328,6 +346,7 @@ public class ByteLoadInstructions implements InstructionAppender {
         put(0x3A,
                 instructions,
                 Instruction.builder()
+                        .label("LD A, (HL-)")
                         .loadReg(RegEnum.HL)
                         .loadAddress()
                         .store(RegEnum.A)
@@ -342,6 +361,7 @@ public class ByteLoadInstructions implements InstructionAppender {
         put(0x32,
                 instructions,
                 Instruction.builder()
+                        .label("LD (HL-), A")
                         .loadReg(RegEnum.HL)
                         .storeAccumulatorAddressReg(RegEnum.A)
                         .decrementReg(RegEnum.HL)
@@ -355,6 +375,7 @@ public class ByteLoadInstructions implements InstructionAppender {
         put(0x2A,
                 instructions,
                 Instruction.builder()
+                        .label("LD A, (HL+)")
                         .loadReg(RegEnum.HL)
                         .loadAddress()
                         .store(RegEnum.A)
@@ -369,6 +390,7 @@ public class ByteLoadInstructions implements InstructionAppender {
         put(0x22,
                 instructions,
                 Instruction.builder()
+                        .label("LD (HL+), A")
                         .loadReg(RegEnum.HL)
                         .storeAccumulatorAddressReg(RegEnum.A)
                         .incrementReg(RegEnum.HL)
@@ -381,6 +403,7 @@ public class ByteLoadInstructions implements InstructionAppender {
         put(0xE0,
                 instructions,
                 Instruction.builder()
+                        .label("LDH (n), A")
                         .loadBytes(RegEnum.SINGLE)
                         .add(0xFF00)
                         .storeAccumulatorAddressReg(RegEnum.A)
@@ -393,6 +416,7 @@ public class ByteLoadInstructions implements InstructionAppender {
         put(0xF0,
                 instructions,
                 Instruction.builder()
+                        .label("LDH A, (n)")
                         .loadBytes(RegEnum.SINGLE)
                         .add(0xFF00)
                         .loadAddress()

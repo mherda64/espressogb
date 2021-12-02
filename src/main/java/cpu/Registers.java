@@ -15,7 +15,7 @@ public class Registers {
     private int l;
 
     private int sp;
-    private int pc;
+    private int pc = -1;
 
     public Registers() {
         f = new FlagsReg();

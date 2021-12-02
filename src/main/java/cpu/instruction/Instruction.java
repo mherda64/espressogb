@@ -8,13 +8,14 @@ import java.util.function.Function;
 public class Instruction {
 
     private List<Operation> operations;
-    private int cycles;
     private Function<Context, Integer> cyclesFun;
     private Context context;
+    private String label;
 
-    public Instruction(List<Operation> operations, Function<Context, Integer> cyclesFun) {
+    public Instruction(List<Operation> operations, Function<Context, Integer> cyclesFun, String label) {
         this.operations = operations;
         this.cyclesFun = cyclesFun;
+        this.label = label;
     }
 
     public static InstructionBuilder builder() {
@@ -35,5 +36,13 @@ public class Instruction {
 
     public void setContext(Context context) {
         this.context = context;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
     }
 }

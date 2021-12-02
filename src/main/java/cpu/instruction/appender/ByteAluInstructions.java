@@ -27,7 +27,7 @@ public class ByteAluInstructions implements InstructionAppender {
                         instructions,
                         Instruction.builder()
                                 .loadReg(RegEnum.A)
-                                .add(opcode.getTarget().get(), false)
+                                .add(opcode.getTarget().get(), false, false)
                                 .store(RegEnum.A)
                                 .build(opcode.getCyclesFun()))
         );
@@ -40,7 +40,7 @@ public class ByteAluInstructions implements InstructionAppender {
                 Instruction.builder()
                         .loadReg(RegEnum.HL)
                         .loadAddress()
-                        .add(RegEnum.A, false)
+                        .add(RegEnum.A, false, false)
                         .store(RegEnum.A)
                         .build(context -> 2)
         );
@@ -52,7 +52,7 @@ public class ByteAluInstructions implements InstructionAppender {
                 instructions,
                 Instruction.builder()
                         .loadBytes(RegEnum.SINGLE)
-                        .add(RegEnum.A, false)
+                        .add(RegEnum.A, false, false)
                         .store(RegEnum.A)
                         .build(context -> 2)
         );
@@ -73,7 +73,7 @@ public class ByteAluInstructions implements InstructionAppender {
                         instructions,
                         Instruction.builder()
                                 .loadReg(RegEnum.A)
-                                .add(opcode.getTarget().get(), true)
+                                .add(opcode.getTarget().get(), true, false)
                                 .store(RegEnum.A)
                                 .build(opcode.getCyclesFun()))
         );
@@ -86,7 +86,7 @@ public class ByteAluInstructions implements InstructionAppender {
                 Instruction.builder()
                         .loadReg(RegEnum.HL)
                         .loadAddress()
-                        .add(RegEnum.A, true)
+                        .add(RegEnum.A, true, false)
                         .store(RegEnum.A)
                         .build(context -> 2)
         );
@@ -98,7 +98,7 @@ public class ByteAluInstructions implements InstructionAppender {
                 instructions,
                 Instruction.builder()
                         .loadBytes(RegEnum.SINGLE)
-                        .add(RegEnum.A, true)
+                        .add(RegEnum.A, true, false)
                         .store(RegEnum.A)
                         .build(context -> 2)
         );

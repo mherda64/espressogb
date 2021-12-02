@@ -72,4 +72,35 @@ class MiscInstructionsTest {
         assertFalse(flags.isCFlag());
     }
 
+
+    @Test
+    void testDAA_afterAdd_0x27() {
+        registers.setA(0x19);
+        registers.setH(0x28);
+
+        // Add H first to set correct flags
+        var instr = executeInstruction(0x84, false, registers, addressSpace);
+        instr = executeInstruction(0x27, false, registers, addressSpace);
+
+        var flags = registers.getFlags();
+        assertEquals(1, instr.getCycles(instr.getContext()));
+        assertEquals(0x47, registers.getA());
+
+    }
+
+    @Test
+    void testDAA_afterSub_0x27() {
+        registers.setA(0x28);
+        registers.setH(0x19);
+
+        // Sub H first to set correct flags
+        var instr = executeInstruction(0x94, false, registers, addressSpace);
+        instr = executeInstruction(0x27, false, registers, addressSpace);
+
+        var flags = registers.getFlags();
+        assertEquals(1, instr.getCycles(instr.getContext()));
+        assertEquals(0x09, registers.getA());
+
+    }
+
 }

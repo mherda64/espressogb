@@ -1,9 +1,6 @@
 package cpu.instruction;
 
-import cpu.BitUtils;
-import cpu.Context;
-import cpu.RegEnum;
-import cpu.Registers;
+import cpu.*;
 import cpu.instruction.appender.JumpCondition;
 import memory.AddressSpace;
 
@@ -18,18 +15,33 @@ public class InstructionBuilder {
 
     private List<Operation> operations;
 
+    private String label;
+
     public InstructionBuilder() {
         operations = new ArrayList<>();
     }
 
     public Instruction build(Function<Context, Integer> cycleFun) {
-        return new Instruction(operations, cycleFun);
+        return new Instruction(operations, cycleFun, label);
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public InstructionBuilder label(String label) {
+        setLabel(label);
+        return this;
     }
 
     public InstructionBuilder load(int value) {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context, InterruptManager interruptManager) {
                 return value;
             }
         });
@@ -39,7 +51,7 @@ public class InstructionBuilder {
     public InstructionBuilder loadBytes(int bytes) {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context, InterruptManager interruptManager) {
                 switch (bytes) {
                     case 1:
                         return addressSpace.get(registers.incPC());
@@ -59,7 +71,7 @@ public class InstructionBuilder {
     public InstructionBuilder store(RegEnum reg) {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context, InterruptManager interruptManager) {
                 registers.set(reg, accumulator);
                 return accumulator;
             }
@@ -70,7 +82,7 @@ public class InstructionBuilder {
     public InstructionBuilder storeRegAddressAccumulator(RegEnum reg) {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context, InterruptManager interruptManager) {
                 addressSpace.set(registers.get(reg), accumulator);
                 //TODO what to return??
                 return accumulator;
@@ -82,7 +94,7 @@ public class InstructionBuilder {
     public InstructionBuilder storeAccumulatorAddressReg(RegEnum reg) {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context, InterruptManager interruptManager) {
                 var val = registers.get(reg);
                 switch (reg.size) {
                     case RegEnum.SINGLE:
@@ -106,7 +118,7 @@ public class InstructionBuilder {
     public InstructionBuilder loadReg(RegEnum reg) {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context, InterruptManager interruptManager) {
                 return registers.get(reg);
             }
         });
@@ -116,7 +128,7 @@ public class InstructionBuilder {
     public InstructionBuilder loadAddress() {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context, InterruptManager interruptManager) {
                 return addressSpace.get(accumulator) & 0xFF;
             }
         });
@@ -126,7 +138,7 @@ public class InstructionBuilder {
     public InstructionBuilder add(Integer value) {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context, InterruptManager interruptManager) {
                 return (accumulator + value) & 0xFFFF;
             }
         });
@@ -136,7 +148,7 @@ public class InstructionBuilder {
     public InstructionBuilder incrementReg(RegEnum reg) {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context, InterruptManager interruptManager) {
                 //TODO: support for reg size
                 registers.set(reg, registers.get(reg) + 1);
                 return accumulator;
@@ -148,7 +160,7 @@ public class InstructionBuilder {
     public InstructionBuilder decrementReg(RegEnum reg) {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context, InterruptManager interruptManager) {
                 registers.set(reg, registers.get(reg) - 1);
                 return accumulator;
             }
@@ -159,7 +171,7 @@ public class InstructionBuilder {
     public InstructionBuilder toSigned() {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context, InterruptManager interruptManager) {
                 return (byte) accumulator;
             }
         });
@@ -173,7 +185,7 @@ public class InstructionBuilder {
     public InstructionBuilder addRegSetFlags(RegEnum reg) {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context, InterruptManager interruptManager) {
                 var newSP = registers.getSP() + accumulator;
 
                 var flags = registers.getFlags();
@@ -209,7 +221,7 @@ public class InstructionBuilder {
     public InstructionBuilder push(RegEnum reg) {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context, InterruptManager interruptManager) {
                 var value = registers.get(reg);
                 push(value, registers, addressSpace);
                 return value;
@@ -221,7 +233,7 @@ public class InstructionBuilder {
     public InstructionBuilder pop(RegEnum reg) {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context, InterruptManager interruptManager) {
                 var value = pop(registers, addressSpace);
                 registers.set(reg, value);
                 return value;
@@ -230,28 +242,41 @@ public class InstructionBuilder {
         return this;
     }
 
-    public InstructionBuilder add(RegEnum reg, boolean addCarry) {
+    public InstructionBuilder add(RegEnum reg, boolean addCarry, boolean isSigned) {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context, InterruptManager interruptManager) {
                 int carry = 0;
                 var flags = registers.getFlags();
+                final var regVal = registers.get(reg);
+
                 if (addCarry) {
                     carry = flags.isCFlag() ? 1 : 0;
                 }
+                var newRegVal = regVal + accumulator;
+
                 switch (reg.size) {
                     case RegEnum.SINGLE:
-                        var newRegVal = registers.get(reg) + accumulator + carry;
+                        newRegVal += carry;
 
                         flags.setZFlag((newRegVal & 0xFF) == 0);
                         flags.setNFlag(false);
-                        flags.setHFlag(((registers.get(reg) & 0xF) + (accumulator & 0xF) + carry) > 0xF);
-                        flags.setCFlag(((registers.get(reg) & 0xFF) + accumulator + carry) > 0xFF);
+                        flags.setHFlag(((regVal & 0xF) + (accumulator & 0xF) + carry) > 0xF);
+                        flags.setCFlag(((regVal & 0xFF) + accumulator + carry) > 0xFF);
 
                         return newRegVal & 0xFF;
                     case RegEnum.DOUBLE:
-                        //TODO support 16-bit alu
-                        throw new RuntimeException("Not implemented!");
+                        flags.setNFlag(false);
+
+                        if (isSigned) {
+                            flags.setHFlag(((regVal & 0xF) + (accumulator & 0xF)) > 0xF);
+                            flags.setCFlag(((regVal & 0xFF) + accumulator) > 0xFF);
+                        } else {
+                            flags.setHFlag(((regVal & 0xFFF) + (accumulator & 0xFFF)) > 0xFFF);
+                            flags.setCFlag(((regVal & 0xFFFF) + accumulator) > 0xFFFF);
+                        }
+
+                        return newRegVal & 0xFFFF;
                     default:
                         throw new IllegalStateException(String.format("Illegal register size %d", reg.size));
                 }
@@ -263,7 +288,7 @@ public class InstructionBuilder {
     public InstructionBuilder sub(RegEnum reg, boolean subCarry) {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context, InterruptManager interruptManager) {
                 var carry = subCarry && registers.getFlags().isCFlag() ? 1 : 0;
                 return sub(accumulator, registers.get(reg), carry, registers);
             }
@@ -274,7 +299,7 @@ public class InstructionBuilder {
     public InstructionBuilder subFrom(RegEnum reg, boolean subCarry) {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context, InterruptManager interruptManager) {
                 var carry = subCarry && registers.getFlags().isCFlag() ? 1 : 0;
                 return sub(registers.get(reg), accumulator, carry, registers);
             }
@@ -285,7 +310,7 @@ public class InstructionBuilder {
     public InstructionBuilder cp(RegEnum reg) {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context, InterruptManager interruptManager) {
                 return sub(registers.get(reg), accumulator, 0, registers);
             }
         });
@@ -308,7 +333,7 @@ public class InstructionBuilder {
     public InstructionBuilder and(RegEnum reg) {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context, InterruptManager interruptManager) {
                 var output = (registers.get(reg) & accumulator) & 0xFF;
 
                 var flags = registers.getFlags();
@@ -326,7 +351,7 @@ public class InstructionBuilder {
     public InstructionBuilder or(RegEnum reg) {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context, InterruptManager interruptManager) {
                 var output = (registers.get(reg) | accumulator) & 0xFF;
 
                 var flags = registers.getFlags();
@@ -344,7 +369,7 @@ public class InstructionBuilder {
     public InstructionBuilder xor(RegEnum reg) {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context, InterruptManager interruptManager) {
                 var output = (registers.get(reg) ^ accumulator) & 0xFF;
 
                 var flags = registers.getFlags();
@@ -362,7 +387,7 @@ public class InstructionBuilder {
     public InstructionBuilder inc(int size) {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context, InterruptManager interruptManager) {
                 switch (size) {
                     case RegEnum.SINGLE:
                         var output = (accumulator + 1) & 0xFF;
@@ -374,8 +399,7 @@ public class InstructionBuilder {
 
                         return output;
                     case RegEnum.DOUBLE:
-                        //TODO support 16-bit alu
-                        throw new RuntimeException("Not implemented!");
+                        return (accumulator + 1) & 0xFFFF;
                     default:
                         throw new IllegalStateException(String.format("Illegal register size %d", size));
 
@@ -388,7 +412,7 @@ public class InstructionBuilder {
     public InstructionBuilder dec(int size) {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context, InterruptManager interruptManager) {
                 switch (size) {
                     case RegEnum.SINGLE:
                         var output = (accumulator - 1) & 0xFF;
@@ -400,8 +424,7 @@ public class InstructionBuilder {
 
                         return output;
                     case RegEnum.DOUBLE:
-                        //TODO support 16-bit alu
-                        throw new RuntimeException("Not implemented!");
+                        return (accumulator - 1) & 0xFFFF;
                     default:
                         throw new IllegalStateException(String.format("Illegal register size %d", size));
 
@@ -414,7 +437,7 @@ public class InstructionBuilder {
     public InstructionBuilder swap() {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context, InterruptManager interruptManager) {
                 var hi = (accumulator & 0xF) << 4;
                 var output = ((accumulator & 0xF0) >> 4) | hi;
 
@@ -433,7 +456,7 @@ public class InstructionBuilder {
     public InstructionBuilder rlc() {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context, InterruptManager interruptManager) {
                 isByte(accumulator);
                 var carry = ((accumulator >>> 7) & 0x1);
                 var output = ((accumulator << 1) & 0xFF) | carry;
@@ -453,7 +476,7 @@ public class InstructionBuilder {
     public InstructionBuilder rl() {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context, InterruptManager interruptManager) {
                 var flags = registers.getFlags();
 
                 isByte(accumulator);
@@ -474,7 +497,7 @@ public class InstructionBuilder {
     public InstructionBuilder rrc() {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context, InterruptManager interruptManager) {
                 isByte(accumulator);
                 var carry = accumulator & 0x1;
                 var output = ((accumulator >> 1) & 0xFF) | (carry << 7);
@@ -494,7 +517,7 @@ public class InstructionBuilder {
     public InstructionBuilder rr() {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context, InterruptManager interruptManager) {
                 var flags = registers.getFlags();
 
                 isByte(accumulator);
@@ -515,7 +538,7 @@ public class InstructionBuilder {
     public InstructionBuilder sla() {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context, InterruptManager interruptManager) {
                 var flags = registers.getFlags();
 
                 isByte(accumulator);
@@ -536,7 +559,7 @@ public class InstructionBuilder {
     public InstructionBuilder sra() {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context, InterruptManager interruptManager) {
                 var flags = registers.getFlags();
 
                 isByte(accumulator);
@@ -558,7 +581,7 @@ public class InstructionBuilder {
     public InstructionBuilder srl() {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context, InterruptManager interruptManager) {
                 var flags = registers.getFlags();
 
                 isByte(accumulator);
@@ -579,7 +602,7 @@ public class InstructionBuilder {
     public InstructionBuilder bitTest(int bit) {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context, InterruptManager interruptManager) {
                 var flags = registers.getFlags();
                 if (bit < 0 || bit > 7) {
                     throw new IllegalArgumentException(String.format("Bit %d out of range 0-7!", accumulator));
@@ -598,7 +621,7 @@ public class InstructionBuilder {
     public InstructionBuilder setBit(int bit, boolean value) {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context, InterruptManager interruptManager) {
                 if (bit < 0 || bit > 7) {
                     throw new IllegalArgumentException(String.format("Bit %d out of range 0-7!", accumulator));
                 }
@@ -614,7 +637,7 @@ public class InstructionBuilder {
     public InstructionBuilder setContext() {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context, InterruptManager interruptManager) {
                 context.set(accumulator);
                 return accumulator;
             }
@@ -648,7 +671,7 @@ public class InstructionBuilder {
     public InstructionBuilder jp(Optional<JumpCondition> conditionOpt, boolean jr) {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context, InterruptManager interruptManager) {
                 boolean shouldJump = true;
 
                 if (conditionOpt.isPresent()) {
@@ -672,7 +695,7 @@ public class InstructionBuilder {
     public InstructionBuilder call(Optional<JumpCondition> conditionOpt) {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context, InterruptManager interruptManager) {
                 boolean shouldCall = true;
 
                 if (conditionOpt.isPresent()) {
@@ -693,7 +716,7 @@ public class InstructionBuilder {
     public InstructionBuilder ret(Optional<JumpCondition> conditionOpt) {
         operations.add(new Operation() {
             @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context) {
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context, InterruptManager interruptManager) {
                 boolean shouldCall = true;
 
                 if (conditionOpt.isPresent()) {
@@ -709,6 +732,140 @@ public class InstructionBuilder {
         });
         return this;
     }
+
+    public InstructionBuilder daa() {
+        operations.add(new Operation() {
+            @Override
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context, InterruptManager interruptManager) {
+                var flags = registers.getFlags();
+                var regA = registers.getA();
+
+                int correction = 0;
+
+                if (!flags.isNFlag()) {
+                    if (flags.isCFlag() || regA > 0x99) {
+                        correction += 0x60;
+                        flags.setCFlag(true);
+                    }
+                    if (flags.isHFlag() || (regA & 0x0F) > 0x09) {
+                        correction += 0x06;
+                    }
+                } else {
+                    if (flags.isCFlag()) {
+                        correction -= 0x60;
+                        flags.setCFlag(true);
+                    }
+                    if (flags.isHFlag()) {
+                        correction -= 0x06;
+                    }
+                }
+                // If it fails, it probably needs 0xFF
+                registers.setA(regA + correction);
+
+                flags.setZFlag(registers.getA() == 0);
+                flags.setHFlag(false);
+
+                return registers.getA();
+            }
+        });
+        return this;
+    }
+
+    public InstructionBuilder cpl() {
+        operations.add(new Operation() {
+            @Override
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context, InterruptManager interruptManager) {
+                var flags = registers.getFlags();
+                var regA = registers.getA();
+                registers.setA(~regA);
+
+                flags.setNFlag(true);
+                flags.setHFlag(true);
+
+                return registers.getA();
+            }
+        });
+        return this;
+    }
+
+    public InstructionBuilder ccf() {
+        operations.add(new Operation() {
+            @Override
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context, InterruptManager interruptManager) {
+                var flags = registers.getFlags();
+
+                flags.setCFlag(!flags.isCFlag());
+                flags.setNFlag(false);
+                flags.setHFlag(false);
+
+                return flags.isCFlag() ? 1 : 0;
+            }
+        });
+        return this;
+    }
+
+    public InstructionBuilder setCarry() {
+        operations.add(new Operation() {
+            @Override
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context, InterruptManager interruptManager) {
+                var flags = registers.getFlags();
+
+                flags.setCFlag(true);
+                flags.setNFlag(false);
+                flags.setHFlag(false);
+
+                return 1;
+            }
+        });
+        return this;
+    }
+
+    public InstructionBuilder halt() {
+        operations.add(new Operation() {
+            @Override
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context, InterruptManager interruptManager) {
+                interruptManager.setHalted(true);
+
+                return 1;
+            }
+        });
+        return this;
+    }
+
+    public InstructionBuilder stop() {
+        operations.add(new Operation() {
+            @Override
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context, InterruptManager interruptManager) {
+                interruptManager.setStopped(true);
+
+                return 1;
+            }
+        });
+        return this;
+    }
+
+    public InstructionBuilder disableInterrupts() {
+        setShouldDisableInterrupts(true);
+        return this;
+    }
+
+    public InstructionBuilder enableInterrupts() {
+        setShouldDisableInterrupts(false);
+        return this;
+    }
+
+    private void setShouldDisableInterrupts(boolean value) {
+        operations.add(new Operation() {
+            @Override
+            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context, InterruptManager interruptManager) {
+                interruptManager.setShouldDisableInterrupts(value);
+
+                return value ? 1 : 0;
+            }
+        });
+    }
+
+
 }
 
 

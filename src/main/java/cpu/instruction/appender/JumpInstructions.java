@@ -158,13 +158,13 @@ public class JumpInstructions implements InstructionAppender {
         /*
          * RETI
          * */
-        // TODO: implement with interrupts
-//        put(0xC9,
-//                instructions,
-//                Instruction.builder()
-//                        .ret(Optional.empty())
-//                        .build(context -> 4)
-//        );
+        put(0xD9,
+                instructions,
+                Instruction.builder()
+                        .ret(Optional.empty())
+                        .enableInterrupts()
+                        .build(context -> 4)
+        );
     }
 
 }

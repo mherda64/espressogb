@@ -37,6 +37,7 @@ public class Instructions {
                 new ByteLoadInstructions(),
                 new WordLoadInstructions(),
                 new ByteAluInstructions(),
+                new WordAluInstructions(),
                 new RotateInstructions(),
                 new MiscInstructions(),
                 new BitInstructions(),
