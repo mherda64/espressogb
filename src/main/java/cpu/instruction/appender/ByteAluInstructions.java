@@ -26,8 +26,9 @@ public class ByteAluInstructions implements InstructionAppender {
                 put(opcode.getOpcode(),
                         instructions,
                         Instruction.builder()
+                                .label(String.format("ADD A, %s", opcode.getTarget()))
                                 .loadReg(RegEnum.A)
-                                .add(opcode.getTarget().get(), false, false)
+                                .add(opcode.getTarget(), false, false)
                                 .store(RegEnum.A)
                                 .build(opcode.getCyclesFun()))
         );
@@ -38,6 +39,7 @@ public class ByteAluInstructions implements InstructionAppender {
         put(0x86,
                 instructions,
                 Instruction.builder()
+                        .label("ADD A, HL")
                         .loadReg(RegEnum.HL)
                         .loadAddress()
                         .add(RegEnum.A, false, false)
@@ -51,6 +53,7 @@ public class ByteAluInstructions implements InstructionAppender {
         put(0xC6,
                 instructions,
                 Instruction.builder()
+                        .label("ADD A, # (immediate byte)")
                         .loadBytes(RegEnum.SINGLE)
                         .add(RegEnum.A, false, false)
                         .store(RegEnum.A)
@@ -72,8 +75,9 @@ public class ByteAluInstructions implements InstructionAppender {
                 put(opcode.getOpcode(),
                         instructions,
                         Instruction.builder()
+                                .label(String.format("ADC A, %s", opcode.getTarget()))
                                 .loadReg(RegEnum.A)
-                                .add(opcode.getTarget().get(), true, false)
+                                .add(opcode.getTarget(), true, false)
                                 .store(RegEnum.A)
                                 .build(opcode.getCyclesFun()))
         );
@@ -84,6 +88,7 @@ public class ByteAluInstructions implements InstructionAppender {
         put(0x8E,
                 instructions,
                 Instruction.builder()
+                        .label("ADC A, (HL)")
                         .loadReg(RegEnum.HL)
                         .loadAddress()
                         .add(RegEnum.A, true, false)
@@ -97,6 +102,7 @@ public class ByteAluInstructions implements InstructionAppender {
         put(0xCE,
                 instructions,
                 Instruction.builder()
+                        .label("ADC A, # (immediate byte)")
                         .loadBytes(RegEnum.SINGLE)
                         .add(RegEnum.A, true, false)
                         .store(RegEnum.A)
@@ -118,8 +124,9 @@ public class ByteAluInstructions implements InstructionAppender {
                 put(opcode.getOpcode(),
                         instructions,
                         Instruction.builder()
+                                .label(String.format("SUB A, %s", opcode.getTarget()))
                                 .loadReg(RegEnum.A)
-                                .sub(opcode.getTarget().get(), false)
+                                .sub(opcode.getTarget(), false)
                                 .store(RegEnum.A)
                                 .build(opcode.getCyclesFun()))
         );
@@ -130,6 +137,7 @@ public class ByteAluInstructions implements InstructionAppender {
         put(0x96,
                 instructions,
                 Instruction.builder()
+                        .label("SUB A, (HL)")
                         .loadReg(RegEnum.HL)
                         .loadAddress()
                         .subFrom(RegEnum.A, false)
@@ -143,6 +151,7 @@ public class ByteAluInstructions implements InstructionAppender {
         put(0xD6,
                 instructions,
                 Instruction.builder()
+                        .label("SUB A, # (immediate byte)")
                         .loadBytes(RegEnum.SINGLE)
                         .subFrom(RegEnum.A, false)
                         .store(RegEnum.A)
@@ -164,8 +173,9 @@ public class ByteAluInstructions implements InstructionAppender {
                 put(opcode.getOpcode(),
                         instructions,
                         Instruction.builder()
+                                .label(String.format("SBC A, %s", opcode.getTarget()))
                                 .loadReg(RegEnum.A)
-                                .sub(opcode.getTarget().get(), true)
+                                .sub(opcode.getTarget(), true)
                                 .store(RegEnum.A)
                                 .build(opcode.getCyclesFun()))
         );
@@ -176,6 +186,7 @@ public class ByteAluInstructions implements InstructionAppender {
         put(0x9E,
                 instructions,
                 Instruction.builder()
+                        .label("SBC A, (HL)")
                         .loadReg(RegEnum.HL)
                         .loadAddress()
                         .subFrom(RegEnum.A, true)
@@ -189,6 +200,7 @@ public class ByteAluInstructions implements InstructionAppender {
         put(0xDE,
                 instructions,
                 Instruction.builder()
+                        .label("SBC A, # (immediate byte)")
                         .loadBytes(RegEnum.SINGLE)
                         .subFrom(RegEnum.A, true)
                         .store(RegEnum.A)
@@ -210,8 +222,9 @@ public class ByteAluInstructions implements InstructionAppender {
                 put(opcode.getOpcode(),
                         instructions,
                         Instruction.builder()
+                                .label(String.format("AND A, %s", opcode.getTarget()))
                                 .loadReg(RegEnum.A)
-                                .and(opcode.getTarget().get())
+                                .and(opcode.getTarget())
                                 .store(RegEnum.A)
                                 .build(opcode.getCyclesFun()))
         );
@@ -222,6 +235,7 @@ public class ByteAluInstructions implements InstructionAppender {
         put(0xA6,
                 instructions,
                 Instruction.builder()
+                        .label("AND A, (HL)")
                         .loadReg(RegEnum.HL)
                         .loadAddress()
                         .and(RegEnum.A)
@@ -235,6 +249,7 @@ public class ByteAluInstructions implements InstructionAppender {
         put(0xE6,
                 instructions,
                 Instruction.builder()
+                        .label("AND A, # (immediate byte)")
                         .loadBytes(RegEnum.SINGLE)
                         .and(RegEnum.A)
                         .store(RegEnum.A)
@@ -256,8 +271,9 @@ public class ByteAluInstructions implements InstructionAppender {
                 put(opcode.getOpcode(),
                         instructions,
                         Instruction.builder()
+                                .label(String.format("OR A, %s", opcode.getTarget()))
                                 .loadReg(RegEnum.A)
-                                .or(opcode.getTarget().get())
+                                .or(opcode.getTarget())
                                 .store(RegEnum.A)
                                 .build(opcode.getCyclesFun()))
         );
@@ -268,6 +284,7 @@ public class ByteAluInstructions implements InstructionAppender {
         put(0xB6,
                 instructions,
                 Instruction.builder()
+                        .label("OR A, (HL)")
                         .loadReg(RegEnum.HL)
                         .loadAddress()
                         .or(RegEnum.A)
@@ -281,6 +298,7 @@ public class ByteAluInstructions implements InstructionAppender {
         put(0xF6,
                 instructions,
                 Instruction.builder()
+                        .label("OR A, # (immediate byte)")
                         .loadBytes(RegEnum.SINGLE)
                         .or(RegEnum.A)
                         .store(RegEnum.A)
@@ -303,8 +321,9 @@ public class ByteAluInstructions implements InstructionAppender {
                 put(opcode.getOpcode(),
                         instructions,
                         Instruction.builder()
+                                .label(String.format("XOR A, %s", opcode.getTarget()))
                                 .loadReg(RegEnum.A)
-                                .xor(opcode.getTarget().get())
+                                .xor(opcode.getTarget())
                                 .store(RegEnum.A)
                                 .build(opcode.getCyclesFun()))
         );
@@ -315,6 +334,7 @@ public class ByteAluInstructions implements InstructionAppender {
         put(0xAE,
                 instructions,
                 Instruction.builder()
+                        .label("XOR A, (HL)")
                         .loadReg(RegEnum.HL)
                         .loadAddress()
                         .xor(RegEnum.A)
@@ -328,6 +348,7 @@ public class ByteAluInstructions implements InstructionAppender {
         put(0xEE,
                 instructions,
                 Instruction.builder()
+                        .label("XOR A, # (immediate byte)")
                         .loadBytes(RegEnum.SINGLE)
                         .xor(RegEnum.A)
                         .store(RegEnum.A)
@@ -350,7 +371,8 @@ public class ByteAluInstructions implements InstructionAppender {
                 put(opcode.getOpcode(),
                         instructions,
                         Instruction.builder()
-                                .loadReg(opcode.getTarget().get())
+                                .label(String.format("CP A, %s", opcode.getTarget()))
+                                .loadReg(opcode.getTarget())
                                 .cp(RegEnum.A)
                                 .build(opcode.getCyclesFun()))
         );
@@ -361,6 +383,7 @@ public class ByteAluInstructions implements InstructionAppender {
         put(0xBE,
                 instructions,
                 Instruction.builder()
+                        .label("CP A, (HL)")
                         .loadReg(RegEnum.HL)
                         .loadAddress()
                         .cp(RegEnum.A)
@@ -373,6 +396,7 @@ public class ByteAluInstructions implements InstructionAppender {
         put(0xFE,
                 instructions,
                 Instruction.builder()
+                        .label("CP A, # (immediate byte)")
                         .loadBytes(RegEnum.SINGLE)
                         .cp(RegEnum.A)
                         .build(context -> 2)
@@ -394,9 +418,10 @@ public class ByteAluInstructions implements InstructionAppender {
                 put(opcode.getOpcode(),
                         instructions,
                         Instruction.builder()
-                                .loadReg(opcode.getTarget().get())
-                                .inc(opcode.getTarget().get().size)
-                                .store(opcode.getTarget().get())
+                                .label(String.format("INC %s", opcode.getTarget()))
+                                .loadReg(opcode.getTarget())
+                                .inc(opcode.getTarget().size)
+                                .store(opcode.getTarget())
                                 .build(opcode.getCyclesFun()))
         );
 
@@ -406,6 +431,7 @@ public class ByteAluInstructions implements InstructionAppender {
         put(0x34,
                 instructions,
                 Instruction.builder()
+                        .label("INC (HL)")
                         .loadReg(RegEnum.HL)
                         .loadAddress()
                         .inc(RegEnum.SINGLE)
@@ -429,9 +455,10 @@ public class ByteAluInstructions implements InstructionAppender {
                 put(opcode.getOpcode(),
                         instructions,
                         Instruction.builder()
-                                .loadReg(opcode.getTarget().get())
-                                .dec(opcode.getTarget().get().size)
-                                .store(opcode.getTarget().get())
+                                .label(String.format("DEC %s", opcode.getTarget()))
+                                .loadReg(opcode.getTarget())
+                                .dec(opcode.getTarget().size)
+                                .store(opcode.getTarget())
                                 .build(opcode.getCyclesFun()))
         );
 
@@ -441,6 +468,7 @@ public class ByteAluInstructions implements InstructionAppender {
         put(0x35,
                 instructions,
                 Instruction.builder()
+                        .label("DEC (HL)")
                         .loadReg(RegEnum.HL)
                         .loadAddress()
                         .dec(RegEnum.SINGLE)

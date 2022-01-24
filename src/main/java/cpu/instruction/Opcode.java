@@ -7,24 +7,24 @@ import java.util.function.Function;
 
 public class Opcode<K> {
     private int opcode;
-    private Optional<K> target;
+    private K target;
     private Function<Context, Integer> cyclesFun;
 
     public Opcode(int opcode, K target, int cycles) {
         this.opcode = opcode;
-        this.target = Optional.of(target);
+        this.target = target;
         this.cyclesFun = context -> cycles;
     }
 
     public Opcode(int opcode, K target, Function<Context,Integer> cyclesFun) {
         this.opcode = opcode;
-        this.target = Optional.of(target);
+        this.target = target;
         this.cyclesFun = cyclesFun;
     }
 
     public Opcode(int opcode, int cycles) {
         this.opcode = opcode;
-        this.target = Optional.empty();
+        this.target = null;
         this.cyclesFun = context -> cycles;
     }
 
@@ -32,7 +32,7 @@ public class Opcode<K> {
         return opcode;
     }
 
-    public Optional<K> getTarget() {
+    public K getTarget() {
         return target;
     }
 

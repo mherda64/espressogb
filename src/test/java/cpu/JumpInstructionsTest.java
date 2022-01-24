@@ -250,7 +250,7 @@ class JumpInstructionsTest {
             var instr = executeInstruction(opcode.getOpcode(), false, registers, addressSpace);
 
             assertEquals(4, instr.getCycles(instr.getContext()));
-            assertEquals((int)opcode.getTarget().get(), registers.getPC());
+            assertEquals((int)opcode.getTarget(), registers.getPC());
             assertEquals(0x20, addressSpace.get(0xDFFF));
             assertEquals(0x00, addressSpace.get(0xDFFE));
                 }

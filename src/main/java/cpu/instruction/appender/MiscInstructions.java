@@ -18,6 +18,7 @@ public class MiscInstructions implements InstructionAppender {
         put(0x27,
                 instructions,
                 Instruction.builder()
+                        .label("DAA")
                         .daa()
                         .build(context -> 1)
         );
@@ -28,6 +29,7 @@ public class MiscInstructions implements InstructionAppender {
         put(0x2F,
                 instructions,
                 Instruction.builder()
+                        .label("CPL")
                         .cpl()
                         .build(context -> 1)
         );
@@ -38,6 +40,7 @@ public class MiscInstructions implements InstructionAppender {
         put(0x3F,
                 instructions,
                 Instruction.builder()
+                        .label("CCF")
                         .ccf()
                         .build(context -> 1)
         );
@@ -48,6 +51,7 @@ public class MiscInstructions implements InstructionAppender {
         put(0x37,
                 instructions,
                 Instruction.builder()
+                        .label("SCF")
                         .setCarry()
                         .build(context -> 1)
         );
@@ -58,6 +62,7 @@ public class MiscInstructions implements InstructionAppender {
         put(0x00,
                 instructions,
                 Instruction.builder()
+                        .label("NOP")
                         .build(context -> 1)
         );
 
@@ -67,6 +72,7 @@ public class MiscInstructions implements InstructionAppender {
         put(0x76,
                 instructions,
                 Instruction.builder()
+                        .label("HALT")
                         .halt()
                         .build(context -> 1)
         );
@@ -77,6 +83,7 @@ public class MiscInstructions implements InstructionAppender {
         put(0x10,
                 instructions,
                 Instruction.builder()
+                        .label("STOP")
                         .stop()
                         .build(context -> 1)
         );
@@ -87,6 +94,7 @@ public class MiscInstructions implements InstructionAppender {
         put(0xF3,
                 instructions,
                 Instruction.builder()
+                        .label("DI")
                         .disableInterrupts()
                         .build(context -> 1)
         );
@@ -97,11 +105,10 @@ public class MiscInstructions implements InstructionAppender {
         put(0xFB,
                 instructions,
                 Instruction.builder()
+                        .label("EI")
                         .enableInterrupts()
                         .build(context -> 1)
         );
-
-
 
 
     }
@@ -123,15 +130,21 @@ public class MiscInstructions implements InstructionAppender {
                 put(opcode.getOpcode(),
                         instructions,
                         Instruction.builder()
-                                .loadReg(opcode.getTarget().get())
+                                .label(String.format("SWAP %s", opcode.getTarget()))
+                                .loadReg(opcode.getTarget())
                                 .swap()
-                                .store(opcode.getTarget().get())
+                                .store(opcode.getTarget())
                                 .build(opcode.getCyclesFun()))
         );
+
+        /*
+         * SWAP (HL)
+         * */
 
         put(0x36,
                 instructions,
                 Instruction.builder()
+                        .label("SWAP (HL)")
                         .loadReg(RegEnum.HL)
                         .loadAddress()
                         .swap()

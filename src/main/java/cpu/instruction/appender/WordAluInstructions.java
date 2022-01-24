@@ -24,7 +24,8 @@ public class WordAluInstructions implements InstructionAppender {
                 put(opcode.getOpcode(),
                         instructions,
                         Instruction.builder()
-                                .loadReg(opcode.getTarget().get())
+                                .label(String.format("ADD HL, %s", opcode.getTarget()))
+                                .loadReg(opcode.getTarget())
                                 .add(RegEnum.HL, false, false)
                                 .store(RegEnum.HL)
                                 .build(opcode.getCyclesFun()))
@@ -36,6 +37,7 @@ public class WordAluInstructions implements InstructionAppender {
         put(0xE8,
                 instructions,
                 Instruction.builder()
+                        .label("ADD SP, n")
                         .loadBytes(RegEnum.SINGLE)
                         .toSigned()
                         .add(RegEnum.SP, false, true)
@@ -55,9 +57,10 @@ public class WordAluInstructions implements InstructionAppender {
                 put(opcode.getOpcode(),
                         instructions,
                         Instruction.builder()
-                                .loadReg(opcode.getTarget().get())
-                                .inc(opcode.getTarget().get().size)
-                                .store(opcode.getTarget().get())
+                                .label(String.format("INC %s", opcode.getTarget()))
+                                .loadReg(opcode.getTarget())
+                                .inc(opcode.getTarget().size)
+                                .store(opcode.getTarget())
                                 .build(opcode.getCyclesFun()))
         );
 
@@ -73,9 +76,10 @@ public class WordAluInstructions implements InstructionAppender {
                 put(opcode.getOpcode(),
                         instructions,
                         Instruction.builder()
-                                .loadReg(opcode.getTarget().get())
-                                .dec(opcode.getTarget().get().size)
-                                .store(opcode.getTarget().get())
+                                .label(String.format("DEC %s", opcode.getTarget()))
+                                .loadReg(opcode.getTarget())
+                                .dec(opcode.getTarget().size)
+                                .store(opcode.getTarget())
                                 .build(opcode.getCyclesFun()))
         );
 

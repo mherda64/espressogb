@@ -34,7 +34,8 @@ public class BitInstructions implements InstructionAppender {
                     put(opcode.getOpcode(),
                             prefixed,
                             Instruction.builder()
-                                    .loadReg(opcode.getTarget().get())
+                                    .label(String.format("BIT %d, %s", param, opcode.getTarget()))
+                                    .loadReg(opcode.getTarget())
                                     .bitTest(param)
                                     .build(opcode.getCyclesFun()))
             );
@@ -42,6 +43,7 @@ public class BitInstructions implements InstructionAppender {
             put(baseOp + 6,
                     prefixed,
                     Instruction.builder()
+                            .label(String.format("BIT %d, (HL)", param))
                             .loadReg(RegEnum.HL)
                             .loadAddress()
                             .bitTest(param)
@@ -67,15 +69,17 @@ public class BitInstructions implements InstructionAppender {
                     put(opcode.getOpcode(),
                             prefixed,
                             Instruction.builder()
-                                    .loadReg(opcode.getTarget().get())
+                                    .label(String.format("SET %d, %s", param, opcode.getTarget()))
+                                    .loadReg(opcode.getTarget())
                                     .setBit(param, true)
-                                    .store(opcode.getTarget().get())
+                                    .store(opcode.getTarget())
                                     .build(opcode.getCyclesFun()))
             );
 
             put(baseOp + 6,
                     prefixed,
                     Instruction.builder()
+                            .label(String.format("SET %d, (HL)", param))
                             .loadReg(RegEnum.HL)
                             .loadAddress()
                             .setBit(param, true)
@@ -102,15 +106,17 @@ public class BitInstructions implements InstructionAppender {
                     put(opcode.getOpcode(),
                             prefixed,
                             Instruction.builder()
-                                    .loadReg(opcode.getTarget().get())
+                                    .label(String.format("RES %d, %s", param, opcode.getTarget()))
+                                    .loadReg(opcode.getTarget())
                                     .setBit(param, false)
-                                    .store(opcode.getTarget().get())
+                                    .store(opcode.getTarget())
                                     .build(opcode.getCyclesFun()))
             );
 
             put(baseOp + 6,
                     prefixed,
                     Instruction.builder()
+                            .label(String.format("RES %d, (HL)", param))
                             .loadReg(RegEnum.HL)
                             .loadAddress()
                             .setBit(param, false)

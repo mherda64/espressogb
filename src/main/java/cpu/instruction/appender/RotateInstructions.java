@@ -18,6 +18,7 @@ public class RotateInstructions implements InstructionAppender {
         put(0x07,
                 instructions,
                 Instruction.builder()
+                        .label("RLCA")
                         .loadReg(RegEnum.A)
                         .rlc()
                         .store(RegEnum.A)
@@ -30,6 +31,7 @@ public class RotateInstructions implements InstructionAppender {
         put(0x17,
                 instructions,
                 Instruction.builder()
+                        .label("RLA")
                         .loadReg(RegEnum.A)
                         .rl()
                         .store(RegEnum.A)
@@ -42,6 +44,7 @@ public class RotateInstructions implements InstructionAppender {
         put(0x0F,
                 instructions,
                 Instruction.builder()
+                        .label("RRCA")
                         .loadReg(RegEnum.A)
                         .rrc()
                         .store(RegEnum.A)
@@ -54,6 +57,7 @@ public class RotateInstructions implements InstructionAppender {
         put(0x1F,
                 instructions,
                 Instruction.builder()
+                        .label("RRA")
                         .loadReg(RegEnum.A)
                         .rr()
                         .store(RegEnum.A)
@@ -80,15 +84,21 @@ public class RotateInstructions implements InstructionAppender {
                 put(opcode.getOpcode(),
                         prefixed,
                         Instruction.builder()
-                                .loadReg(opcode.getTarget().get())
+                                .label(String.format("RLC %s", opcode.getTarget()))
+                                .loadReg(opcode.getTarget())
                                 .rlc()
-                                .store(opcode.getTarget().get())
+                                .store(opcode.getTarget())
                                 .build(opcode.getCyclesFun()))
         );
+
+        /*
+         * RLC (HL)
+         * */
 
         put(0x06,
                 prefixed,
                 Instruction.builder()
+                        .label("RLC (HL)")
                         .loadReg(RegEnum.HL)
                         .loadAddress()
                         .rlc()
@@ -111,15 +121,21 @@ public class RotateInstructions implements InstructionAppender {
                 put(opcode.getOpcode(),
                         prefixed,
                         Instruction.builder()
-                                .loadReg(opcode.getTarget().get())
+                                .label(String.format("RL %s", opcode.getTarget()))
+                                .loadReg(opcode.getTarget())
                                 .rl()
-                                .store(opcode.getTarget().get())
+                                .store(opcode.getTarget())
                                 .build(opcode.getCyclesFun()))
         );
+
+        /*
+         * RL (HL)
+         * */
 
         put(0x16,
                 prefixed,
                 Instruction.builder()
+                        .label("RL (HL)")
                         .loadReg(RegEnum.HL)
                         .loadAddress()
                         .rl()
@@ -143,15 +159,21 @@ public class RotateInstructions implements InstructionAppender {
                 put(opcode.getOpcode(),
                         prefixed,
                         Instruction.builder()
-                                .loadReg(opcode.getTarget().get())
+                                .label(String.format("RRC %s", opcode.getTarget()))
+                                .loadReg(opcode.getTarget())
                                 .rrc()
-                                .store(opcode.getTarget().get())
+                                .store(opcode.getTarget())
                                 .build(opcode.getCyclesFun()))
         );
+
+        /*
+         * RRC (HL)
+         * */
 
         put(0x0E,
                 prefixed,
                 Instruction.builder()
+                        .label("RRC (HL)")
                         .loadReg(RegEnum.HL)
                         .loadAddress()
                         .rrc()
@@ -174,15 +196,21 @@ public class RotateInstructions implements InstructionAppender {
                 put(opcode.getOpcode(),
                         prefixed,
                         Instruction.builder()
-                                .loadReg(opcode.getTarget().get())
+                                .label(String.format("RR %s", opcode.getTarget()))
+                                .loadReg(opcode.getTarget())
                                 .rr()
-                                .store(opcode.getTarget().get())
+                                .store(opcode.getTarget())
                                 .build(opcode.getCyclesFun()))
         );
+
+        /*
+         * RR (HL)
+         * */
 
         put(0x1E,
                 prefixed,
                 Instruction.builder()
+                        .label("RR (HL)")
                         .loadReg(RegEnum.HL)
                         .loadAddress()
                         .rr()
@@ -205,15 +233,21 @@ public class RotateInstructions implements InstructionAppender {
                 put(opcode.getOpcode(),
                         prefixed,
                         Instruction.builder()
-                                .loadReg(opcode.getTarget().get())
+                                .label(String.format("SLA %s", opcode.getTarget()))
+                                .loadReg(opcode.getTarget())
                                 .sla()
-                                .store(opcode.getTarget().get())
+                                .store(opcode.getTarget())
                                 .build(opcode.getCyclesFun()))
         );
+
+        /*
+         * SLA (HL)
+         * */
 
         put(0x26,
                 prefixed,
                 Instruction.builder()
+                        .label("SLA (HL)")
                         .loadReg(RegEnum.HL)
                         .loadAddress()
                         .sla()
@@ -236,15 +270,21 @@ public class RotateInstructions implements InstructionAppender {
                 put(opcode.getOpcode(),
                         prefixed,
                         Instruction.builder()
-                                .loadReg(opcode.getTarget().get())
+                                .label(String.format("SRA %s", opcode.getTarget()))
+                                .loadReg(opcode.getTarget())
                                 .sra()
-                                .store(opcode.getTarget().get())
+                                .store(opcode.getTarget())
                                 .build(opcode.getCyclesFun()))
         );
+
+        /*
+         * SRA (HL)
+         * */
 
         put(0x2E,
                 prefixed,
                 Instruction.builder()
+                        .label("SRA (HL)")
                         .loadReg(RegEnum.HL)
                         .loadAddress()
                         .sra()
@@ -267,15 +307,21 @@ public class RotateInstructions implements InstructionAppender {
                 put(opcode.getOpcode(),
                         prefixed,
                         Instruction.builder()
-                                .loadReg(opcode.getTarget().get())
+                                .label(String.format("SRL %s", opcode.getTarget()))
+                                .loadReg(opcode.getTarget())
                                 .srl()
-                                .store(opcode.getTarget().get())
+                                .store(opcode.getTarget())
                                 .build(opcode.getCyclesFun()))
         );
+
+        /*
+         * SRL (HL)
+         * */
 
         put(0x3E,
                 prefixed,
                 Instruction.builder()
+                        .label("SRL (HL)")
                         .loadReg(RegEnum.HL)
                         .loadAddress()
                         .srl()

@@ -39,12 +39,7 @@ public class InstructionBuilder {
     }
 
     public InstructionBuilder load(int value) {
-        operations.add(new Operation() {
-            @Override
-            public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context, InterruptManager interruptManager) {
-                return value;
-            }
-        });
+        operations.add((registers, addressSpace, accumulator, context, interruptManager) -> value);
         return this;
     }
 
@@ -668,14 +663,14 @@ public class InstructionBuilder {
         return shouldJump;
     }
 
-    public InstructionBuilder jp(Optional<JumpCondition> conditionOpt, boolean jr) {
+    public InstructionBuilder jp(JumpCondition conditionOpt, boolean jr) {
         operations.add(new Operation() {
             @Override
             public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context, InterruptManager interruptManager) {
                 boolean shouldJump = true;
 
-                if (conditionOpt.isPresent()) {
-                    shouldJump = checkCondition(conditionOpt.get(), registers, context);
+                if (conditionOpt != null) {
+                    shouldJump = checkCondition(conditionOpt, registers, context);
                 }
 
                 if (shouldJump) {
@@ -692,14 +687,14 @@ public class InstructionBuilder {
         return this;
     }
 
-    public InstructionBuilder call(Optional<JumpCondition> conditionOpt) {
+    public InstructionBuilder call(JumpCondition conditionOpt) {
         operations.add(new Operation() {
             @Override
             public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context, InterruptManager interruptManager) {
                 boolean shouldCall = true;
 
-                if (conditionOpt.isPresent()) {
-                    shouldCall = checkCondition(conditionOpt.get(), registers, context);
+                if (conditionOpt != null) {
+                    shouldCall = checkCondition(conditionOpt, registers, context);
                 }
 
                 if (shouldCall) {
@@ -713,14 +708,14 @@ public class InstructionBuilder {
         return this;
     }
 
-    public InstructionBuilder ret(Optional<JumpCondition> conditionOpt) {
+    public InstructionBuilder ret(JumpCondition conditionOpt) {
         operations.add(new Operation() {
             @Override
             public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context, InterruptManager interruptManager) {
                 boolean shouldCall = true;
 
-                if (conditionOpt.isPresent()) {
-                    shouldCall = checkCondition(conditionOpt.get(), registers, context);
+                if (conditionOpt != null) {
+                    shouldCall = checkCondition(conditionOpt, registers, context);
                 }
 
                 if (shouldCall) {

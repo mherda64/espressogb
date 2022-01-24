@@ -24,8 +24,9 @@ public class WordLoadInstructions implements InstructionAppender {
                 put(opcode.getOpcode(),
                         instructions,
                         Instruction.builder()
+                                .label(String.format("LD %s, nn", opcode.getTarget()))
                                 .loadBytes(RegEnum.DOUBLE)
-                                .store(opcode.getTarget().get())
+                                .store(opcode.getTarget())
                                 .build(opcode.getCyclesFun()))
         );
 
@@ -35,6 +36,7 @@ public class WordLoadInstructions implements InstructionAppender {
         put(0xF9,
                 instructions,
                 Instruction.builder()
+                        .label("LD SP, HL")
                         .loadReg(RegEnum.HL)
                         .store(RegEnum.SP)
                         .build(context -> 2)
@@ -46,6 +48,7 @@ public class WordLoadInstructions implements InstructionAppender {
         put(0xF8,
                 instructions,
                 Instruction.builder()
+                        .label("LDHL SP, n")
                         .loadBytes(RegEnum.SINGLE)
                         .toSigned()
                         .addRegSetFlags(RegEnum.SP)
@@ -59,6 +62,7 @@ public class WordLoadInstructions implements InstructionAppender {
         put(0x08,
                 instructions,
                 Instruction.builder()
+                        .label("LD (nn), SP")
                         .loadBytes(RegEnum.DOUBLE)
                         .storeAccumulatorAddressReg(RegEnum.SP)
                         .build(context -> 5)
@@ -76,7 +80,8 @@ public class WordLoadInstructions implements InstructionAppender {
                 put(opcode.getOpcode(),
                         instructions,
                         Instruction.builder()
-                                .push(opcode.getTarget().get())
+                                .label(String.format("PUSH %s", opcode.getTarget()))
+                                .push(opcode.getTarget())
                                 .build(opcode.getCyclesFun()))
         );
 
@@ -92,7 +97,8 @@ public class WordLoadInstructions implements InstructionAppender {
                 put(opcode.getOpcode(),
                         instructions,
                         Instruction.builder()
-                                .pop(opcode.getTarget().get())
+                                .label(String.format("POP %s", opcode.getTarget()))
+                                .pop(opcode.getTarget())
                                 .build(opcode.getCyclesFun()))
         );
     }
