@@ -27,6 +27,10 @@ public class Display extends JPanel implements Runnable {
         rgb = new int[DISPLAY_WIDTH * DISPLAY_HEIGHT];
     }
 
+    public void setPixel(int pixel, int value) {
+        rgb[pixel] = value;
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -39,6 +43,13 @@ public class Display extends JPanel implements Runnable {
     @Override
     public void run() {
         while (true) {
+//            for (int i = 0; i < rgb.length; i++) {
+//                var R = (int) (Math.random() * 255);
+//                var G = (int) (Math.random() * 255);
+//                var B = (int) (Math.random() * 255);
+//                rgb[i] = 0xFF000000 | R << 16 | G << 8 | B;
+//            }
+
             img.setRGB(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT, rgb, 0, DISPLAY_WIDTH);
 
             validate();

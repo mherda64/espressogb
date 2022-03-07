@@ -3,7 +3,13 @@ package cpu;
 import cpu.instruction.Instructions;
 import memory.AddressSpace;
 import memory.Memory;
+import ppu.Display;
+import ppu.PPU;
+import ppu.TileDisplay;
+import ppu.Tiles;
 
+import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -47,8 +53,40 @@ public class CPU {
         var memory = new Memory(0xFFFF);
         var cpu = new CPU(registers, memory);
 
-        cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/tetris.gb", 0x0);
-        cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/DMG_ROM.bin", 0x0);
+        var tiles = new Tiles(memory);
+        memory.setTiles(tiles);
+
+        var display = new Display();
+        display.setPreferredSize(new Dimension(160, 144));
+
+        var mainWindow = new JFrame("xD");
+        mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        mainWindow.setLocationRelativeTo(null);
+        mainWindow.setContentPane(display);
+        mainWindow.setResizable(false);
+        mainWindow.setVisible(true);
+        mainWindow.pack();
+
+
+        var tileMapDisplay = new TileDisplay(tiles);
+        tileMapDisplay.setPreferredSize(new Dimension(320, 320));
+
+        var tilemapWindow = new JFrame("tilemap");
+        tilemapWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        tilemapWindow.setLocationRelativeTo(null);
+        tilemapWindow.setContentPane(tileMapDisplay);
+        tilemapWindow.setResizable(false);
+        tilemapWindow.setVisible(true);
+        tilemapWindow.pack();
+
+        var ppu = new PPU(memory, display, tiles);
+
+        new Thread(display).start();
+        new Thread(tileMapDisplay).start();
+
+//        cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/tetris.gb", 0x0);
+        cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/individual/01-special.gb", 0x0);
+//        cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/DMG_ROM.bin", 0x0);
 
 //        for (int i = 0; i < 0x100; i++) {
 //            System.out.println(String.format("byte %d - %02X", i, memory.get(i)));
@@ -69,7 +107,7 @@ public class CPU {
                 opcode = memory.get(registers.incPC());
             }
 
-            if (registers.getPC() == 0x0021) {
+            if (registers.getPC() >= 0x0064) {
                 System.out.println("break");
             }
 
@@ -87,13 +125,17 @@ public class CPU {
 
             var cycles = instr.getCycles(context);
             cpu.addCycles(cycles);
+            ppu.step(cycles);
             currentCycles += cycles;
             System.out.println(cpu.getCycleCounter());
+
+            tileMapDisplay.updateTileMap();
 
             if (currentCycles > desiredCycles) {
                 while (lastTime + 1_000_000_000 > System.nanoTime()) ;
                 lastTime = System.nanoTime();
                 currentCycles = 0;
+
             }
         }
     }
