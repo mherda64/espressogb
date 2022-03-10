@@ -15,7 +15,7 @@ public class Registers {
     private int l;
 
     private int sp;
-    private int pc = -1;
+    private int pc;
 
     public Registers() {
         f = new FlagsReg();
@@ -141,8 +141,8 @@ public class Registers {
     }
 
     public int incPC() {
-        pc += 1;
-        return pc;
+//        pc += 1;
+        return pc++;
     }
 
     public int decSP() {

@@ -2,10 +2,6 @@ package ppu;
 
 import memory.AddressSpace;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-
 public class Tiles {
 
     private final AddressSpace addressSpace;

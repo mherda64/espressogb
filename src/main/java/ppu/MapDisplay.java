@@ -1,18 +1,25 @@
 package ppu;
 
+import memory.AddressSpace;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class TileDisplay extends JPanel implements Runnable {
+public class MapDisplay extends JPanel implements Runnable {
 
-    public static final int DISPLAY_WIDTH = 128;
+    public static final int DISPLAY_WIDTH = 256;
 
-    public static final int DISPLAY_HEIGHT = 192;
+    public static final int DISPLAY_HEIGHT = 256;
 
     public static final int SCALE = 1;
 
+    private boolean backgroundMap = false;
+    private boolean backgroundTile = false;
+
     private final Tiles tiles;
+
+    private final AddressSpace addressSpace;
 
     private final BufferedImage img;
 
@@ -29,7 +36,8 @@ public class TileDisplay extends JPanel implements Runnable {
         return 0xFF | r << 16 | g << 8 | b;
     }
 
-    public TileDisplay(Tiles tiles) {
+    public MapDisplay(AddressSpace addressSpace, Tiles tiles) {
+        this.addressSpace = addressSpace;
         this.tiles = tiles;
         this.img = GraphicsEnvironment
                 .getLocalGraphicsEnvironment()
@@ -37,19 +45,6 @@ public class TileDisplay extends JPanel implements Runnable {
                 .getDefaultConfiguration()
                 .createCompatibleImage(DISPLAY_WIDTH * SCALE, DISPLAY_HEIGHT * SCALE);
         rgb = new int[DISPLAY_HEIGHT * SCALE][DISPLAY_WIDTH * SCALE];
-    }
-
-    public void updateTileMap() {
-        var x = 0;
-        var y = 0;
-        for (int i = 0; i < 384; i++) {
-            drawTile(x * 8 * SCALE, y * 8 * SCALE, tiles.getTileMap()[i]);
-            x += 1;
-            if (x >= 16) {
-                x = 0;
-                y += 1;
-            }
-        }
     }
 
     private void drawTile(int baseX, int baseY, int[][] tile) {
@@ -60,9 +55,20 @@ public class TileDisplay extends JPanel implements Runnable {
         }
     }
 
-//    private void setPixel(int pixel, int value) {
-//        rgb[pixel] = value;
-//    }
+    public void updateMap() {
+        var mapOffset = 0x8000;
+        mapOffset += backgroundMap ? 0x1C00 : 0x1800;
+        var tileMap = tiles.getTileMap();
+
+        for (int y = 0; y < 32; y++) {
+            for (int x = 0; x < 32; x++) {
+                var tile = addressSpace.get(mapOffset + y * 32 + x);
+                if (backgroundTile && tile < 128) tile += 256;
+                drawTile(x * 8, y * 8, tileMap[tile]);
+
+            }
+        }
+    }
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -90,4 +96,5 @@ public class TileDisplay extends JPanel implements Runnable {
             repaint();
         }
     }
+
 }

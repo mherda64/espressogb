@@ -5,7 +5,7 @@ import memory.AddressSpace;
 public class PPU {
 
     // TODO: varying
-    private boolean backgroundMap = true;
+    private boolean backgroundMap = false;
     // TODO: varying
     private boolean backgroundTile = false;
 
@@ -85,11 +85,16 @@ public class PPU {
     }
 
     private int getSCY() {
-        return addressSpace.get(GPURegs.SCY.address);
+//        return 0;
+        var scy = addressSpace.get(GPURegs.SCY.address);
+        System.out.println("SCY:" + scy);
+        return scy;
     }
 
     private int getSCX() {
-        return addressSpace.get(GPURegs.SCX.address);
+        var scx = addressSpace.get(GPURegs.SCX.address);
+        System.out.println("SCX:" + scx);
+        return scx;
     }
 
     private static int getColor(int r, int g, int b) {
@@ -115,9 +120,13 @@ public class PPU {
 
         var displayOffset = 160 * lineCounter;
 
-        var tile = addressSpace.get(mapOffset + lineOffset);
+        var tileMapAddress = 0x8000 + mapOffset + lineOffset;
+        var tile = addressSpace.get(tileMapAddress);
         if (backgroundTile && tile < 128) tile += 256;
 
+        if (tile != 0) {
+            System.out.println("break");
+        }
         var tilemap = tiles.getTileMap();
 
         for (int i = 0; i < 160; i++) {
@@ -129,8 +138,13 @@ public class PPU {
             if (x == 8) {
                 x = 0;
                 lineOffset = (lineOffset + 1) & 31;
-                tile = addressSpace.get(mapOffset + lineOffset);
+                tileMapAddress = 0x8000 + mapOffset + lineOffset;
+                tile = addressSpace.get(tileMapAddress);
                 if (backgroundTile && tile < 128) tile += 256;
+
+                if (tile != 0) {
+                    System.out.println("break");
+                }
             }
         }
 
