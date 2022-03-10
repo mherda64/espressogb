@@ -23,20 +23,20 @@ class ByteLoadInstructionsTest {
 
     @Test
     void testLoadByte_0x0E_shouldPass() {
-        registers.setPC(0x2001);
+        registers.setPC(0x2002);
         addressSpace.set(0x2002, 0x99);
 
         var instr = executeInstruction(0x0E, false, registers, addressSpace);
 
         assertEquals(2, instr.getCycles(instr.getContext()));
         assertEquals(0x99, registers.getC());
-        assertEquals(0x2002, registers.getPC());
+        assertEquals(0x2003, registers.getPC());
     }
 
     @Test
     void testLoadByte_0x06_shouldPass() {
         registers.setPC(0x2001);
-        addressSpace.set(0x2002, 0x99);
+        addressSpace.set(0x2001, 0x99);
 
         var instr = executeInstruction(0x06, false, registers, addressSpace);
 
@@ -72,7 +72,7 @@ class ByteLoadInstructionsTest {
 
     @Test
     void testLoadInstAddress_0xFA() {
-        registers.setPC(0x2000);
+        registers.setPC(0x2001);
         addressSpace.set(0x2001, 0x15);
         addressSpace.set(0x2002, 0x2A);
         addressSpace.set(0x2A15, 0xFF);
@@ -82,7 +82,7 @@ class ByteLoadInstructionsTest {
 
         assertEquals(4, instr.getCycles(instr.getContext()));
         assertEquals(0xFF, registers.getA());
-        assertEquals(0x2002, registers.getPC());
+        assertEquals(0x2003, registers.getPC());
     }
 
     @Test
@@ -113,7 +113,7 @@ class ByteLoadInstructionsTest {
 
     @Test
     void testLoadImmediateAddressWithA_0xEA() {
-        registers.setPC(0xC000);
+        registers.setPC(0xC001);
         registers.setA(0xFA);
         addressSpace.set(0xC001, 0x15);
         addressSpace.set(0xC002, 0xC1);
@@ -123,7 +123,7 @@ class ByteLoadInstructionsTest {
 
         assertEquals(4, instr.getCycles(instr.getContext()));
         assertEquals(0xFA, addressSpace.get(0xC115));
-        assertEquals(0xC002, registers.getPC());
+        assertEquals(0xC003, registers.getPC());
     }
 
     @Test
@@ -221,7 +221,7 @@ class ByteLoadInstructionsTest {
     void testLoadImmediateAddress_regA_0xE0() {
         registers.setPC(0x2000);
         registers.setA(0x1C);
-        addressSpace.set(0x2001, 0x12);
+        addressSpace.set(0x2000, 0x12);
 
         var instr = executeInstruction(0xE0, false, registers, addressSpace);
 
@@ -235,7 +235,7 @@ class ByteLoadInstructionsTest {
     void testLoadRegA_immediateAddress_0xF0() {
         registers.setPC(0x2000);
         registers.setA(0x1C);
-        addressSpace.set(0x2001, 0x12);
+        addressSpace.set(0x2000, 0x12);
         addressSpace.set(0xFF12, 0x9A);
 
         var instr = executeInstruction(0xF0, false, registers, addressSpace);

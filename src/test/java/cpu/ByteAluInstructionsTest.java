@@ -116,7 +116,7 @@ class ByteAluInstructionsTest {
     void testAddA_immediateByte_noFlagSet_0xC6() {
         registers.setPC(0x2000);
         registers.setA(0xAA);
-        addressSpace.set(0x2001, 0x12);
+        addressSpace.set(0x2000, 0x12);
 
         var instr = executeInstruction(0xC6, false, registers, addressSpace);
 
@@ -134,7 +134,7 @@ class ByteAluInstructionsTest {
     void testAddA_immediateByte_carrySet_0xC6() {
         registers.setPC(0x2000);
         registers.setA(0x1A);
-        addressSpace.set(0x2001, 0xF0);
+        addressSpace.set(0x2000, 0xF0);
 
         var instr = executeInstruction(0xC6, false, registers, addressSpace);
 
@@ -248,7 +248,7 @@ class ByteAluInstructionsTest {
 
     @Test
     void testAdcA_immediateByte_noFlagSet_0xCE() {
-        registers.setPC(0x2000);
+        registers.setPC(0x2001);
         registers.setA(0x01);
         addressSpace.set(0x2001, 0x05);
         registers.getFlags().setCFlag(true);
@@ -258,7 +258,7 @@ class ByteAluInstructionsTest {
         var flags = registers.getFlags();
         assertEquals(2, instr.getCycles(instr.getContext()));
         assertEquals(0x07, registers.getA());
-        assertEquals(0x2001, registers.getPC());
+        assertEquals(0x2002, registers.getPC());
         assertFalse(flags.isZFlag());
         assertFalse(flags.isNFlag());
         assertFalse(flags.isHFlag());
@@ -269,7 +269,7 @@ class ByteAluInstructionsTest {
     void testAdcA_immediateByte_carrySet_0xCE() {
         registers.setPC(0x2000);
         registers.setA(0xF1);
-        addressSpace.set(0x2001, 0x0F);
+        addressSpace.set(0x2000, 0x0F);
         registers.getFlags().setCFlag(true);
 
         var instr = executeInstruction(0xCE, false, registers, addressSpace);
@@ -379,7 +379,7 @@ class ByteAluInstructionsTest {
     void testSubA_immediateByte_halfCarrySet_0xD6() {
         registers.setPC(0x2000);
         registers.setA(0xF1);
-        addressSpace.set(0x2001, 0x1F);
+        addressSpace.set(0x2000, 0x1F);
 
         var instr = executeInstruction(0xD6, false, registers, addressSpace);
 
@@ -455,7 +455,7 @@ class ByteAluInstructionsTest {
         registers.setPC(0x2000);
         registers.setA(0xF1);
         registers.getFlags().setCFlag(false);
-        addressSpace.set(0x2001, 0x11);
+        addressSpace.set(0x2000, 0x11);
 
         var instr = executeInstruction(0xDE, false, registers, addressSpace);
 
@@ -473,7 +473,7 @@ class ByteAluInstructionsTest {
     void testAnd_immediateByte_0xE6() {
         registers.setPC(0x2000);
         registers.setA(0xF1);
-        addressSpace.set(0x2001, 0xC2);
+        addressSpace.set(0x2000, 0xC2);
 
         var instr = executeInstruction(0xE6, false, registers, addressSpace);
 

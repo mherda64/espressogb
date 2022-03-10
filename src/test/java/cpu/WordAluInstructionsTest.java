@@ -100,7 +100,7 @@ public class WordAluInstructionsTest {
     @Test
     void testAddSP_immediateSigned_noFlagSet_0xE8() {
         var flags = registers.getFlags();
-        registers.setPC(0x2000);
+        registers.setPC(0x2001);
         registers.setSP(0x0100);
         addressSpace.set(0x2001, -25 & 0xFF);
         flags.setZFlag(true);
@@ -109,7 +109,7 @@ public class WordAluInstructionsTest {
 
         assertEquals(4, instr.getCycles(instr.getContext()));
         assertEquals(0x00E7, registers.getSP());
-        assertEquals(0x2001, registers.getPC());
+        assertEquals(0x2002, registers.getPC());
         // Zero flag not affected
         assertTrue(flags.isZFlag());
         assertFalse(flags.isNFlag());
@@ -121,7 +121,7 @@ public class WordAluInstructionsTest {
     @Test
     void testAddSP_immediateSigned_halfCarrySet_0xE8() {
         var flags = registers.getFlags();
-        registers.setPC(0x2000);
+        registers.setPC(0x2001);
         registers.setSP(0x011F);
         addressSpace.set(0x2001, 0x01);
         flags.setZFlag(true);
@@ -130,7 +130,7 @@ public class WordAluInstructionsTest {
 
         assertEquals(4, instr.getCycles(instr.getContext()));
         assertEquals(0x0120, registers.getSP());
-        assertEquals(0x2001, registers.getPC());
+        assertEquals(0x2002, registers.getPC());
         // Zero flag not affected
         assertTrue(flags.isZFlag());
         assertFalse(flags.isNFlag());

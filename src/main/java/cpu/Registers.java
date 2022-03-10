@@ -146,13 +146,13 @@ public class Registers {
     }
 
     public int decSP() {
-        sp -= 1;
-        return sp;
+//        sp -= 1;
+        return sp--;
     }
 
     public int incSP() {
-        sp += 1;
-        return sp;
+//        sp += 1;
+        return ++sp;
     }
 
     public int getA() {

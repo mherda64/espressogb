@@ -206,9 +206,8 @@ public class InstructionBuilder {
     }
 
     private int pop(Registers registers, AddressSpace addressSpace) {
-        var lo = addressSpace.get(registers.getSP());
+        var lo = addressSpace.get(registers.incSP());
         var hi = addressSpace.get(registers.incSP());
-        registers.incSP();
 
         return (hi << 8 | lo) & 0xFFFF;
     }
