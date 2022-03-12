@@ -14,11 +14,12 @@ class RegistersTest {
         r = new Registers();
 
         // when
+        // low 4 bytes of F are masked out
         r.setAF(0x1234);
 
         // then
         assertEquals(0x12, r.getA());
-        assertEquals(0x34, r.getFlags().getByte());
+        assertEquals(0x30, r.getFlags().getByte());
     }
 
     @Test
@@ -28,10 +29,11 @@ class RegistersTest {
 
         // when
         r.setA(0xFA);
+        // low 4 bytes of F are masked out
         r.setFlags(0xCC);
 
         // then
-        assertEquals(0xFACC, r.getAF());
+        assertEquals(0xFAC0, r.getAF());
     }
 
 }

@@ -76,6 +76,7 @@ public class PPU {
                     if (lineCounter > 153) {
                         currentMode = Mode.OAM_READ;
                         lineCounter = 0;
+//                        clearScreen();
                     }
 
                 }
@@ -92,6 +93,7 @@ public class PPU {
     }
 
     private int getSCX() {
+//        return 0;
         var scx = addressSpace.get(GPURegs.SCX.address);
         System.out.println("SCX:" + scx);
         return scx;
@@ -101,13 +103,19 @@ public class PPU {
         return 0xFF | r << 16 | g << 8 | b;
     }
 
+    private void clearScreen() {
+        for (int i = 0; i < 160 * 144; i++) {
+            display.setPixel(i, 0);
+        }
+    }
+
     private void drawLine() {
         // Offset for the tile map #0 or #1
         var mapOffset = backgroundMap ? 0x1C00 : 0x1800;
 
         // Which line of tiles to use in the map
         // divided by 8 as that's the height of a tile
-        mapOffset += ((lineCounter + getSCY()) & 0xFF) >> 3;
+        mapOffset += 32 * (((lineCounter + getSCY()) & 0xFF) >> 3);
 
         // Which tile to start with in the tile line
         var lineOffset = getSCX() >> 3;
@@ -124,9 +132,6 @@ public class PPU {
         var tile = addressSpace.get(tileMapAddress);
         if (backgroundTile && tile < 128) tile += 256;
 
-        if (tile != 0) {
-            System.out.println("break");
-        }
         var tilemap = tiles.getTileMap();
 
         for (int i = 0; i < 160; i++) {
@@ -141,10 +146,6 @@ public class PPU {
                 tileMapAddress = 0x8000 + mapOffset + lineOffset;
                 tile = addressSpace.get(tileMapAddress);
                 if (backgroundTile && tile < 128) tile += 256;
-
-                if (tile != 0) {
-                    System.out.println("break");
-                }
             }
         }
 

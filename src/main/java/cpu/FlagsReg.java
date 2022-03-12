@@ -60,7 +60,7 @@ public class FlagsReg {
 
     public void setFlagsByte(int value) {
         isByte(value);
-        f = value;
+        f = value & 0xF0;
     }
 
 }

@@ -67,7 +67,7 @@ public class InstructionBuilder {
         operations.add(new Operation() {
             @Override
             public int execute(Registers registers, AddressSpace addressSpace, int accumulator, Context context, InterruptManager interruptManager) {
-                registers.set(reg, accumulator);
+                registers.set(reg, accumulator & 0xFFFF);
                 return accumulator;
             }
         });
@@ -754,7 +754,7 @@ public class InstructionBuilder {
                     }
                 }
                 // If it fails, it probably needs 0xFF
-                registers.setA(regA + correction);
+                registers.setA((regA + correction) & 0xFF);
 
                 flags.setZFlag(registers.getA() == 0);
                 flags.setHFlag(false);

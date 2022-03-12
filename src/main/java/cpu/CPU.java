@@ -94,11 +94,12 @@ public class CPU {
         new Thread(tileSetDisplay).start();
         new Thread(mapDisplay).start();
 
-        cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/tetris.gb", 0x0);
+//        cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/tetris.gb", 0x0);
 //        cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/gb240p.gb", 0x0);
-//        cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/opus5.gb", 0x0);
-//        cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/individual/01-special.gb", 0x0);
-        cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/DMG_ROM.bin", 0x0);
+//        cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/cpu_instrs.gb", 0x0);
+        cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/individual/11-op a,(hl).gb", 0x0);
+//        cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/DMG_ROM.bin", 0x0);
+//        cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/bootix_dmg.bin", 0x0);
 
 //        for (int i = 0; i < 0x100; i++) {
 //            System.out.println(String.format("byte %d - %02X", i, memory.get(i)));
@@ -121,8 +122,8 @@ public class CPU {
                 opcode = memory.get(registers.incPC());
             }
 
-            if (registers.getPC() == 0x000C) {
-//                System.out.println("break");
+            if (registers.getPC() == 0xC33E) {
+                System.out.println("break");
             }
 
             var instr = prefixed ? Instructions.getPrefixed(opcode) : Instructions.get(opcode);
@@ -145,8 +146,8 @@ public class CPU {
 
             if (currentCycles > desiredCycles) {
 
-                mapDisplay.updateMap();
-                tileSetDisplay.updateTileMap();
+//                mapDisplay.updateMap();
+//                tileSetDisplay.updateTileMap();
 
                 while (lastTime + 1_000_000_000 > System.nanoTime()) ;
                 lastTime = System.nanoTime();

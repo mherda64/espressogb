@@ -133,7 +133,7 @@ class WordLoadInstructionsTest {
     void testPush_AF_0xF5() {
         registers.setPC(0x2000);
         registers.setSP(0x221F);
-        registers.setAF(0x1234);
+        registers.setAF(0x1230);
 
         var instr = executeInstruction(0xF5, false, registers, addressSpace);
 
@@ -141,14 +141,14 @@ class WordLoadInstructionsTest {
         assertEquals(0x221D, registers.getSP());
         assertEquals(0x2000, registers.getPC());
         assertEquals(0x12, addressSpace.get(0x221F));
-        assertEquals(0x34, addressSpace.get(0x221E));
+        assertEquals(0x30, addressSpace.get(0x221E));
     }
 
     @Test
     void testPop_AF_0xF1() {
         registers.setPC(0x2000);
         registers.setSP(0x221C);
-        registers.setAF(0xFFFF);
+        registers.setAF(0xFF00);
         addressSpace.set(0x221E, 0x12);
         addressSpace.set(0x221D, 0x34);
 
@@ -157,7 +157,7 @@ class WordLoadInstructionsTest {
         assertEquals(3, instr.getCycles(instr.getContext()));
         assertEquals(0x221E, registers.getSP());
         assertEquals(0x2000, registers.getPC());
-        assertEquals(0x1234, registers.getAF());
+        assertEquals(0x1230, registers.getAF());
     }
 
 }
