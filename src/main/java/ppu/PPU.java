@@ -88,14 +88,14 @@ public class PPU {
     private int getSCY() {
 //        return 0;
         var scy = addressSpace.get(GPURegs.SCY.address);
-        System.out.println("SCY:" + scy);
+//        System.out.println("SCY:" + scy);
         return scy;
     }
 
     private int getSCX() {
 //        return 0;
         var scx = addressSpace.get(GPURegs.SCX.address);
-        System.out.println("SCX:" + scx);
+//        System.out.println("SCX:" + scx);
         return scx;
     }
 

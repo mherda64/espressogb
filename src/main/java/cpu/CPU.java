@@ -95,9 +95,9 @@ public class CPU {
         new Thread(mapDisplay).start();
 
 //        cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/tetris.gb", 0x0);
-//        cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/gb240p.gb", 0x0);
+//        cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/dmg-acid2.gb", 0x0);
 //        cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/cpu_instrs.gb", 0x0);
-        cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/individual/11-op a,(hl).gb", 0x0);
+        cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/individual/03-op sp,hl.gb", 0x0);
 //        cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/DMG_ROM.bin", 0x0);
 //        cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/bootix_dmg.bin", 0x0);
 
@@ -144,15 +144,15 @@ public class CPU {
             currentCycles += cycles;
 //            System.out.println(cpu.getCycleCounter());
 
+
             if (currentCycles > desiredCycles) {
 
-//                mapDisplay.updateMap();
-//                tileSetDisplay.updateTileMap();
+                mapDisplay.updateMap();
+                tileSetDisplay.updateTileMap();
 
                 while (lastTime + 1_000_000_000 > System.nanoTime()) ;
                 lastTime = System.nanoTime();
                 currentCycles = 0;
-
             }
         }
     }

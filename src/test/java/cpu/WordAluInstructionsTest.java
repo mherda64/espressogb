@@ -110,12 +110,32 @@ public class WordAluInstructionsTest {
         assertEquals(4, instr.getCycles(instr.getContext()));
         assertEquals(0x00E7, registers.getSP());
         assertEquals(0x2002, registers.getPC());
-        // Zero flag not affected
-        assertTrue(flags.isZFlag());
+        // Zero flag reset
+        assertFalse(flags.isZFlag());
         assertFalse(flags.isNFlag());
         // Not sure how flags should behave with negative numbers and borrowing
         assertFalse(flags.isHFlag());
         assertFalse(flags.isCFlag());
+    }
+
+    @Test
+    void testAddSP_immediateSigned_0xE8() {
+        var flags = registers.getFlags();
+        registers.setPC(0x2001);
+        registers.setSP(0xFFFF);
+        addressSpace.set(0x2001, -1 & 0xFF);
+        flags.setZFlag(true);
+
+        var instr = executeInstruction(0xE8, false, registers, addressSpace);
+
+        assertEquals(4, instr.getCycles(instr.getContext()));
+        assertEquals(0xFFFE, registers.getSP());
+        assertEquals(0x2002, registers.getPC());
+        // Zero flag reset
+        assertFalse(flags.isZFlag());
+        assertFalse(flags.isNFlag());
+        assertTrue(flags.isHFlag());
+        assertTrue(flags.isCFlag());
     }
 
     @Test
@@ -132,7 +152,7 @@ public class WordAluInstructionsTest {
         assertEquals(0x0120, registers.getSP());
         assertEquals(0x2002, registers.getPC());
         // Zero flag not affected
-        assertTrue(flags.isZFlag());
+        assertFalse(flags.isZFlag());
         assertFalse(flags.isNFlag());
         assertTrue(flags.isHFlag());
         assertFalse(flags.isCFlag());

@@ -6,13 +6,13 @@ public class FlagsReg {
 
     private int f;
 
-    private static final int Z_FLAG = 7;
+    public static final int Z_FLAG = 7;
 
-    private static final int N_FLAG = 6;
+    public static final int N_FLAG = 6;
 
-    private static final int H_FLAG = 5;
+    public static final int H_FLAG = 5;
 
-    private static final int C_FLAG = 4;
+    public static final int C_FLAG = 4;
 
     public FlagsReg(int f) {
         isByte(f);

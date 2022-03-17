@@ -1,5 +1,6 @@
 package cpu.instruction.appender;
 
+import cpu.FlagsReg;
 import cpu.RegEnum;
 import cpu.instruction.Instruction;
 import cpu.instruction.Opcode;
@@ -42,6 +43,7 @@ public class WordAluInstructions implements InstructionAppender {
                         .toSigned()
                         .add(RegEnum.SP, false, true)
                         .store(RegEnum.SP)
+                        .setFlag(FlagsReg.Z_FLAG, false)
                         .build(context -> 4)
         );
 
