@@ -141,18 +141,15 @@ public class Registers {
     }
 
     public int incPC() {
-//        pc += 1;
         return pc++;
     }
 
     public int decSP() {
-//        sp -= 1;
-        return sp--;
+        return --sp;
     }
 
     public int incSP() {
-//        sp += 1;
-        return ++sp;
+        return sp++;
     }
 
     public int getA() {

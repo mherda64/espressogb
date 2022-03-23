@@ -6,29 +6,34 @@ import java.awt.image.BufferedImage;
 
 public class Display extends JPanel implements Runnable {
 
-    public static final int DISPLAY_WIDTH = 160;
+    public final int DISPLAY_WIDTH;
 
-    public static final int DISPLAY_HEIGHT = 144;
+    public final int DISPLAY_HEIGHT;
 
     private final BufferedImage img;
 
-    private final int[] rgb;
+    protected final int scale;
 
-    private int pixelCounter = 0;
+    protected final int[][] rgb;
 
-    public static final int[] COLORS = new int[]{0xe6f8da, 0x99c886, 0x437969, 0x051f2a};
-
-    public Display() {
+    public Display(int width, int height, int scale) {
+        this.DISPLAY_WIDTH = width;
+        this.DISPLAY_HEIGHT = height;
+        this.scale = scale;
         this.img = GraphicsEnvironment
                 .getLocalGraphicsEnvironment()
                 .getDefaultScreenDevice()
                 .getDefaultConfiguration()
-                .createCompatibleImage(DISPLAY_WIDTH, DISPLAY_HEIGHT);
-        rgb = new int[DISPLAY_WIDTH * DISPLAY_HEIGHT];
+                .createCompatibleImage(DISPLAY_WIDTH * scale, DISPLAY_HEIGHT * scale);
+        rgb = new int[DISPLAY_HEIGHT * scale][DISPLAY_WIDTH * scale];
     }
 
-    public void setPixel(int pixel, int value) {
-        rgb[pixel] = value;
+    public void setPixel(int x, int y, int value) {
+        for (int i = 0; i < scale; i++) {
+            for (int j = 0; j < scale; j++) {
+                rgb[x * scale + i][y * scale + j] = value;
+            }
+        }
     }
 
     @Override
@@ -36,21 +41,22 @@ public class Display extends JPanel implements Runnable {
         super.paintComponent(g);
 
         var g2d = (Graphics2D) g.create();
-        g2d.drawImage(img, 0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT, null);
+        g2d.drawImage(img, 0, 0, DISPLAY_WIDTH * scale, DISPLAY_HEIGHT * scale, null);
         g2d.dispose();
     }
 
     @Override
     public void run() {
+        var singleDimensionRGB = new int[DISPLAY_WIDTH * scale * DISPLAY_HEIGHT * scale];
         while (true) {
-//            for (int i = 0; i < rgb.length; i++) {
-//                var R = (int) (Math.random() * 255);
-//                var G = (int) (Math.random() * 255);
-//                var B = (int) (Math.random() * 255);
-//                rgb[i] = 0xFF000000 | R << 16 | G << 8 | B;
-//            }
 
-            img.setRGB(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT, rgb, 0, DISPLAY_WIDTH);
+            for (int i = 0; i < rgb.length; i++) {
+                for (int j = 0; j < rgb[i].length; j++) {
+                    singleDimensionRGB[i * DISPLAY_WIDTH * scale + j] = rgb[i][j];
+                }
+            }
+
+            img.setRGB(0, 0, DISPLAY_WIDTH * scale, DISPLAY_HEIGHT * scale, singleDimensionRGB, 0, DISPLAY_WIDTH * scale);
 
             validate();
             repaint();

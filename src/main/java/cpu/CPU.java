@@ -18,7 +18,9 @@ public class CPU {
 
     private int cycleCounter;
 
-    private int freq = 1048576;
+    private final int freq = 1048576;
+
+    private static final int SCALE = 2;
 
     public CPU(Registers registers, Memory memory) {
         this.registers = registers;
@@ -53,31 +55,23 @@ public class CPU {
         var tiles = new Tiles(memory);
         memory.setTiles(tiles);
 
-        var display = new Display();
-        display.setPreferredSize(new Dimension(160, 144));
-
-        var mainWindow = new JFrame("screen");
-        mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        mainWindow.setLocationRelativeTo(null);
-        mainWindow.setContentPane(display);
-        mainWindow.setResizable(false);
-        mainWindow.setVisible(true);
-        mainWindow.pack();
+        var display = new Display(160, 144, SCALE);
+        display.setPreferredSize(new Dimension(160 * SCALE, 144 * SCALE));
 
 
-        var tileSetDisplay = new TileDisplay(tiles);
-        tileSetDisplay.setPreferredSize(new Dimension(200, 200));
+        var tileSetDisplay = new TileDisplay(tiles, SCALE);
+        tileSetDisplay.setPreferredSize(new Dimension(150 * SCALE, 200 * SCALE));
 
         var tileSetWindow = new JFrame("tileset");
         tileSetWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        tileSetWindow.setLocationRelativeTo(mainWindow);
+        tileSetWindow.setLocationRelativeTo(null);
         tileSetWindow.setContentPane(tileSetDisplay);
         tileSetWindow.setResizable(false);
         tileSetWindow.setVisible(true);
         tileSetWindow.pack();
 
-        var mapDisplay = new MapDisplay(memory, tiles);
-        mapDisplay.setPreferredSize(new Dimension(300, 300));
+        var mapDisplay = new MapDisplay(memory, tiles, SCALE);
+        mapDisplay.setPreferredSize(new Dimension(260 * SCALE, 260 * SCALE));
 
         var tileMapWindow = new JFrame("tilemap");
         tileMapWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -87,6 +81,13 @@ public class CPU {
         tileMapWindow.setVisible(true);
         tileMapWindow.pack();
 
+        var mainWindow = new JFrame("screen");
+        mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        mainWindow.setLocationRelativeTo(tileMapWindow);
+        mainWindow.setContentPane(display);
+        mainWindow.setResizable(false);
+        mainWindow.setVisible(true);
+        mainWindow.pack();
 
         var ppu = new PPU(memory, display, tiles);
 
@@ -94,16 +95,32 @@ public class CPU {
         new Thread(tileSetDisplay).start();
         new Thread(mapDisplay).start();
 
+//        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/individual/01-special.gb"; //passed
+//        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/individual/02-interrupts.gb"; //failed
+//        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/individual/03-op sp,hl.gb"; //passed
+//        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/individual/04-op r,imm.gb"; //passed
+//        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/individual/05-op rp.gb"; //passed
+//        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/individual/06-ld r,r.gb"; //passed
+//        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/individual/07-jr,jp,call,ret,rst.gb"; //passed
+//        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/individual/08-misc instrs.gb"; //passed
+        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/individual/09-op r,r.gb"; //failed
+//        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/individual/10-bit ops.gb"; //passed
+//        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/individual/11-op a,(hl).gb"; //passed
+//        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/dmg-acid2.gb"; //passed
+
+        cpu.loadFile(filePath, 0x0);
+
 //        cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/tetris.gb", 0x0);
 //        cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/dmg-acid2.gb", 0x0);
 //        cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/cpu_instrs.gb", 0x0);
-        cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/individual/03-op sp,hl.gb", 0x0);
-//        cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/DMG_ROM.bin", 0x0);
+//        cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/individual/07-jr,jp,call,ret,rst.gb", 0x0);
+        cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/DMG_ROM.bin", 0x0);
 //        cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/bootix_dmg.bin", 0x0);
 
 //        for (int i = 0; i < 0x100; i++) {
 //            System.out.println(String.format("byte %d - %02X", i, memory.get(i)));
 //        }
+
 
         var interruptManager = new InterruptManager();
 
@@ -114,12 +131,21 @@ public class CPU {
 //        registers.setPC(0x100);
 
         while (true) {
+
+            if (registers.getPC() == 0x100)
+                cpu.loadFile(filePath, 0x0);
+
+
             boolean prefixed = false;
             int opcode = memory.get(registers.incPC());
 
             if (opcode == 0xCB) {
                 prefixed = true;
                 opcode = memory.get(registers.incPC());
+            }
+
+            if (opcode == 0x18) {
+                System.out.println("break");
             }
 
             if (registers.getPC() == 0xC33E) {
@@ -148,7 +174,7 @@ public class CPU {
             if (currentCycles > desiredCycles) {
 
                 mapDisplay.updateMap();
-                tileSetDisplay.updateTileMap();
+                tileSetDisplay.updateMap();
 
                 while (lastTime + 1_000_000_000 > System.nanoTime()) ;
                 lastTime = System.nanoTime();

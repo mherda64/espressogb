@@ -104,8 +104,9 @@ public class PPU {
     }
 
     private void clearScreen() {
-        for (int i = 0; i < 160 * 144; i++) {
-            display.setPixel(i, 0);
+        for (int x = 0; x < 144; x++) {
+            for (int y = 0; y < 160; y++)
+                display.setPixel(x, y, 0);
         }
     }
 
@@ -126,7 +127,7 @@ public class PPU {
         // Which pixel to use in the pixel line
         var x = getSCX() & 7;
 
-        var displayOffset = 160 * lineCounter;
+//        var displayOffset = 160 * lineCounter;
 
         var tileMapAddress = 0x8000 + mapOffset + lineOffset;
         var tile = addressSpace.get(tileMapAddress);
@@ -136,8 +137,9 @@ public class PPU {
 
         for (int i = 0; i < 160; i++) {
             var colour = PALETTE[tilemap[tile][y][x]];
-            display.setPixel(displayOffset, colour);
-            displayOffset += 1;
+            display.setPixel(lineCounter, i, colour);
+//            display.setPixel(displayOffset, colour);
+//            displayOffset += 1;
             x += 1;
 
             if (x == 8) {
