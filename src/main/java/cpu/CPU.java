@@ -1,6 +1,7 @@
 package cpu;
 
 import cpu.instruction.Instructions;
+import input.InputManager;
 import memory.AddressSpace;
 import memory.Memory;
 import ppu.*;
@@ -52,12 +53,14 @@ public class CPU {
         var memory = new Memory(0x10000);
         var cpu = new CPU(registers, memory);
 
+        var inputManager = new InputManager();
+        memory.setInputManager(inputManager);
+
         var tiles = new Tiles(memory);
         memory.setTiles(tiles);
 
         var display = new Display(160, 144, SCALE);
         display.setPreferredSize(new Dimension(160 * SCALE, 144 * SCALE));
-
 
         var tileSetDisplay = new TileDisplay(tiles, SCALE);
         tileSetDisplay.setPreferredSize(new Dimension(150 * SCALE, 200 * SCALE));
@@ -88,6 +91,7 @@ public class CPU {
         mainWindow.setResizable(false);
         mainWindow.setVisible(true);
         mainWindow.pack();
+        mainWindow.addKeyListener(inputManager);
 
         var ppu = new PPU(memory, display, tiles);
 
@@ -156,9 +160,9 @@ public class CPU {
             var instr = prefixed ? Instructions.getPrefixed(opcode) : Instructions.get(opcode);
             var context = instr.getContext();
 
-            System.out.println(
-                    String.format("PC %04X - %s", prefixed ? registers.getPC() - 1 : registers.getPC(), instr.getLabel())
-            );
+//            System.out.println(
+//                    String.format("PC %04X - %s", prefixed ? registers.getPC() - 1 : registers.getPC(), instr.getLabel())
+//            );
 
             int accumulator = 0;
             for (var operation : instr.getOperations()) {
@@ -173,11 +177,11 @@ public class CPU {
 
             if (currentCycles > desiredCycles) {
 
-                mapDisplay.updateMap();
-                mapDisplay.requestRefresh();
+//                mapDisplay.updateMap();
+//                mapDisplay.requestRefresh();
 
-                tileSetDisplay.updateMap();
-                tileSetDisplay.requestRefresh();
+//                tileSetDisplay.updateMap();
+//                tileSetDisplay.requestRefresh();
 
                 while (lastTime + 1_000_000_000 > System.nanoTime()) ;
                 lastTime = System.nanoTime();
