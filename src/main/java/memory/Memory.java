@@ -6,8 +6,8 @@ import static cpu.BitUtils.*;
 
 public class Memory implements AddressSpace {
 
-    private int size;
-    private int[] memory;
+    private final int size;
+    private final int[] memory;
     private Tiles tiles;
 
     public Memory(int size) {

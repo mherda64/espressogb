@@ -6,6 +6,8 @@ import java.awt.image.BufferedImage;
 
 public class Display extends JPanel implements Runnable {
 
+    private boolean doRefresh = false;
+
     public final int DISPLAY_WIDTH;
 
     public final int DISPLAY_HEIGHT;
@@ -15,6 +17,8 @@ public class Display extends JPanel implements Runnable {
     protected final int scale;
 
     protected final int[][] rgb;
+
+    private final int[] singleDimensionRGB;
 
     public Display(int width, int height, int scale) {
         this.DISPLAY_WIDTH = width;
@@ -26,6 +30,11 @@ public class Display extends JPanel implements Runnable {
                 .getDefaultConfiguration()
                 .createCompatibleImage(DISPLAY_WIDTH * scale, DISPLAY_HEIGHT * scale);
         rgb = new int[DISPLAY_HEIGHT * scale][DISPLAY_WIDTH * scale];
+        singleDimensionRGB = new int[DISPLAY_WIDTH * scale * DISPLAY_HEIGHT * scale];
+    }
+
+    public void requestRefresh() {
+        this.doRefresh = true;
     }
 
     public void setPixel(int x, int y, int value) {
@@ -47,19 +56,29 @@ public class Display extends JPanel implements Runnable {
 
     @Override
     public void run() {
-        var singleDimensionRGB = new int[DISPLAY_WIDTH * scale * DISPLAY_HEIGHT * scale];
         while (true) {
-
-            for (int i = 0; i < rgb.length; i++) {
-                for (int j = 0; j < rgb[i].length; j++) {
-                    singleDimensionRGB[i * DISPLAY_WIDTH * scale + j] = rgb[i][j];
+            synchronized (this) {
+                try {
+                    wait(1);
+                } catch (InterruptedException e) {
+                    break;
                 }
             }
 
-            img.setRGB(0, 0, DISPLAY_WIDTH * scale, DISPLAY_HEIGHT * scale, singleDimensionRGB, 0, DISPLAY_WIDTH * scale);
+            if (doRefresh) {
+                doRefresh = false;
 
-            validate();
-            repaint();
+                for (int i = 0; i < rgb.length; i++) {
+                    for (int j = 0; j < rgb[i].length; j++) {
+                        singleDimensionRGB[i * DISPLAY_WIDTH * scale + j] = rgb[i][j];
+                    }
+                }
+
+                img.setRGB(0, 0, DISPLAY_WIDTH * scale, DISPLAY_HEIGHT * scale, singleDimensionRGB, 0, DISPLAY_WIDTH * scale);
+
+                validate();
+                repaint();
+            }
         }
     }
 }

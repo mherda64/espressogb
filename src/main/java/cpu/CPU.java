@@ -103,10 +103,12 @@ public class CPU {
 //        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/individual/06-ld r,r.gb"; //passed
 //        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/individual/07-jr,jp,call,ret,rst.gb"; //passed
 //        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/individual/08-misc instrs.gb"; //passed
-        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/individual/09-op r,r.gb"; //failed
+//        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/individual/09-op r,r.gb"; //failed
 //        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/individual/10-bit ops.gb"; //passed
 //        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/individual/11-op a,(hl).gb"; //passed
-//        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/dmg-acid2.gb"; //passed
+//        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/dmg-acid2.gb";
+//        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/tetris.gb";
+        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/ttt.gb";
 
         cpu.loadFile(filePath, 0x0);
 
@@ -114,8 +116,8 @@ public class CPU {
 //        cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/dmg-acid2.gb", 0x0);
 //        cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/cpu_instrs.gb", 0x0);
 //        cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/individual/07-jr,jp,call,ret,rst.gb", 0x0);
-        cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/DMG_ROM.bin", 0x0);
-//        cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/bootix_dmg.bin", 0x0);
+//        cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/DMG_ROM.bin", 0x0);
+        cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/bootix_dmg.bin", 0x0);
 
 //        for (int i = 0; i < 0x100; i++) {
 //            System.out.println(String.format("byte %d - %02X", i, memory.get(i)));
@@ -135,7 +137,6 @@ public class CPU {
             if (registers.getPC() == 0x100)
                 cpu.loadFile(filePath, 0x0);
 
-
             boolean prefixed = false;
             int opcode = memory.get(registers.incPC());
 
@@ -144,13 +145,13 @@ public class CPU {
                 opcode = memory.get(registers.incPC());
             }
 
-            if (opcode == 0x18) {
-                System.out.println("break");
-            }
-
-            if (registers.getPC() == 0xC33E) {
-                System.out.println("break");
-            }
+//            if (opcode == 0x18) {
+//                System.out.println("break");
+//            }
+//
+//            if (registers.getPC() == 0xC33E) {
+//                System.out.println("break");
+//            }
 
             var instr = prefixed ? Instructions.getPrefixed(opcode) : Instructions.get(opcode);
             var context = instr.getContext();
@@ -170,11 +171,13 @@ public class CPU {
             currentCycles += cycles;
 //            System.out.println(cpu.getCycleCounter());
 
-
             if (currentCycles > desiredCycles) {
 
                 mapDisplay.updateMap();
+                mapDisplay.requestRefresh();
+
                 tileSetDisplay.updateMap();
+                tileSetDisplay.requestRefresh();
 
                 while (lastTime + 1_000_000_000 > System.nanoTime()) ;
                 lastTime = System.nanoTime();
