@@ -9,7 +9,9 @@ public enum GPURegs {
     LYC(0xFF45),
     WY(0xFF4A),
     WX(0xFF4B),
-    BGP(0xFF47);
+    BGP(0xFF47),
+    OBJ_PAL_1(0xFF48),
+    OBJ_PAL_2(0xFF49);
 
     int address;
 

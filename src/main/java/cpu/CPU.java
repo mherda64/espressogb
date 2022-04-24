@@ -5,6 +5,7 @@ import input.InputManager;
 import memory.AddressSpace;
 import memory.Memory;
 import ppu.*;
+import ppu.oam.SpriteManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,9 +20,11 @@ public class CPU {
 
     private int cycleCounter;
 
-    private final int freq = 1048576;
+    private final int freq = 2000;
 
-    private static final int SCALE = 2;
+    private static final int DISPLAY_SCALE = 3;
+    private static final int TILESET_SCALE = 2;
+    private static final int BGMAP_SCALE = 2;
 
     public CPU(Registers registers, Memory memory) {
         this.registers = registers;
@@ -51,30 +54,33 @@ public class CPU {
     public static void main(String[] args) throws IOException {
         var registers = new Registers();
         var memory = new Memory(0x10000);
+        var gpuRegsManager = new GPURegsManager(memory);
         var cpu = new CPU(registers, memory);
 
         var inputManager = new InputManager();
         memory.setInputManager(inputManager);
 
         var tiles = new Tiles(memory);
+        var sprites = new SpriteManager();
         memory.setTiles(tiles);
+        memory.setSprites(sprites);
 
-        var display = new Display(160, 144, SCALE);
-        display.setPreferredSize(new Dimension(160 * SCALE, 144 * SCALE));
+        var display = new Display(160, 144, DISPLAY_SCALE);
+        display.setPreferredSize(new Dimension(160 * DISPLAY_SCALE, 144 * DISPLAY_SCALE));
 
-        var tileSetDisplay = new TileDisplay(tiles, SCALE);
-        tileSetDisplay.setPreferredSize(new Dimension(150 * SCALE, 200 * SCALE));
+        var tileSetDisplay = new TileDisplay(tiles, gpuRegsManager, TILESET_SCALE);
+        tileSetDisplay.setPreferredSize(new Dimension(150 * TILESET_SCALE, 200 * TILESET_SCALE));
 
         var tileSetWindow = new JFrame("tileset");
         tileSetWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        tileSetWindow.setLocationRelativeTo(null);
+        tileSetWindow.setLocation(0, 0);
         tileSetWindow.setContentPane(tileSetDisplay);
         tileSetWindow.setResizable(false);
         tileSetWindow.setVisible(true);
         tileSetWindow.pack();
 
-        var mapDisplay = new MapDisplay(memory, tiles, SCALE);
-        mapDisplay.setPreferredSize(new Dimension(260 * SCALE, 260 * SCALE));
+        var mapDisplay = new MapDisplay(memory, gpuRegsManager, tiles, BGMAP_SCALE);
+        mapDisplay.setPreferredSize(new Dimension(260 * BGMAP_SCALE, 260 * BGMAP_SCALE));
 
         var tileMapWindow = new JFrame("tilemap");
         tileMapWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -93,7 +99,7 @@ public class CPU {
         mainWindow.pack();
         mainWindow.addKeyListener(inputManager);
 
-        var ppu = new PPU(memory, display, tiles);
+        var ppu = new PPU(memory, gpuRegsManager, sprites, display, tiles);
 
         new Thread(display).start();
         new Thread(tileSetDisplay).start();
@@ -112,16 +118,14 @@ public class CPU {
 //        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/individual/11-op a,(hl).gb"; //passed
 //        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/dmg-acid2.gb";
 //        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/tetris.gb";
+//        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/mario.gb";
+//        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/dr_mario.gb";
         var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/ttt.gb";
 
         cpu.loadFile(filePath, 0x0);
 
-//        cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/tetris.gb", 0x0);
-//        cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/dmg-acid2.gb", 0x0);
-//        cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/cpu_instrs.gb", 0x0);
-//        cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/individual/07-jr,jp,call,ret,rst.gb", 0x0);
-//        cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/DMG_ROM.bin", 0x0);
-        cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/bootix_dmg.bin", 0x0);
+        cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/DMG_ROM.bin", 0x0);
+//        cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/bootix_dmg.bin", 0x0);
 
 //        for (int i = 0; i < 0x100; i++) {
 //            System.out.println(String.format("byte %d - %02X", i, memory.get(i)));
@@ -133,8 +137,6 @@ public class CPU {
         int currentCycles = 0;
         var lastTime = System.nanoTime();
         int desiredCycles = cpu.freq;
-
-//        registers.setPC(0x100);
 
         while (true) {
 
@@ -148,14 +150,6 @@ public class CPU {
                 prefixed = true;
                 opcode = memory.get(registers.incPC());
             }
-
-//            if (opcode == 0x18) {
-//                System.out.println("break");
-//            }
-//
-//            if (registers.getPC() == 0xC33E) {
-//                System.out.println("break");
-//            }
 
             var instr = prefixed ? Instructions.getPrefixed(opcode) : Instructions.get(opcode);
             var context = instr.getContext();
@@ -175,15 +169,17 @@ public class CPU {
             currentCycles += cycles;
 //            System.out.println(cpu.getCycleCounter());
 
+//            while (lastTime + inputManager.delay > System.nanoTime()) ;
+
             if (currentCycles > desiredCycles) {
 
-//                mapDisplay.updateMap();
-//                mapDisplay.requestRefresh();
+                mapDisplay.updateMap();
+                mapDisplay.requestRefresh();
 
-//                tileSetDisplay.updateMap();
-//                tileSetDisplay.requestRefresh();
+                tileSetDisplay.updateMap();
+                tileSetDisplay.requestRefresh();
 
-                while (lastTime + 1_000_000_000 > System.nanoTime()) ;
+//                System.out.println(inputManager.delay);
                 lastTime = System.nanoTime();
                 currentCycles = 0;
             }

@@ -1,6 +1,7 @@
 package ppu;
 
 import memory.AddressSpace;
+import ppu.oam.SpriteManager;
 
 public class PPU {
 
@@ -8,15 +9,17 @@ public class PPU {
     private final Display display;
     private final AddressSpace addressSpace;
     private final GPURegsManager regsManager;
+    private final SpriteManager spriteManager;
     private Mode currentMode;
     private int lineCounter;
     private int currentModeClockCounter;
 
-    public PPU(AddressSpace addressSpace, Display display, Tiles tiles) {
+    public PPU(AddressSpace addressSpace, GPURegsManager regsManager, SpriteManager spriteManager, Display display, Tiles tiles) {
         this.tiles = tiles;
         this.addressSpace = addressSpace;
         this.display = display;
-        this.regsManager = new GPURegsManager(addressSpace);
+        this.regsManager = regsManager;
+        this.spriteManager = spriteManager;
         this.currentMode = Mode.OAM_READ;
         this.lineCounter = 0;
         this.currentModeClockCounter = 0;
@@ -96,30 +99,59 @@ public class PPU {
         // Which pixel to use in the pixel line
         var x = regsManager.getSCX() & 7;
 
-//        var displayOffset = 160 * lineCounter;
-
         var tileMapAddress = 0x8000 + mapOffset + lineOffset;
-        var tile = addressSpace.get(tileMapAddress);
-        if (regsManager.isBackgroundTiles() && tile < 128) tile += 256;
+        var tileIndex = addressSpace.get(tileMapAddress);
+        if (regsManager.isBackgroundTiles() && tileIndex < 128) tileIndex += 256;
 
         var tilemap = tiles.getTileMap();
+        var bgPalette = regsManager.getBGPalette();
+
+        var scanRow = new int[160];
 
         for (int i = 0; i < 160; i++) {
-//            var colour = PALETTE[tilemap[tile][y][x]];
-            var colour = regsManager.getPalette()[tilemap[tile][y][x]];
+            scanRow[i] = tilemap[tileIndex][y][x];
+            var colour = bgPalette[tilemap[tileIndex][y][x]];
             display.setPixel(lineCounter, i, colour);
-//            display.setPixel(displayOffset, colour);
-//            displayOffset += 1;
             x += 1;
 
             if (x == 8) {
                 x = 0;
                 lineOffset = (lineOffset + 1) & 31;
                 tileMapAddress = 0x8000 + mapOffset + lineOffset;
-                tile = addressSpace.get(tileMapAddress);
-                if (regsManager.isBackgroundTiles() && tile < 128) tile += 256;
+                tileIndex = addressSpace.get(tileMapAddress);
+                if (regsManager.isBackgroundTiles() && tileIndex < 128) tileIndex += 256;
             }
         }
 
+        if (regsManager.isSpritesEnabled()) {
+            var sprites = spriteManager.getSprites();
+
+            for (var sprite : sprites) {
+                // If sprite is in line
+                if (sprite.getYPos() <= lineCounter && sprite.getYPos() + 8 > lineCounter) {
+                    var palette = sprite.isSecondPalette()
+                            ? regsManager.getSecondObjPalette()
+                            : regsManager.getFirstObjPalette();
+
+                    var spriteTileIndex = sprite.getTile();
+                    var tile = tilemap[spriteTileIndex];
+                    var tileRow = sprite.isYFlip()
+                            ? tile[7 - lineCounter + sprite.getYPos()]
+                            : tile[lineCounter - sprite.getYPos()];
+
+                    for (int tileCol = 0; tileCol < 8; tileCol++) {
+                        var destCol = sprite.getXPos() + tileCol;
+                        if (destCol >= 0
+                                && destCol < 160
+                                && tileRow[tileCol] > 0
+                                && (sprite.isAboveBgPriority() || scanRow[tileCol] == 0))
+                        {
+                            var colour = palette[tileRow[sprite.isXFlip() ? 7 - tileCol : tileCol]];
+                            display.setPixel(lineCounter, destCol, colour);
+                        }
+                    }
+                }
+            }
+        }
     }
 }

@@ -12,12 +12,9 @@ public class GPURegsManager {
             0
     };
 
-    private int[] palette = new int[4];
-
-//    private boolean switchBackground = false;
-//    private boolean backgroundMap = false;
-//    private boolean backgroundTiles = false;
-//    private boolean switchLCD = false;
+    private final int[] bgPalette = new int[4];
+    private final int[] firstObjPalette = new int[4];
+    private final int[] secondObjPalette = new int[4];
 
     private final AddressSpace addressSpace;
 
@@ -33,6 +30,10 @@ public class GPURegsManager {
         return addressSpace.get(GPURegs.SCX.address);
     }
 
+    public boolean isSpritesEnabled() {
+        return BitUtils.getByteBit(addressSpace.get(GPURegs.LDCD.address), 1);
+    }
+
     public boolean isBackgroundMap() {
         return BitUtils.getByteBit(addressSpace.get(GPURegs.LDCD.address), 3);
     }
@@ -41,12 +42,29 @@ public class GPURegsManager {
         return !BitUtils.getByteBit(addressSpace.get(GPURegs.LDCD.address), 4);
     }
 
-    public int[] getPalette() {
+    // TODO: update palettes in the future only when necessary
+    public int[] getBGPalette() {
         var paletteReg = addressSpace.get(GPURegs.BGP.address);
         for (int i = 0; i < 4; i++) {
-            palette[i] = COLORS[(paletteReg >> (i * 2)) & 3];
+            bgPalette[i] = COLORS[(paletteReg >> (i * 2)) & 3];
         }
-        return palette;
+        return bgPalette;
+    }
+
+    public int[] getFirstObjPalette() {
+        var paletteReg = addressSpace.get(GPURegs.OBJ_PAL_1.address);
+        for (int i = 0; i < 4; i++) {
+            firstObjPalette[i] = COLORS[(paletteReg >> (i * 2)) & 3];
+        }
+        return firstObjPalette;
+    }
+
+    public int[] getSecondObjPalette() {
+        var paletteReg = addressSpace.get(GPURegs.OBJ_PAL_1.address);
+        for (int i = 0; i < 4; i++) {
+            firstObjPalette[i] = COLORS[(paletteReg >> (i * 2)) & 3];
+        }
+        return firstObjPalette;
     }
 
     private static int getColor(int r, int g, int b) {
