@@ -9,7 +9,7 @@ public class InstructionsTest {
     public static Instruction executeInstruction(int opcode, boolean prefixed, Registers registers, AddressSpace addressSpace) {
         var instr = prefixed ? Instructions.getPrefixed(opcode) : Instructions.get(opcode);
         var context = instr.getContext();
-        var interruptManager = new InterruptManager();
+        var interruptManager = new InterruptManager(null, registers, addressSpace);
 
         int accumulator = 0;
         for (var operation : instr.getOperations()) {

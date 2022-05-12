@@ -1,5 +1,6 @@
 package ppu;
 
+import cpu.InterruptRegs;
 import memory.AddressSpace;
 import ppu.oam.SpriteManager;
 
@@ -52,6 +53,7 @@ public class PPU {
 
                     if (lineCounter == 143) {
                         currentMode = Mode.VBLANK;
+                        addressSpace.set(InterruptRegs.IF.getAddress(), addressSpace.get(InterruptRegs.IF.getAddress()) | 0x01);
                         display.requestRefresh();
                     } else {
                         currentMode = Mode.OAM_READ;
@@ -72,7 +74,7 @@ public class PPU {
                 }
                 break;
         }
-        addressSpace.set(0xFF44, lineCounter);
+        addressSpace.set(GPURegs.LY.address, lineCounter);
     }
 
     private void clearScreen() {

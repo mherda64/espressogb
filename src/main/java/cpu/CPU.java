@@ -117,10 +117,11 @@ public class CPU {
 //        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/individual/10-bit ops.gb"; //passed
 //        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/individual/11-op a,(hl).gb"; //passed
 //        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/dmg-acid2.gb";
-//        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/tetris.gb";
+        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/tetris.gb";
 //        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/mario.gb";
 //        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/dr_mario.gb";
-        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/ttt.gb";
+//        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/ttt.gb";
+//        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/mini4.gb";
 
         cpu.loadFile(filePath, 0x0);
 
@@ -132,7 +133,7 @@ public class CPU {
 //        }
 
 
-        var interruptManager = new InterruptManager();
+        var interruptManager = new InterruptManager(cpu, registers, memory);
 
         int currentCycles = 0;
         var lastTime = System.nanoTime();
@@ -142,6 +143,12 @@ public class CPU {
 
             if (registers.getPC() == 0x100)
                 cpu.loadFile(filePath, 0x0);
+
+            interruptManager.updateEnableInterruptsFlag();
+
+            if (interruptManager.isInterruptsEnabled()) {
+                interruptManager.handleInterrupts();
+            }
 
             boolean prefixed = false;
             int opcode = memory.get(registers.incPC());
@@ -167,9 +174,6 @@ public class CPU {
             cpu.addCycles(cycles);
             ppu.step(cycles);
             currentCycles += cycles;
-//            System.out.println(cpu.getCycleCounter());
-
-//            while (lastTime + inputManager.delay > System.nanoTime()) ;
 
             if (currentCycles > desiredCycles) {
 
@@ -179,7 +183,6 @@ public class CPU {
                 tileSetDisplay.updateMap();
                 tileSetDisplay.requestRefresh();
 
-//                System.out.println(inputManager.delay);
                 lastTime = System.nanoTime();
                 currentCycles = 0;
             }

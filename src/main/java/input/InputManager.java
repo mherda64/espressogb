@@ -79,8 +79,8 @@ public class InputManager implements KeyListener {
     }
 
     public int getKeys() {
-        if (inputColumn == 0x10) return leftColumn;
-        else if (inputColumn == 0x20) return rightColumn;
+        if (inputColumn == 0x10) return rightColumn;
+        else if (inputColumn == 0x20) return leftColumn;
 
         return 0;
     }
