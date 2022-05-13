@@ -5,7 +5,6 @@ import memory.AddressSpace;
 public class MapDisplay extends Display implements Runnable, UtilDisplay {
 
     public static final int DISPLAY_WIDTH = 256;
-
     public static final int DISPLAY_HEIGHT = 256;
 
     private final Tiles tiles;
@@ -30,6 +29,22 @@ public class MapDisplay extends Display implements Runnable, UtilDisplay {
         }
     }
 
+    private void drawDisplayRectangle() {
+        var color = 0xFF & (~regsManager.getBGPalette()[0]);
+        var scy = regsManager.getSCY();
+        var scx = regsManager.getSCX();
+
+        for (int x = 0; x < 160; x++) {
+            setPixel((scy) % DISPLAY_HEIGHT, (scx + x) % DISPLAY_WIDTH, color);
+            setPixel((scy + 144) % DISPLAY_HEIGHT, (scx + x) % DISPLAY_WIDTH, color);
+        }
+
+        for (int y = 0; y < 144; y++) {
+            setPixel((scy + y) % DISPLAY_HEIGHT, (scx) % DISPLAY_WIDTH, color);
+            setPixel((scy + y) % DISPLAY_HEIGHT, (scx + 160) % DISPLAY_WIDTH, color);
+        }
+    }
+
     @Override
     public void updateMap() {
         var mapOffset = 0x8000;
@@ -41,8 +56,10 @@ public class MapDisplay extends Display implements Runnable, UtilDisplay {
                 var tile = addressSpace.get(mapOffset + y * 32 + x);
                 if (regsManager.isBackgroundTiles() && tile < 128) tile += 256;
                 drawTile(x * 8 * scale, y * 8 * scale, tileMap[tile]);
-
             }
         }
+
+        drawDisplayRectangle();
+        requestRefresh();
     }
 }

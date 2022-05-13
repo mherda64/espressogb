@@ -8,9 +8,9 @@ public class Display extends JPanel implements Runnable {
 
     private boolean doRefresh = false;
 
-    public final int DISPLAY_WIDTH;
+    public int DISPLAY_WIDTH = 160;
 
-    public final int DISPLAY_HEIGHT;
+    public int DISPLAY_HEIGHT = 144;
 
     private final BufferedImage img;
 
@@ -19,6 +19,10 @@ public class Display extends JPanel implements Runnable {
     protected final int[][] rgb;
 
     private final int[] singleDimensionRGB;
+
+    public Display(int scale) {
+        this(160, 144, scale);
+    }
 
     public Display(int width, int height, int scale) {
         this.DISPLAY_WIDTH = width;
@@ -35,6 +39,13 @@ public class Display extends JPanel implements Runnable {
 
     public void requestRefresh() {
         this.doRefresh = true;
+    }
+
+    public void clearScreen() {
+        for (int x = 0; x < 144; x++) {
+            for (int y = 0; y < 160; y++)
+                setPixel(x, y, 0);
+        }
     }
 
     public void setPixel(int x, int y, int value) {

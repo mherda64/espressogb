@@ -37,5 +37,6 @@ public class TileDisplay extends Display implements Runnable, UtilDisplay {
                 y += 1;
             }
         }
+        requestRefresh();
     }
 }

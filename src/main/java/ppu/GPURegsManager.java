@@ -60,7 +60,7 @@ public class GPURegsManager {
     }
 
     public int[] getSecondObjPalette() {
-        var paletteReg = addressSpace.get(GPURegs.OBJ_PAL_1.address);
+        var paletteReg = addressSpace.get(GPURegs.OBJ_PAL_2.address);
         for (int i = 0; i < 4; i++) {
             firstObjPalette[i] = COLORS[(paletteReg >> (i * 2)) & 3];
         }

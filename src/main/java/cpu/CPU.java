@@ -22,7 +22,7 @@ public class CPU {
 
     private final int freq = 2000;
 
-    private static final int DISPLAY_SCALE = 3;
+    private static final int DISPLAY_SCALE = 5;
     private static final int TILESET_SCALE = 2;
     private static final int BGMAP_SCALE = 2;
 
@@ -65,7 +65,7 @@ public class CPU {
         memory.setTiles(tiles);
         memory.setSprites(sprites);
 
-        var display = new Display(160, 144, DISPLAY_SCALE);
+        var display = new Display(DISPLAY_SCALE);
         display.setPreferredSize(new Dimension(160 * DISPLAY_SCALE, 144 * DISPLAY_SCALE));
 
         var tileSetDisplay = new TileDisplay(tiles, gpuRegsManager, TILESET_SCALE);
@@ -117,11 +117,11 @@ public class CPU {
 //        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/individual/10-bit ops.gb"; //passed
 //        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/individual/11-op a,(hl).gb"; //passed
 //        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/dmg-acid2.gb";
-        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/tetris.gb";
+//        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/tetris.gb";
 //        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/mario.gb";
 //        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/dr_mario.gb";
 //        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/ttt.gb";
-//        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/mini4.gb";
+        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/opus5.gb";
 
         cpu.loadFile(filePath, 0x0);
 
@@ -178,10 +178,8 @@ public class CPU {
             if (currentCycles > desiredCycles) {
 
                 mapDisplay.updateMap();
-                mapDisplay.requestRefresh();
 
                 tileSetDisplay.updateMap();
-                tileSetDisplay.requestRefresh();
 
                 lastTime = System.nanoTime();
                 currentCycles = 0;

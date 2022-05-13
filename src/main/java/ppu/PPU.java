@@ -77,13 +77,6 @@ public class PPU {
         addressSpace.set(GPURegs.LY.address, lineCounter);
     }
 
-    private void clearScreen() {
-        for (int x = 0; x < 144; x++) {
-            for (int y = 0; y < 160; y++)
-                display.setPixel(x, y, 0);
-        }
-    }
-
     private void drawLine() {
         // Offset for the tile map #0 or #1
         var mapOffset = regsManager.isBackgroundMap() ? 0x1C00 : 0x1800;
