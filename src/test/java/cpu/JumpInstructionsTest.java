@@ -193,8 +193,8 @@ class JumpInstructionsTest {
         assertEquals(6, instr.getCycles(instr.getContext()));
         assertEquals(0x3180, registers.getPC());
         assertEquals(0xDFFD, registers.getSP());
-        assertEquals(0x20, addressSpace.get(0xDFFF));
-        assertEquals(0x03, addressSpace.get(0xDFFE));
+        assertEquals(0x20, addressSpace.get(0xDFFE));
+        assertEquals(0x03, addressSpace.get(0xDFFD));
     }
 
     @Test
@@ -210,8 +210,8 @@ class JumpInstructionsTest {
         assertEquals(6, instr.getCycles(instr.getContext()));
         assertEquals(0x3180, registers.getPC());
         assertEquals(0xDFFD, registers.getSP());
-        assertEquals(0x20, addressSpace.get(0xDFFF));
-        assertEquals(0x03, addressSpace.get(0xDFFE));
+        assertEquals(0x20, addressSpace.get(0xDFFE));
+        assertEquals(0x03, addressSpace.get(0xDFFD));
 
     }
 
@@ -249,8 +249,8 @@ class JumpInstructionsTest {
 
                     assertEquals(4, instr.getCycles(instr.getContext()));
                     assertEquals((int) opcode.getTarget(), registers.getPC());
-                    assertEquals(0x20, addressSpace.get(0xDFFF));
-                    assertEquals(0x00, addressSpace.get(0xDFFE));
+                    assertEquals(0x20, addressSpace.get(0xDFFE));
+                    assertEquals(0x00, addressSpace.get(0xDFFD));
                     assertEquals(0xDFFD, registers.getSP());
                 }
         );
@@ -260,8 +260,8 @@ class JumpInstructionsTest {
     void testRet_0xC9() {
         registers.setPC(0x2000);
         registers.setSP(0xDFFD);
-        addressSpace.set(0xDFFE, 0x80);
-        addressSpace.set(0xDFFF, 0x31);
+        addressSpace.set(0xDFFD, 0x80);
+        addressSpace.set(0xDFFE, 0x31);
 
         var instr = executeInstruction(0xC9, false, registers, addressSpace);
 
@@ -274,8 +274,8 @@ class JumpInstructionsTest {
     void testRet_Z_shouldRet_0xC8() {
         registers.setPC(0x2000);
         registers.setSP(0xDFFD);
-        addressSpace.set(0xDFFE, 0x80);
-        addressSpace.set(0xDFFF, 0x31);
+        addressSpace.set(0xDFFD, 0x80);
+        addressSpace.set(0xDFFE, 0x31);
         registers.getFlags().setZFlag(true);
 
         var instr = executeInstruction(0xC8, false, registers, addressSpace);
