@@ -14,6 +14,8 @@ public class Memory implements AddressSpace {
     private SpriteManager spriteManager;
     private InputManager inputManager;
 
+    boolean initialized = false;
+
     public Memory(int size) {
         this.size = size;
         this.memory = new int[size];
@@ -31,10 +33,27 @@ public class Memory implements AddressSpace {
         this.inputManager = inputManager;
     }
 
+    public void setInitialized() {
+        initialized = true;
+    }
+
     @Override
     public void set(int address, int value) {
         isShort(address);
         isByte(value);
+
+        if (initialized && address <= 0x3FFF) {
+//            throw new IllegalStateException(String.format("Writing to ROM %04X bank 0", address));
+            System.out.println((String.format("Trying to write to ROM memory PC: %04X bank 0, skipping...", address)));
+            return;
+        }
+
+        if (initialized && address >= 0x4000 && address <= 0x7FFF) {
+//            throw new IllegalStateException(String.format("Writing to ROM %04X bank N", address));
+            System.out.println((String.format("Trying to write to ROM memory PC: %04X bank N, skipping...", address)));
+            return;
+        }
+
         memory[address] = value;
 
         if (address == 0xFF00)
@@ -47,6 +66,14 @@ public class Memory implements AddressSpace {
 
         if (address >= 0xFE00 && address <= 0xFE9F) {
             spriteManager.updateSprite(address, value);
+        }
+
+        // OAM
+        if (address == 0xFF46) {
+            var destAdress = (value << 8) & 0xFF00;
+            for (int i = 0; i < 160; i++) {
+                set(0xFE00 + i, get(destAdress + i));
+            }
         }
     }
 

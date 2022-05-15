@@ -22,7 +22,7 @@ public class CPU {
 
     private final int freq = 2000;
 
-    private static final int DISPLAY_SCALE = 5;
+    private static final int DISPLAY_SCALE = 6;
     private static final int TILESET_SCALE = 2;
     private static final int BGMAP_SCALE = 2;
 
@@ -51,7 +51,9 @@ public class CPU {
         return cycleCounter;
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
+        long VSYNC_PERIOD = (long) (1.0 / 60.0 * 1_000_000_000);
+
         var registers = new Registers();
         var memory = new Memory(0x10000);
         var gpuRegsManager = new GPURegsManager(memory);
@@ -141,8 +143,10 @@ public class CPU {
 
         while (true) {
 
-            if (registers.getPC() == 0x100)
+            if (registers.getPC() == 0x100) {
                 cpu.loadFile(filePath, 0x0);
+                memory.setInitialized();
+            }
 
             interruptManager.updateEnableInterruptsFlag();
 
