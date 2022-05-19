@@ -31,15 +31,15 @@ public class GPURegsManager {
     }
 
     public boolean isSpritesEnabled() {
-        return BitUtils.getByteBit(addressSpace.get(GPURegs.LDCD.address), 1);
+        return BitUtils.getByteBit(addressSpace.get(GPURegs.LCDC.address), 1);
     }
 
     public boolean isBackgroundMap() {
-        return BitUtils.getByteBit(addressSpace.get(GPURegs.LDCD.address), 3);
+        return BitUtils.getByteBit(addressSpace.get(GPURegs.LCDC.address), 3);
     }
 
     public boolean isBackgroundTiles() {
-        return !BitUtils.getByteBit(addressSpace.get(GPURegs.LDCD.address), 4);
+        return !BitUtils.getByteBit(addressSpace.get(GPURegs.LCDC.address), 4);
     }
 
     // TODO: update palettes in the future only when necessary

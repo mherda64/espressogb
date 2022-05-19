@@ -2,7 +2,7 @@ package ppu;
 
 public enum GPURegs {
 
-    LDCD(0xFF40),
+    LCDC(0xFF40),
     STAT(0xFF41),
     SCY(0xFF42),
     SCX(0xFF43),

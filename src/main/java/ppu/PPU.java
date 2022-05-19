@@ -14,6 +14,7 @@ public class PPU {
     private Mode currentMode;
     private int lineCounter;
     private int currentModeClockCounter;
+    private int[] scanRow;
 
     public PPU(AddressSpace addressSpace, GPURegsManager regsManager, SpriteManager spriteManager, Display display, Tiles tiles) {
         this.tiles = tiles;
@@ -24,6 +25,7 @@ public class PPU {
         this.currentMode = Mode.OAM_READ;
         this.lineCounter = 0;
         this.currentModeClockCounter = 0;
+        scanRow = new int[160];
     }
 
     public void step(int clocks) {
@@ -101,7 +103,6 @@ public class PPU {
         var tilemap = tiles.getTileMap();
         var bgPalette = regsManager.getBGPalette();
 
-        var scanRow = new int[160];
 
         for (int i = 0; i < 160; i++) {
             scanRow[i] = tilemap[tileIndex][y][x];
@@ -138,8 +139,8 @@ public class PPU {
                         var destCol = sprite.getXPos() + tileCol;
                         if (destCol >= 0
                                 && destCol < 160
-                                && tileRow[tileCol] > 0
-                                && (sprite.isAboveBgPriority() || scanRow[tileCol] == 0))
+                                && (tileRow[tileCol] > 0 && !sprite.isXFlip() || tileRow[7 - tileCol] > 0 && sprite.isXFlip())
+                                && (!sprite.isAboveBgPriority() || scanRow[destCol] == 0))
                         {
                             var colour = palette[tileRow[sprite.isXFlip() ? 7 - tileCol : tileCol]];
                             display.setPixel(lineCounter, destCol, colour);
