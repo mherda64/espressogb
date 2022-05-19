@@ -4,11 +4,18 @@ import memory.AddressSpace;
 
 public class Tiles {
 
-    private final AddressSpace addressSpace;
+    private AddressSpace addressSpace;
 
     private final int[][][] tileMap = new int[384][8][8];
 
     public Tiles(AddressSpace addressSpace) {
+        this.addressSpace = addressSpace;
+    }
+
+    public Tiles() {
+    }
+
+    public void setAddressSpace(AddressSpace addressSpace) {
         this.addressSpace = addressSpace;
     }
 

@@ -1,8 +1,7 @@
 package cpu;
 
-import cpu.instruction.Instructions;
 import memory.AddressSpace;
-import memory.Memory;
+import memory.BasicMemory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +16,7 @@ class ByteAluInstructionsTest {
     @BeforeEach
     void init() {
         registers = new Registers();
-        addressSpace = new Memory(0xFFFF);
+        addressSpace = new BasicMemory(0xFFFF);
     }
 
     @Test

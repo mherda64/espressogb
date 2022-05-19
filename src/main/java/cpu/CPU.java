@@ -3,7 +3,7 @@ package cpu;
 import cpu.instruction.Instructions;
 import input.InputManager;
 import memory.AddressSpace;
-import memory.Memory;
+import memory.MMU;
 import ppu.*;
 import ppu.oam.SpriteManager;
 
@@ -20,15 +20,16 @@ public class CPU {
 
     private int cycleCounter;
 
-    private final int freq = 2000;
+//        private final int freq = 1048576;
+    private final int freq = 4000;
 
     private static final int DISPLAY_SCALE = 6;
     private static final int TILESET_SCALE = 2;
     private static final int BGMAP_SCALE = 2;
 
-    public CPU(Registers registers, Memory memory) {
+    public CPU(Registers registers, MMU mmu) {
         this.registers = registers;
-        this.memory = memory;
+        this.memory = mmu;
     }
 
     public int loadFile(String path, int pointer) throws IOException {
@@ -54,18 +55,17 @@ public class CPU {
     public static void main(String[] args) throws IOException, InterruptedException {
         long VSYNC_PERIOD = (long) (1.0 / 60.0 * 1_000_000_000);
 
+        var inputManager = new InputManager();
+        var tiles = new Tiles();
+        var sprites = new SpriteManager();
+
         var registers = new Registers();
-        var memory = new Memory(0x10000);
+//        var memory = new Memory(0x10000);
+        var memory = new MMU(inputManager, sprites, tiles);
         var gpuRegsManager = new GPURegsManager(memory);
         var cpu = new CPU(registers, memory);
 
-        var inputManager = new InputManager();
-        memory.setInputManager(inputManager);
-
-        var tiles = new Tiles(memory);
-        var sprites = new SpriteManager();
-        memory.setTiles(tiles);
-        memory.setSprites(sprites);
+        tiles.setAddressSpace(memory);
 
         var display = new Display(DISPLAY_SCALE);
         display.setPreferredSize(new Dimension(160 * DISPLAY_SCALE, 144 * DISPLAY_SCALE));
@@ -107,45 +107,29 @@ public class CPU {
         new Thread(tileSetDisplay).start();
         new Thread(mapDisplay).start();
 
-//        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/individual/01-special.gb"; //passed
-//        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/individual/02-interrupts.gb"; //failed
-//        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/individual/03-op sp,hl.gb"; //passed
-//        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/individual/04-op r,imm.gb"; //passed
-//        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/individual/05-op rp.gb"; //passed
-//        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/individual/06-ld r,r.gb"; //passed
-//        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/individual/07-jr,jp,call,ret,rst.gb"; //passed
-//        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/individual/08-misc instrs.gb"; //passed
-//        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/individual/09-op r,r.gb"; //failed
-//        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/individual/10-bit ops.gb"; //passed
-//        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/individual/11-op a,(hl).gb"; //passed
 //        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/dmg-acid2.gb";
-//        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/tetris.gb";
-//        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/mario.gb";
+        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/tetris.gb";
+//        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/alleyway.gb";
+//        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/bombjack.gb";
 //        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/dr_mario.gb";
 //        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/ttt.gb";
-        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/opus5.gb";
+//        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/opus5.gb";
 
         cpu.loadFile(filePath, 0x0);
 
         cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/DMG_ROM.bin", 0x0);
 //        cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/bootix_dmg.bin", 0x0);
 
-//        for (int i = 0; i < 0x100; i++) {
-//            System.out.println(String.format("byte %d - %02X", i, memory.get(i)));
-//        }
-
-
         var interruptManager = new InterruptManager(cpu, registers, memory);
 
         int currentCycles = 0;
-        var lastTime = System.nanoTime();
         int desiredCycles = cpu.freq;
 
         while (true) {
 
             if (registers.getPC() == 0x100) {
                 cpu.loadFile(filePath, 0x0);
-                memory.setInitialized();
+                memory.initializeROM();
             }
 
             interruptManager.updateEnableInterruptsFlag();
@@ -180,12 +164,11 @@ public class CPU {
             currentCycles += cycles;
 
             if (currentCycles > desiredCycles) {
+                Thread.sleep(0, 200);
 
                 mapDisplay.updateMap();
-
                 tileSetDisplay.updateMap();
 
-                lastTime = System.nanoTime();
                 currentCycles = 0;
             }
         }
