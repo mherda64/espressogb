@@ -55,13 +55,15 @@ public class CPU {
     public static void main(String[] args) throws IOException, InterruptedException {
         long VSYNC_PERIOD = (long) (1.0 / 60.0 * 1_000_000_000);
 
+        var filePath = "/home/mherda/github_repos/espressogb/src/main/resources/tetris.gb";
+        var biosPath = "/home/mherda/github_repos/espressogb/src/main/resources/DMG_ROM.bin";
+
         var inputManager = new InputManager();
         var tiles = new Tiles();
         var sprites = new SpriteManager();
 
         var registers = new Registers();
-//        var memory = new Memory(0x10000);
-        var memory = new MMU(inputManager, sprites, tiles);
+        var memory = new MMU(inputManager, sprites, tiles, filePath, biosPath);
         var gpuRegsManager = new GPURegsManager(memory);
         var cpu = new CPU(registers, memory);
 
@@ -75,7 +77,7 @@ public class CPU {
 
         var tileSetWindow = new JFrame("tileset");
         tileSetWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        tileSetWindow.setLocation(0, 0);
+        tileSetWindow.setLocation(100, 100);
         tileSetWindow.setContentPane(tileSetDisplay);
         tileSetWindow.setResizable(false);
         tileSetWindow.setVisible(true);
@@ -107,19 +109,6 @@ public class CPU {
         new Thread(tileSetDisplay).start();
         new Thread(mapDisplay).start();
 
-//        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/dmg-acid2.gb";
-        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/tetris.gb";
-//        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/alleyway.gb";
-//        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/bombjack.gb";
-//        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/dr_mario.gb";
-//        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/ttt.gb";
-//        var filePath = "/home/musiek/github_repos/espressogb/src/main/resources/opus5.gb";
-
-        cpu.loadFile(filePath, 0x0);
-
-        cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/DMG_ROM.bin", 0x0);
-//        cpu.loadFile("/home/musiek/github_repos/espressogb/src/main/resources/bootix_dmg.bin", 0x0);
-
         var interruptManager = new InterruptManager(cpu, registers, memory);
 
         int currentCycles = 0;
@@ -127,10 +116,8 @@ public class CPU {
 
         while (true) {
 
-            if (registers.getPC() == 0x100) {
-                cpu.loadFile(filePath, 0x0);
-                memory.initializeROM();
-            }
+            if (registers.getPC() == 0x100)
+                memory.loadGameAndInitialize();
 
             interruptManager.updateEnableInterruptsFlag();
 
