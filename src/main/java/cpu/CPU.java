@@ -55,7 +55,8 @@ public class CPU {
     public static void main(String[] args) throws IOException, InterruptedException {
         long VSYNC_PERIOD = (long) (1.0 / 60.0 * 1_000_000_000);
 
-        var filePath = "/home/mherda/github_repos/espressogb/src/main/resources/tetris.gb";
+        var filePath = "/home/mherda/github_repos/espressogb/src/main/resources/hangman.gb";
+//        var filePath = "/home/mherda/github_repos/espressogb/src/main/resources/tetris.gb";
         var biosPath = "/home/mherda/github_repos/espressogb/src/main/resources/DMG_ROM.bin";
 
         var inputManager = new InputManager();
@@ -117,7 +118,7 @@ public class CPU {
         while (true) {
 
             if (registers.getPC() == 0x100)
-                memory.loadGameAndInitialize();
+                memory.setAfterBios();
 
             interruptManager.updateEnableInterruptsFlag();
 

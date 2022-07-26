@@ -24,4 +24,18 @@ public class BasicMemory implements AddressSpace {
 
         return memory[address];
     }
+
+    public void forceSet(int address, int value) {
+        isByte(value);
+
+        memory[address] = value;
+    }
+
+    public int forceGet(int address) {
+        return memory[address];
+    }
+
+    public int getSize() {
+        return memory.length;
+    }
 }

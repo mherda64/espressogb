@@ -1,7 +1,7 @@
 package memory;
 
 public enum MBC {
-    NONE(1, 1),
+    NONE(1, 2),
     MBC1(1, 128),
     MBC1_RAM(4, 128);
 

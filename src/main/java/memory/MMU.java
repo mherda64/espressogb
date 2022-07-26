@@ -12,14 +12,15 @@ import java.nio.file.Paths;
 
 import static cpu.BitUtils.isByte;
 import static cpu.BitUtils.isShort;
+import static memory.RamMode.RAM;
 import static memory.RamMode.ROM;
 
 public class MMU implements AddressSpace {
 
-    private boolean romInitialized = false;
+    private boolean afterBios = false;
 
+    private final BasicMemory bios;
     private final BasicMemory loadedROM;
-    private final FixedROM fixedROM;
     private final SwitchableROM[] switchableROMs;
     private final VideoRAM videoRAM;
     private final ExternalRAM[] switchableRAMs;
@@ -27,19 +28,21 @@ public class MMU implements AddressSpace {
     private final OAM oam;
     private final HighMem highMem;
 
-    private final int ramBank = 0x1;
-    private final int romBank = 0x0;
-    private final RamMode mode = ROM;
+    private int ramBank = 0x0;
+    private int romBank = 0x1;
+    private RamMode ramMode = ROM;
+    private final MBC mbc;
 
     public MMU(InputManager inputManager, SpriteManager spriteManager, Tiles tiles, String romPath, String biosPath) throws IOException {
-        loadedROM = loadFullGame(romPath);
-        var mbc = MBC.getMBC(loadedROM.get(0x0147));
-
-        fixedROM = new FixedROM();
+        bios = loadFile(biosPath);
+        loadedROM = loadFile(romPath);
+        mbc = MBC.getMBC(loadedROM.get(0x0147));
 
         switchableROMs = new SwitchableROM[mbc.getMaxRomSize()];
-        for (int i = 0; i < mbc.getMaxRomSize(); i++)
-            switchableROMs[i] = new SwitchableROM();
+        for (int i = 0; i < mbc.getMaxRomSize(); i++) {
+            switchableROMs[i] = i == 0 ? new SwitchableROM(0x0) : new SwitchableROM(0x4000);
+            loadRomBank(i);
+        }
 
         switchableRAMs = new ExternalRAM[mbc.getMaxRamSize()];
         for (int i = 0; i < mbc.getMaxRamSize(); i++)
@@ -50,29 +53,30 @@ public class MMU implements AddressSpace {
         oam = new OAM(spriteManager);
         highMem = new HighMem(inputManager);
 
-        loadGame();
-        loadBios(biosPath);
     }
 
-    public void loadGameAndInitialize() {
-        loadGame();
-        romInitialized = true;
+    private void loadRomBank(int index) {
+        var romSize = loadedROM.getSize();
+        if (index == 0) {
+            for (int i = 0; i < 0x4000 && i < romSize; i++) {
+                switchableROMs[index].set(i, loadedROM.forceGet(i));
+            }
+        } else {
+            for (int i = 0x4000; i < (0x4000 * 2) && ((index - 1) * 0x4000 + i) < romSize; i++) {
+                switchableROMs[index].set(i, loadedROM.forceGet((index - 1) * 0x4000 + i));
+            }
+        }
+
+    }
+
+    public void setAfterBios() {
+        afterBios = true;
     }
 
     @Override
     public void set(int address, int value) {
         isShort(address);
         isByte(value);
-
-        if (romInitialized && address <= 0x3FFF) {
-            System.out.println((String.format("Trying to write to ROM memory PC: %04X bank 0, skipping...", address)));
-            return;
-        }
-
-        if (romInitialized && address >= 0x4000 && address <= 0x7FFF) {
-            System.out.println((String.format("Trying to write to ROM memory PC: %04X bank N, skipping...", address)));
-            return;
-        }
 
         // OAM DMA
         if (address == 0xFF46) {
@@ -83,9 +87,44 @@ public class MMU implements AddressSpace {
         }
 
         if (address <= 0x3FFF) {
-            fixedROM.set(address, value);
+            if (!afterBios) {
+                switchableROMs[0].set(address, value);
+            } else if (mbc != MBC.NONE && address >= 0x2000) {
+                // ROM bank setting
+                switch (value & 0x1F) {
+                    case 0x0:
+                        romBank = (romBank & 0x60) | 0x01;
+                        break;
+                    case 0x20:
+                        romBank = (romBank & 0x60) | 0x21;
+                        break;
+                    case 0x40:
+                        romBank = (romBank & 0x60) | 0x41;
+                        break;
+                    case 0x60:
+                        romBank = (romBank & 0x60) | 0x61;
+                        break;
+                    default:
+                        romBank = (romBank & 0x60) | (value & 0x1F);
+                }
+            }
         } else if (address <= 0x7FFF) {
-            switchableROMs[romBank].set(address, value);
+            if (!afterBios) {
+                switchableROMs[romBank].set(address, value);
+            } else if (mbc != MBC.NONE && address <= 0x5FFF) {
+                // RAM bank setting
+                switch (ramMode) {
+                    case ROM:
+                        romBank = (romBank & 0x1F) | ((value & 0x3) << 5);
+                        break;
+                    case RAM:
+                        ramBank = value & 0x3;
+                        break;
+                }
+
+            } else {
+                ramMode = (value & 0x1) > 0 ? RAM : ROM;
+            }
         } else if (address <= 0x9FFF) {
             videoRAM.set(address, value);
         } else if (address <= 0xBFFF) {
@@ -104,8 +143,10 @@ public class MMU implements AddressSpace {
     public int get(int address) {
         isShort(address);
 
-        if (address <= 0x3FFF) {
-            return fixedROM.get(address);
+        if (!afterBios && address < 0x0100) {
+            return bios.get(address);
+        } else if (address <= 0x3FFF) {
+            return switchableROMs[0].get(address);
         } else if (address <= 0x7FFF) {
             return switchableROMs[romBank].get(address);
         } else if (address <= 0x9FFF) {
@@ -114,7 +155,9 @@ public class MMU implements AddressSpace {
             return switchableRAMs[ramBank].get(address);
         } else if (address <= 0xDFFF) {
             return workingRAM.get(address);
-        } else if (address >= 0xFE00 && address <= 0xFE9F) {
+        } else if (address <= 0xFDFF) {
+            return workingRAM.get(address - 0x2000);
+        } else if (address <= 0xFE9F) {
             return oam.get(address);
         } else if (address >= 0xFF00 && address <= 0xFFFF) {
             return highMem.get(address);
@@ -123,28 +166,13 @@ public class MMU implements AddressSpace {
         }
     }
 
-    private void loadBios(String biosPath) throws IOException {
-        byte[] program = Files.readAllBytes(new File(biosPath).toPath());
-
-        var pointer = 0x00;
-        for (byte x : program) {
-            set(pointer, x & 0xFF);
-            pointer++;
-        }
-    }
-
-    private void loadGame() {
-        for (int i = 0; i < 0x8000; i++)
-            set(i, loadedROM.get(i));
-    }
-
-    private BasicMemory loadFullGame(String romPath) throws IOException {
-        var memory = new BasicMemory((int) Files.size(Paths.get(romPath)));
+    private BasicMemory loadFile(String romPath) throws IOException {
+        var memory = new BasicMemory((int) Files.size(Paths.get(romPath)) + 1);
         byte[] program = Files.readAllBytes(new File(romPath).toPath());
 
         var pointer = 0x00;
         for (byte x : program) {
-            memory.set(pointer, x & 0xFF);
+            memory.forceSet(pointer, x & 0xFF);
             pointer++;
         }
         return memory;
