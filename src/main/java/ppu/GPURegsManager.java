@@ -30,6 +30,14 @@ public class GPURegsManager {
         return addressSpace.get(GPURegs.SCX.address);
     }
 
+    public int getWY() {
+        return addressSpace.get(GPURegs.WY.address);
+    }
+
+    public int getWX() {
+        return addressSpace.get(GPURegs.WX.address);
+    }
+
     public boolean isBackgroundEnabled() {
         return BitUtils.getByteBit(addressSpace.get(GPURegs.LCDC.address), 0);
     }
@@ -59,7 +67,7 @@ public class GPURegsManager {
     }
 
     public boolean isLCDOn() {
-        return BitUtils.getByteBit(addressSpace.get(GPURegs.LCDC.address), 57);
+        return BitUtils.getByteBit(addressSpace.get(GPURegs.LCDC.address), 7);
     }
 
     // TODO: update palettes in the future only when necessary

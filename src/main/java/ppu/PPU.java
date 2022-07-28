@@ -81,31 +81,48 @@ public class PPU {
     }
 
     private void drawLine() {
+        var tilemap = tiles.getTileMap();
+
+        drawBackgroundLine(tilemap, regsManager.getSCY(), regsManager.getSCX(), regsManager.isBackgroundMap(), false);
+
+        if (regsManager.isWindowEnabled()) {
+            var windowY = regsManager.getWY();
+            var windowX = regsManager.getWX() - 7;
+            if (lineCounter >= windowY) {
+                drawBackgroundLine(tilemap, windowY, windowX, regsManager.useSecondMapForWindow(), true);
+            }
+        }
+
+        if (regsManager.isSpritesEnabled()) {
+            drawSpriteLine(tilemap);
+        }
+    }
+
+    private void drawBackgroundLine(int[][][] tilemap, int initY, int initX, boolean useSecondMap, boolean drawWindow) {
+        var bgPalette = regsManager.getBGPalette();
+
         // Offset for the tile map #0 or #1
-        var mapOffset = regsManager.isBackgroundMap() ? 0x1C00 : 0x1800;
+        var mapOffset = useSecondMap ? 0x1C00 : 0x1800;
 
         // Which line of tiles to use in the map
         // divided by 8 as that's the height of a tile
-        mapOffset += 32 * (((lineCounter + regsManager.getSCY()) & 0xFF) >> 3);
+        mapOffset += 32 * (((lineCounter + initY) & 0xFF) >> 3);
 
         // Which tile to start with in the tile line
-        var lineOffset = regsManager.getSCX() >> 3;
+        var lineOffset = initX >> 3;
 
         // Which line of pixels to use in the destination tile
-        var y = (lineCounter + regsManager.getSCY()) & 7;
+        var y = (lineCounter + initY) & 7;
 
         // Which pixel to use in the pixel line
-        var x = regsManager.getSCX() & 7;
+        var x = initX & 7;
 
         var tileMapAddress = 0x8000 + mapOffset + lineOffset;
         var tileIndex = addressSpace.get(tileMapAddress);
         if (regsManager.isBackgroundTiles() && tileIndex < 128) tileIndex += 256;
 
-        var tilemap = tiles.getTileMap();
-        var bgPalette = regsManager.getBGPalette();
 
-
-        for (int i = 0; i < 160; i++) {
+        for (int i = 0; drawWindow ? i >= initX && i < 160 : i < 160; i++) {
             scanRow[i] = tilemap[tileIndex][y][x];
             var colour = bgPalette[tilemap[tileIndex][y][x]];
             display.setPixel(lineCounter, i, colour);
@@ -119,49 +136,48 @@ public class PPU {
                 if (regsManager.isBackgroundTiles() && tileIndex < 128) tileIndex += 256;
             }
         }
+    }
 
-        if (regsManager.isSpritesEnabled()) {
-            var sprites = spriteManager.getSprites();
-            var doubleSprites = regsManager.isDoubleSpritesEnabled();
-            var spriteHeight = doubleSprites ? 16 : 8;
+    private void drawSpriteLine(int[][][] tilemap) {
+        var sprites = spriteManager.getSprites();
+        var doubleSprites = regsManager.isDoubleSpritesEnabled();
+        var spriteHeight = doubleSprites ? 16 : 8;
 
-            for (var sprite : sprites) {
-                // If sprite is in line
-                if (sprite.getYPos() <= lineCounter && sprite.getYPos() + spriteHeight > lineCounter) {
-                    int[][] tile;
-                    int[] tileRow;
-                    var spriteTileIndex = sprite.getTile();
+        for (var sprite : sprites) {
+            // If sprite is in line
+            if (sprite.getYPos() <= lineCounter && sprite.getYPos() + spriteHeight > lineCounter) {
+                int[][] tile;
+                int[] tileRow;
+                var spriteTileIndex = sprite.getTile();
 
-                    if (doubleSprites) {
-                        var topTileIndex = spriteTileIndex & 0xFE;
-                        var bottomTileIndex = spriteTileIndex | 0x01;
+                if (doubleSprites) {
+                    var topTileIndex = spriteTileIndex & 0xFE;
+                    var bottomTileIndex = spriteTileIndex | 0x01;
 
-                        if (lineCounter - sprite.getYPos() <= 7 && !sprite.isYFlip() ||
-                                lineCounter - sprite.getYPos() > 7 && sprite.isYFlip()) {
-                            tile = tilemap[topTileIndex];
-                        }
-                        else {
-                            tile = tilemap[bottomTileIndex];
-                        }
-
-                        if (lineCounter - sprite.getYPos() > 7) {
-                            tileRow = sprite.isYFlip()
-                                    ? tile[7 - lineCounter + sprite.getYPos() + 8]
-                                    : tile[lineCounter - sprite.getYPos() - 8];
-                        } else {
-                            tileRow = sprite.isYFlip()
-                                    ? tile[7 - lineCounter + sprite.getYPos()]
-                                    : tile[lineCounter - sprite.getYPos()];
-                        }
+                    if (lineCounter - sprite.getYPos() <= 7 && !sprite.isYFlip() ||
+                            lineCounter - sprite.getYPos() > 7 && sprite.isYFlip()) {
+                        tile = tilemap[topTileIndex];
                     } else {
-                        tile = tilemap[spriteTileIndex];
+                        tile = tilemap[bottomTileIndex];
+                    }
+
+                    if (lineCounter - sprite.getYPos() > 7) {
+                        tileRow = sprite.isYFlip()
+                                ? tile[7 - lineCounter + sprite.getYPos() + 8]
+                                : tile[lineCounter - sprite.getYPos() - 8];
+                    } else {
                         tileRow = sprite.isYFlip()
                                 ? tile[7 - lineCounter + sprite.getYPos()]
                                 : tile[lineCounter - sprite.getYPos()];
                     }
-
-                    drawTileRow(sprite, tileRow);
+                } else {
+                    tile = tilemap[spriteTileIndex];
+                    tileRow = sprite.isYFlip()
+                            ? tile[7 - lineCounter + sprite.getYPos()]
+                            : tile[lineCounter - sprite.getYPos()];
                 }
+
+                drawTileRow(sprite, tileRow);
             }
         }
     }
