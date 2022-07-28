@@ -20,10 +20,10 @@ public class CPU {
 
     private int cycleCounter;
 
-//        private final int freq = 1048576;
     private final int freq = 4000;
+//    private final int freq = 1500;
 
-    private static final int DISPLAY_SCALE = 6;
+    private static final int DISPLAY_SCALE = 3;
     private static final int TILESET_SCALE = 2;
     private static final int BGMAP_SCALE = 2;
 
@@ -55,7 +55,10 @@ public class CPU {
     public static void main(String[] args) throws IOException, InterruptedException {
         long VSYNC_PERIOD = (long) (1.0 / 60.0 * 1_000_000_000);
 
-        var filePath = "/home/mherda/github_repos/espressogb/src/main/resources/hangman.gb";
+//        var filePath = "/home/mherda/github_repos/espressogb/src/main/resources/games/tennis.gb";
+//        var filePath = "/home/mherda/github_repos/espressogb/src/main/resources/tests/cpu_instrs.gb";
+        var filePath = "/home/mherda/github_repos/espressogb/src/main/resources/kirby.gb";
+//        var filePath = "/home/mherda/github_repos/espressogb/src/main/resources/mario.gb";
 //        var filePath = "/home/mherda/github_repos/espressogb/src/main/resources/tetris.gb";
         var biosPath = "/home/mherda/github_repos/espressogb/src/main/resources/DMG_ROM.bin";
 

@@ -30,8 +30,16 @@ public class GPURegsManager {
         return addressSpace.get(GPURegs.SCX.address);
     }
 
+    public boolean isBackgroundEnabled() {
+        return BitUtils.getByteBit(addressSpace.get(GPURegs.LCDC.address), 0);
+    }
+
     public boolean isSpritesEnabled() {
         return BitUtils.getByteBit(addressSpace.get(GPURegs.LCDC.address), 1);
+    }
+
+    public boolean isDoubleSpritesEnabled() {
+        return BitUtils.getByteBit(addressSpace.get(GPURegs.LCDC.address), 2);
     }
 
     public boolean isBackgroundMap() {
@@ -40,6 +48,18 @@ public class GPURegsManager {
 
     public boolean isBackgroundTiles() {
         return !BitUtils.getByteBit(addressSpace.get(GPURegs.LCDC.address), 4);
+    }
+
+    public boolean isWindowEnabled() {
+        return BitUtils.getByteBit(addressSpace.get(GPURegs.LCDC.address), 5);
+    }
+
+    public boolean useSecondMapForWindow() {
+        return BitUtils.getByteBit(addressSpace.get(GPURegs.LCDC.address), 6);
+    }
+
+    public boolean isLCDOn() {
+        return BitUtils.getByteBit(addressSpace.get(GPURegs.LCDC.address), 57);
     }
 
     // TODO: update palettes in the future only when necessary

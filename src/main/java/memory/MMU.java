@@ -52,7 +52,6 @@ public class MMU implements AddressSpace {
         workingRAM = new WorkingRAM();
         oam = new OAM(spriteManager);
         highMem = new HighMem(inputManager);
-
     }
 
     private void loadRomBank(int index) {
