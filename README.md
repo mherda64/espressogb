@@ -4,6 +4,4 @@
 
 Passing some of Blargg's tests, has ambition to play Pokémon one day.
 
-https://user-images.githubusercontent.com/56952371/158029376-e912c1f0-fe35-4c9a-85ec-bf2d137fa164.mov
-
-![Tetris logo](https://i.imgur.com/VPSRPjO.png)
+![Peek 2022-07-28 20-14](https://user-images.githubusercontent.com/56952371/181608605-ad668b9b-9c7c-4bd2-9afa-b6e0539aa9f9.gif)
