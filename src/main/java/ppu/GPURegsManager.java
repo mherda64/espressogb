@@ -96,6 +96,6 @@ public class GPURegsManager {
     }
 
     private static int getColor(int r, int g, int b) {
-        return 0xFF | r << 16 | g << 8 | b;
+        return r << 16 | g << 8 | b;
     }
 }

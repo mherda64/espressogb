@@ -41,13 +41,6 @@ public class Display extends JPanel implements Runnable {
         this.doRefresh = true;
     }
 
-    public void clearScreen() {
-        for (int x = 0; x < 144; x++) {
-            for (int y = 0; y < 160; y++)
-                setPixel(x, y, 0);
-        }
-    }
-
     public void setPixel(int x, int y, int value) {
         for (int i = 0; i < scale; i++) {
             for (int j = 0; j < scale; j++) {

@@ -20,16 +20,15 @@ public class CPU {
 
     private int cycleCounter;
 
-    private final int freq = 4000;
-//    private final int freq = 1500;
+    private int freq;
 
-    private static final int DISPLAY_SCALE = 3;
     private static final int TILESET_SCALE = 2;
     private static final int BGMAP_SCALE = 2;
 
-    public CPU(Registers registers, MMU mmu) {
+    public CPU(Registers registers, MMU mmu, int freq) {
         this.registers = registers;
         this.memory = mmu;
+        this.freq = freq;
     }
 
     public int loadFile(String path, int pointer) throws IOException {
@@ -53,14 +52,13 @@ public class CPU {
     }
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        long VSYNC_PERIOD = (long) (1.0 / 60.0 * 1_000_000_000);
+        var filePath = args[0];
+        var biosPath = args[1];
+        var freq = Integer.parseInt(args[2]);
 
-//        var filePath = "/home/mherda/github_repos/espressogb/src/main/resources/games/tennis.gb";
-//        var filePath = "/home/mherda/github_repos/espressogb/src/main/resources/tests/cpu_instrs.gb";
-        var filePath = "/home/mherda/github_repos/espressogb/src/main/resources/kirby.gb";
-//        var filePath = "/home/mherda/github_repos/espressogb/src/main/resources/mario.gb";
-//        var filePath = "/home/mherda/github_repos/espressogb/src/main/resources/tetris.gb";
-        var biosPath = "/home/mherda/github_repos/espressogb/src/main/resources/DMG_ROM.bin";
+        var DISPLAY_SCALE = 1;
+        if (args.length >= 4 && args[3] != null)
+            DISPLAY_SCALE = Integer.parseInt(args[3]);
 
         var inputManager = new InputManager();
         var tiles = new Tiles();
@@ -69,7 +67,7 @@ public class CPU {
         var registers = new Registers();
         var memory = new MMU(inputManager, sprites, tiles, filePath, biosPath);
         var gpuRegsManager = new GPURegsManager(memory);
-        var cpu = new CPU(registers, memory);
+        var cpu = new CPU(registers, memory, freq);
 
         tiles.setAddressSpace(memory);
 
@@ -78,29 +76,29 @@ public class CPU {
 
         var tileSetDisplay = new TileDisplay(tiles, gpuRegsManager, TILESET_SCALE);
         tileSetDisplay.setPreferredSize(new Dimension(150 * TILESET_SCALE, 200 * TILESET_SCALE));
-
-        var tileSetWindow = new JFrame("tileset");
-        tileSetWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        tileSetWindow.setLocation(100, 100);
-        tileSetWindow.setContentPane(tileSetDisplay);
-        tileSetWindow.setResizable(false);
-        tileSetWindow.setVisible(true);
-        tileSetWindow.pack();
+//
+//        var tileSetWindow = new JFrame("tileset");
+//        tileSetWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        tileSetWindow.setLocation(100, 100);
+//        tileSetWindow.setContentPane(tileSetDisplay);
+//        tileSetWindow.setResizable(false);
+//        tileSetWindow.setVisible(true);
+//        tileSetWindow.pack();
 
         var mapDisplay = new MapDisplay(memory, gpuRegsManager, tiles, BGMAP_SCALE);
         mapDisplay.setPreferredSize(new Dimension(260 * BGMAP_SCALE, 260 * BGMAP_SCALE));
 
-        var tileMapWindow = new JFrame("tilemap");
-        tileMapWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        tileMapWindow.setLocationRelativeTo(tileSetWindow);
-        tileMapWindow.setContentPane(mapDisplay);
-        tileMapWindow.setResizable(false);
-        tileMapWindow.setVisible(true);
-        tileMapWindow.pack();
+//        var tileMapWindow = new JFrame("tilemap");
+//        tileMapWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        tileMapWindow.setLocationRelativeTo(tileSetWindow);
+//        tileMapWindow.setContentPane(mapDisplay);
+//        tileMapWindow.setResizable(false);
+//        tileMapWindow.setVisible(true);
+//        tileMapWindow.pack();
 
         var mainWindow = new JFrame("screen");
         mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        mainWindow.setLocationRelativeTo(tileMapWindow);
+//        mainWindow.setLocationRelativeTo(tileMapWindow);
         mainWindow.setContentPane(display);
         mainWindow.setResizable(false);
         mainWindow.setVisible(true);
@@ -155,10 +153,11 @@ public class CPU {
             currentCycles += cycles;
 
             if (currentCycles > desiredCycles) {
-                Thread.sleep(0, 200);
+                if (desiredCycles != 0)
+                    Thread.sleep(0, 200);
 
-                mapDisplay.updateMap();
-                tileSetDisplay.updateMap();
+//                mapDisplay.updateMap();
+//                tileSetDisplay.updateMap();
 
                 currentCycles = 0;
             }
