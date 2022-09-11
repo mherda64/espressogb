@@ -18,7 +18,7 @@ public class CPU {
     private Registers registers;
     private AddressSpace memory;
 
-    private int cycleCounter;
+    private long cycleCounter;
 
     private int freq;
 
@@ -42,21 +42,26 @@ public class CPU {
         return program.length;
     }
 
-    public int addCycles(int cycles) {
+    public long addCycles(int cycles) {
         cycleCounter += cycles;
         return cycleCounter;
     }
 
-    public int getCycleCounter() {
+    public long getCycles() {
         return cycleCounter;
     }
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        var filePath = args[0];
-        var biosPath = args[1];
-        var freq = Integer.parseInt(args[2]);
+//        var filePath = args[0];
+//        var biosPath = args[1];
+//        var freq = Integer.parseInt(args[2]);
 
-        var DISPLAY_SCALE = 1;
+        var filePath = "/home/mherda/github_repos/espressogb/roms/kirby.gb";
+        var biosPath = "/home/mherda/github_repos/espressogb/roms/DMG_ROM.bin";
+        var freq = 2000;
+
+//        var DISPLAY_SCALE = 1;
+        var DISPLAY_SCALE = 4;
         if (args.length >= 4 && args[3] != null)
             DISPLAY_SCALE = Integer.parseInt(args[3]);
 
@@ -68,6 +73,7 @@ public class CPU {
         var memory = new MMU(inputManager, sprites, tiles, filePath, biosPath);
         var gpuRegsManager = new GPURegsManager(memory);
         var cpu = new CPU(registers, memory, freq);
+        var timers = new Timers(memory, cpu.getCycles());
 
         tiles.setAddressSpace(memory);
 
@@ -150,6 +156,7 @@ public class CPU {
             var cycles = instr.getCycles(context);
             cpu.addCycles(cycles);
             ppu.step(cycles);
+            timers.step(cpu.getCycles());
             currentCycles += cycles;
 
             if (currentCycles > desiredCycles) {

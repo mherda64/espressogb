@@ -84,7 +84,9 @@ public class InterruptManager {
         addressSpace.set(registers.decSP(), BitUtils.getLowByte(pc));
         registers.setPC(0x0040);
 
-        cpu.addCycles(20);
+//        TODO: Find out how many cycles should VBlank int take
+//        cpu.addCycles(20);
+        cpu.addCycles(12);
     }
 
 }
