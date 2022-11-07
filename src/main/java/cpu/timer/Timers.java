@@ -1,5 +1,7 @@
-package cpu;
+package cpu.timer;
 
+import cpu.interrupt.InterruptEnum;
+import cpu.interrupt.InterruptRegs;
 import memory.MMU;
 
 public class Timers {
@@ -47,7 +49,7 @@ public class Timers {
             // Overflow interrupt
             mmu.set(TimerRegs.TIMA.address, mmu.get(TimerRegs.TMA.address));
 
-            mmu.set(InterruptRegs.IF.getAddress(), mmu.get(InterruptRegs.IF.getAddress()) | 0x04);
+            mmu.set(InterruptRegs.IF.getAddress(), mmu.get(InterruptRegs.IF.getAddress()) | InterruptEnum.TIMER.get());
         } else {
             mmu.set(TimerRegs.TIMA.address, tima + 1);
         }

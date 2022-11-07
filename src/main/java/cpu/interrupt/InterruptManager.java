@@ -1,5 +1,8 @@
-package cpu;
+package cpu.interrupt;
 
+import cpu.BitUtils;
+import cpu.CPU;
+import cpu.Registers;
 import memory.AddressSpace;
 
 public class InterruptManager {
@@ -26,9 +29,21 @@ public class InterruptManager {
         if (intEnable > 0 && intFlag > 0) {
             var enabled = intEnable & intFlag;
 
-            if ((enabled & 0x01) > 0) {
+            if ((enabled & InterruptEnum.VBLANK.get()) > 0) {
                 addressSpace.set(InterruptRegs.IF.getAddress(), intFlag & 0xFE);
-                callVBlankInt();
+                callInt(0x0040);
+            } else if ((enabled & InterruptEnum.LCD_STAT.get()) > 0) {
+                addressSpace.set(InterruptRegs.IF.getAddress(), intFlag & 0xFD);
+                callInt(0x0048);
+            } else if ((enabled & InterruptEnum.TIMER.get()) > 0) {
+                addressSpace.set(InterruptRegs.IF.getAddress(), intFlag & 0xFB);
+                callInt(0x0050);
+            } else if ((enabled & InterruptEnum.SERIAL.get()) > 0) {
+                addressSpace.set(InterruptRegs.IF.getAddress(), intFlag & 0xF7);
+                callInt(0x0058);
+            } else if ((enabled & InterruptEnum.JOYPAD.get()) > 0) {
+                addressSpace.set(InterruptRegs.IF.getAddress(), intFlag & 0xEF);
+                callInt(0x0060);
             }
 
 
@@ -76,16 +91,15 @@ public class InterruptManager {
         this.shouldDisableInterrupts = shouldDisableInterrupts;
     }
 
-    private void callVBlankInt() {
+    private void callInt(int intVector) {
         disableInterrupts();
 
         var pc = registers.getPC();
         addressSpace.set(registers.decSP(), BitUtils.getHighByte(pc));
         addressSpace.set(registers.decSP(), BitUtils.getLowByte(pc));
-        registers.setPC(0x0040);
+        registers.setPC(intVector);
 
-//        TODO: Find out how many cycles should VBlank int take
-//        cpu.addCycles(20);
+//        TODO: Find out how many cycles should interrupt call take
         cpu.addCycles(12);
     }
 

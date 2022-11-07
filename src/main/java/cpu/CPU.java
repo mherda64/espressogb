@@ -1,6 +1,8 @@
 package cpu;
 
 import cpu.instruction.Instructions;
+import cpu.interrupt.InterruptManager;
+import cpu.timer.Timers;
 import input.InputManager;
 import memory.AddressSpace;
 import memory.MMU;
@@ -56,12 +58,12 @@ public class CPU {
 //        var biosPath = args[1];
 //        var freq = Integer.parseInt(args[2]);
 
-        var filePath = "/home/mherda/github_repos/espressogb/roms/kirby.gb";
-        var biosPath = "/home/mherda/github_repos/espressogb/roms/DMG_ROM.bin";
-        var freq = 2000;
+        var filePath = "/home/mherda/github_repos/espressogb/roms/ferrari.gb";
+        var biosPath = "/home/mherda/github_repos/espressogb/roms/dmg_boot.bin";
+        var freq = 1500;
 
 //        var DISPLAY_SCALE = 1;
-        var DISPLAY_SCALE = 4;
+        var DISPLAY_SCALE = 6;
         if (args.length >= 4 && args[3] != null)
             DISPLAY_SCALE = Integer.parseInt(args[3]);
 

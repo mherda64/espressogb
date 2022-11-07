@@ -2,6 +2,7 @@ package cpu;
 
 import cpu.instruction.Instruction;
 import cpu.instruction.Instructions;
+import cpu.interrupt.InterruptManager;
 import memory.AddressSpace;
 
 public class InstructionsTest {
