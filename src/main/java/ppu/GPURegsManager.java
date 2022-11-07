@@ -27,7 +27,9 @@ public class GPURegsManager {
     }
 
     public int getSCX() {
-        return addressSpace.get(GPURegs.SCX.address);
+        int scx = addressSpace.get(GPURegs.SCX.address);
+//        System.out.println(scx);
+        return scx;
     }
 
     public int getWY() {
@@ -108,18 +110,21 @@ public class GPURegsManager {
     }
 
     public boolean statLineCountEqualInterruptEnabled() {
-        return (addressSpace.get(GPURegs.STAT.address) & 0x80) > 0;
+        var stat = addressSpace.get(GPURegs.STAT.address);
+//        System.out.println(stat);
+//        System.out.println((stat & 0x80) > 0);
+        return (stat & 0x40) > 0;
     }
 
     public boolean statOAMInterruptSourceEnabled() {
-        return (addressSpace.get(GPURegs.STAT.address) & 0x40) > 0;
-    }
-
-    public boolean statVBlankInterruptSourceEnabled() {
         return (addressSpace.get(GPURegs.STAT.address) & 0x20) > 0;
     }
 
-    public boolean statHBlankInterruptSourceEnabled() {
+    public boolean statVBlankInterruptSourceEnabled() {
         return (addressSpace.get(GPURegs.STAT.address) & 0x10) > 0;
+    }
+
+    public boolean statHBlankInterruptSourceEnabled() {
+        return (addressSpace.get(GPURegs.STAT.address) & 0x08) > 0;
     }
 }

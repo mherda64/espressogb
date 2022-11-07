@@ -46,6 +46,14 @@ public class PPU {
                     currentModeClockCounter -= Mode.VRAM_READ.clocks;
                     setCurrentMode(Mode.HBLANK);
 
+                    //        LY == LYC interrupt
+                    var lineCountersEqual = addressSpace.get(GPURegs.LY.address) == addressSpace.get(GPURegs.LYC.address);
+                    regsManager.updateStatLineCountersEqualFlag(lineCountersEqual);
+                    if (regsManager.statLineCountEqualInterruptEnabled() && lineCountersEqual) {
+                        addressSpace.set(InterruptRegs.IF.getAddress(),
+                                addressSpace.get(InterruptRegs.IF.getAddress()) | InterruptEnum.LCD_STAT.get());
+                    }
+
                     drawLine();
                 }
                 break;
@@ -82,40 +90,33 @@ public class PPU {
         }
         addressSpace.set(GPURegs.LY.address, lineCounter);
 
-////        LY == LYC interrupt
-//        var lineCountersEqual = addressSpace.get(GPURegs.LY.address) == addressSpace.get(GPURegs.LYC.address);
-//        regsManager.updateStatLineCountersEqualFlag(lineCountersEqual);
-//        if (regsManager.statLineCountEqualInterruptEnabled() && lineCountersEqual) {
-//            addressSpace.set(InterruptRegs.IF.getAddress(),
-//                    addressSpace.get(InterruptRegs.IF.getAddress()) | InterruptEnum.LCD_STAT.get());
-//        }
     }
 
     private void setCurrentMode(Mode mode) {
         currentMode = mode;
         regsManager.updateStatMode(mode);
 
-////        OAM, HBLANK, VBLANK STAT interrupts
-//        switch (mode) {
-//            case OAM_READ:
-//                if (regsManager.statOAMInterruptSourceEnabled()) {
-//                    addressSpace.set(InterruptRegs.IF.getAddress(),
-//                            addressSpace.get(InterruptRegs.IF.getAddress()) | InterruptEnum.LCD_STAT.get());
-//                }
-//                break;
-//            case HBLANK:
-//                if (regsManager.statHBlankInterruptSourceEnabled()) {
-//                    addressSpace.set(InterruptRegs.IF.getAddress(),
-//                            addressSpace.get(InterruptRegs.IF.getAddress()) | InterruptEnum.LCD_STAT.get());
-//                }
-//                break;
-//            case VBLANK:
-//                if (regsManager.statVBlankInterruptSourceEnabled()) {
-//                    addressSpace.set(InterruptRegs.IF.getAddress(),
-//                            addressSpace.get(InterruptRegs.IF.getAddress()) | InterruptEnum.LCD_STAT.get());
-//                }
-//                break;
-//        }
+//        OAM, HBLANK, VBLANK STAT interrupts
+        switch (mode) {
+            case OAM_READ:
+                if (regsManager.statOAMInterruptSourceEnabled()) {
+                    addressSpace.set(InterruptRegs.IF.getAddress(),
+                            addressSpace.get(InterruptRegs.IF.getAddress()) | InterruptEnum.LCD_STAT.get());
+                }
+                break;
+            case HBLANK:
+                if (regsManager.statHBlankInterruptSourceEnabled()) {
+                    addressSpace.set(InterruptRegs.IF.getAddress(),
+                            addressSpace.get(InterruptRegs.IF.getAddress()) | InterruptEnum.LCD_STAT.get());
+                }
+                break;
+            case VBLANK:
+                if (regsManager.statVBlankInterruptSourceEnabled()) {
+                    addressSpace.set(InterruptRegs.IF.getAddress(),
+                            addressSpace.get(InterruptRegs.IF.getAddress()) | InterruptEnum.LCD_STAT.get());
+                }
+                break;
+        }
     }
 
     private void drawLine() {
