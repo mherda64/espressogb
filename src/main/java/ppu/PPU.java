@@ -1,6 +1,7 @@
 package ppu;
 
-import cpu.InterruptRegs;
+import cpu.interrupt.InterruptEnum;
+import cpu.interrupt.InterruptRegs;
 import memory.AddressSpace;
 import ppu.oam.Sprite;
 import ppu.oam.SpriteManager;
@@ -36,14 +37,22 @@ public class PPU {
             case OAM_READ:
                 if (currentModeClockCounter >= Mode.OAM_READ.clocks) {
                     currentModeClockCounter -= Mode.OAM_READ.clocks;
-                    currentMode = Mode.VRAM_READ;
+                    setCurrentMode(Mode.VRAM_READ);
                 }
                 break;
 
             case VRAM_READ:
                 if (currentModeClockCounter >= Mode.VRAM_READ.clocks) {
                     currentModeClockCounter -= Mode.VRAM_READ.clocks;
-                    currentMode = Mode.HBLANK;
+                    setCurrentMode(Mode.HBLANK);
+
+                    //        LY == LYC interrupt
+                    var lineCountersEqual = addressSpace.get(GPURegs.LY.address) == addressSpace.get(GPURegs.LYC.address);
+                    regsManager.updateStatLineCountersEqualFlag(lineCountersEqual);
+                    if (regsManager.statLineCountEqualInterruptEnabled() && lineCountersEqual) {
+                        addressSpace.set(InterruptRegs.IF.getAddress(),
+                                addressSpace.get(InterruptRegs.IF.getAddress()) | InterruptEnum.LCD_STAT.get());
+                    }
 
                     drawLine();
                 }
@@ -55,11 +64,13 @@ public class PPU {
                     lineCounter++;
 
                     if (lineCounter == 143) {
-                        currentMode = Mode.VBLANK;
-                        addressSpace.set(InterruptRegs.IF.getAddress(), addressSpace.get(InterruptRegs.IF.getAddress()) | 0x01);
+                        setCurrentMode(Mode.VBLANK);
+//                        VBLANK interrupt
+                        addressSpace.set(InterruptRegs.IF.getAddress(),
+                                addressSpace.get(InterruptRegs.IF.getAddress()) | InterruptEnum.VBLANK.get());
                         display.requestRefresh();
                     } else {
-                        currentMode = Mode.OAM_READ;
+                        setCurrentMode(Mode.OAM_READ);
                     }
                 }
                 break;
@@ -70,7 +81,7 @@ public class PPU {
                     lineCounter++;
 
                     if (lineCounter > 153) {
-                        currentMode = Mode.OAM_READ;
+                        setCurrentMode(Mode.OAM_READ);
                         lineCounter = 0;
                     }
 
@@ -78,6 +89,34 @@ public class PPU {
                 break;
         }
         addressSpace.set(GPURegs.LY.address, lineCounter);
+
+    }
+
+    private void setCurrentMode(Mode mode) {
+        currentMode = mode;
+        regsManager.updateStatMode(mode);
+
+//        OAM, HBLANK, VBLANK STAT interrupts
+        switch (mode) {
+            case OAM_READ:
+                if (regsManager.statOAMInterruptSourceEnabled()) {
+                    addressSpace.set(InterruptRegs.IF.getAddress(),
+                            addressSpace.get(InterruptRegs.IF.getAddress()) | InterruptEnum.LCD_STAT.get());
+                }
+                break;
+            case HBLANK:
+                if (regsManager.statHBlankInterruptSourceEnabled()) {
+                    addressSpace.set(InterruptRegs.IF.getAddress(),
+                            addressSpace.get(InterruptRegs.IF.getAddress()) | InterruptEnum.LCD_STAT.get());
+                }
+                break;
+            case VBLANK:
+                if (regsManager.statVBlankInterruptSourceEnabled()) {
+                    addressSpace.set(InterruptRegs.IF.getAddress(),
+                            addressSpace.get(InterruptRegs.IF.getAddress()) | InterruptEnum.LCD_STAT.get());
+                }
+                break;
+        }
     }
 
     private void drawLine() {

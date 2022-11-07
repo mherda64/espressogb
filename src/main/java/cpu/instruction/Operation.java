@@ -1,7 +1,7 @@
 package cpu.instruction;
 
 import cpu.Context;
-import cpu.InterruptManager;
+import cpu.interrupt.InterruptManager;
 import cpu.Registers;
 import memory.AddressSpace;
 

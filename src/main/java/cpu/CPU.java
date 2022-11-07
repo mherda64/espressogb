@@ -1,6 +1,8 @@
 package cpu;
 
 import cpu.instruction.Instructions;
+import cpu.interrupt.InterruptManager;
+import cpu.timer.Timers;
 import input.InputManager;
 import memory.AddressSpace;
 import memory.MMU;
@@ -22,8 +24,8 @@ public class CPU {
 
     private int freq;
 
-    private static final int TILESET_SCALE = 2;
-    private static final int BGMAP_SCALE = 2;
+    private static final int TILESET_SCALE = 1;
+    private static final int BGMAP_SCALE = 1;
 
     public CPU(Registers registers, MMU mmu, int freq) {
         this.registers = registers;
@@ -56,12 +58,12 @@ public class CPU {
 //        var biosPath = args[1];
 //        var freq = Integer.parseInt(args[2]);
 
-        var filePath = "/home/mherda/github_repos/espressogb/roms/kirby.gb";
-        var biosPath = "/home/mherda/github_repos/espressogb/roms/DMG_ROM.bin";
-        var freq = 2000;
+        var filePath = "/home/mherda/github_repos/espressogb/roms/tennis.gb";
+        var biosPath = "/home/mherda/github_repos/espressogb/roms/dmg_boot.bin";
+        var freq = 1500;
 
 //        var DISPLAY_SCALE = 1;
-        var DISPLAY_SCALE = 4;
+        var DISPLAY_SCALE = 3;
         if (args.length >= 4 && args[3] != null)
             DISPLAY_SCALE = Integer.parseInt(args[3]);
 
@@ -83,24 +85,24 @@ public class CPU {
         var tileSetDisplay = new TileDisplay(tiles, gpuRegsManager, TILESET_SCALE);
         tileSetDisplay.setPreferredSize(new Dimension(150 * TILESET_SCALE, 200 * TILESET_SCALE));
 //
-//        var tileSetWindow = new JFrame("tileset");
-//        tileSetWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        tileSetWindow.setLocation(100, 100);
-//        tileSetWindow.setContentPane(tileSetDisplay);
-//        tileSetWindow.setResizable(false);
-//        tileSetWindow.setVisible(true);
-//        tileSetWindow.pack();
+        var tileSetWindow = new JFrame("tileset");
+        tileSetWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        tileSetWindow.setLocation(100, 100);
+        tileSetWindow.setContentPane(tileSetDisplay);
+        tileSetWindow.setResizable(false);
+        tileSetWindow.setVisible(true);
+        tileSetWindow.pack();
 
         var mapDisplay = new MapDisplay(memory, gpuRegsManager, tiles, BGMAP_SCALE);
         mapDisplay.setPreferredSize(new Dimension(260 * BGMAP_SCALE, 260 * BGMAP_SCALE));
 
-//        var tileMapWindow = new JFrame("tilemap");
-//        tileMapWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        tileMapWindow.setLocationRelativeTo(tileSetWindow);
-//        tileMapWindow.setContentPane(mapDisplay);
-//        tileMapWindow.setResizable(false);
-//        tileMapWindow.setVisible(true);
-//        tileMapWindow.pack();
+        var tileMapWindow = new JFrame("tilemap");
+        tileMapWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        tileMapWindow.setLocationRelativeTo(tileSetWindow);
+        tileMapWindow.setContentPane(mapDisplay);
+        tileMapWindow.setResizable(false);
+        tileMapWindow.setVisible(true);
+        tileMapWindow.pack();
 
         var mainWindow = new JFrame("screen");
         mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -160,11 +162,11 @@ public class CPU {
             currentCycles += cycles;
 
             if (currentCycles > desiredCycles) {
-                if (desiredCycles != 0)
-                    Thread.sleep(0, 200);
+//                if (desiredCycles != 0)
+//                    Thread.sleep(0, 20);
 
-//                mapDisplay.updateMap();
-//                tileSetDisplay.updateMap();
+                mapDisplay.updateMap();
+                tileSetDisplay.updateMap();
 
                 currentCycles = 0;
             }

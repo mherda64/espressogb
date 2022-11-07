@@ -1,4 +1,4 @@
-package cpu;
+package cpu.interrupt;
 
 public enum InterruptRegs {
 

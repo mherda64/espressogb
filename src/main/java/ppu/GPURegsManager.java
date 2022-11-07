@@ -27,7 +27,9 @@ public class GPURegsManager {
     }
 
     public int getSCX() {
-        return addressSpace.get(GPURegs.SCX.address);
+        int scx = addressSpace.get(GPURegs.SCX.address);
+//        System.out.println(scx);
+        return scx;
     }
 
     public int getWY() {
@@ -97,5 +99,32 @@ public class GPURegsManager {
 
     private static int getColor(int r, int g, int b) {
         return r << 16 | g << 8 | b;
+    }
+
+    public void updateStatMode(Mode mode) {
+        addressSpace.set(GPURegs.STAT.address, (addressSpace.get(GPURegs.STAT.address) & 0xFC) | mode.statIndex);
+    }
+
+    public void updateStatLineCountersEqualFlag(boolean value) {
+        addressSpace.set(GPURegs.STAT.address, (addressSpace.get(GPURegs.STAT.address) & 0xFB) | (value ? 1 : 0) << 2);
+    }
+
+    public boolean statLineCountEqualInterruptEnabled() {
+        var stat = addressSpace.get(GPURegs.STAT.address);
+//        System.out.println(stat);
+//        System.out.println((stat & 0x80) > 0);
+        return (stat & 0x40) > 0;
+    }
+
+    public boolean statOAMInterruptSourceEnabled() {
+        return (addressSpace.get(GPURegs.STAT.address) & 0x20) > 0;
+    }
+
+    public boolean statVBlankInterruptSourceEnabled() {
+        return (addressSpace.get(GPURegs.STAT.address) & 0x10) > 0;
+    }
+
+    public boolean statHBlankInterruptSourceEnabled() {
+        return (addressSpace.get(GPURegs.STAT.address) & 0x08) > 0;
     }
 }

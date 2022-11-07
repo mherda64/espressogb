@@ -1,4 +1,4 @@
-package cpu;
+package cpu.timer;
 
 public enum TimerRegs {
 
