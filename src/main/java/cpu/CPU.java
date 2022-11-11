@@ -93,7 +93,7 @@ public class CPU {
         tileSetWindow.setVisible(true);
         tileSetWindow.pack();
 
-        var mapDisplay = new MapDisplay(memory, gpuRegsManager, tiles, BGMAP_SCALE);
+        var mapDisplay = new MapDisplay(memory, gpuRegsManager, tiles, BGMAP_SCALE, true);
         mapDisplay.setPreferredSize(new Dimension(260 * BGMAP_SCALE, 260 * BGMAP_SCALE));
 
         var tileMapWindow = new JFrame("tilemap");

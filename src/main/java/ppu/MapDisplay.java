@@ -9,14 +9,17 @@ public class MapDisplay extends Display implements Runnable, UtilDisplay {
 
     private final Tiles tiles;
 
+    private boolean isBackgroundMap;
+
     private final AddressSpace addressSpace;
     private final GPURegsManager regsManager;
 
-    public MapDisplay(AddressSpace addressSpace, GPURegsManager regsManager, Tiles tiles, int scale) {
+    public MapDisplay(AddressSpace addressSpace, GPURegsManager regsManager, Tiles tiles, int scale, boolean isBackgroundMap) {
         super(DISPLAY_WIDTH, DISPLAY_HEIGHT, scale);
         this.addressSpace = addressSpace;
         this.regsManager = regsManager;
         this.tiles = tiles;
+        this.isBackgroundMap = isBackgroundMap;
     }
 
     @Override
@@ -48,7 +51,7 @@ public class MapDisplay extends Display implements Runnable, UtilDisplay {
     @Override
     public void updateMap() {
         var mapOffset = 0x8000;
-        mapOffset += regsManager.isBackgroundMap() ? 0x1C00 : 0x1800;
+        mapOffset += isBackgroundMap ? 0x1C00 : 0x1800;
         var tileMap = tiles.getTileMap();
 
         for (int y = 0; y < 32; y++) {

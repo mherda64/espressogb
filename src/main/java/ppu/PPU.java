@@ -145,23 +145,40 @@ public class PPU {
 
         // Which line of tiles to use in the map
         // divided by 8 as that's the height of a tile
-        mapOffset += 32 * (((lineCounter + initY) & 0xFF) >> 3);
+        if (drawWindow) {
+            mapOffset += 32 * (((lineCounter - initY) & 0xFF) >> 3);
+        } else {
+            mapOffset += 32 * (((lineCounter + initY) & 0xFF) >> 3);
+        }
 
         // Which tile to start with in the tile line
-        var lineOffset = initX >> 3;
+        var lineOffset = 0;
+        if (!drawWindow) {
+            lineOffset = initX >> 3;
+        }
 
         // Which line of pixels to use in the destination tile
-        var y = (lineCounter + initY) & 7;
+        var y = 0;
+        if (drawWindow) {
+            y = (lineCounter - initY) & 7;
+        } else {
+            y = (lineCounter + initY) & 7;
+        }
 
         // Which pixel to use in the pixel line
-        var x = initX & 7;
+        var x = 0;
+        if (!drawWindow) {
+            x = initX & 7;
+        }
 
         var tileMapAddress = 0x8000 + mapOffset + lineOffset;
         var tileIndex = addressSpace.get(tileMapAddress);
         if (regsManager.isBackgroundTiles() && tileIndex < 128) tileIndex += 256;
 
-
-        for (int i = 0; drawWindow ? i >= initX && i < 160 : i < 160; i++) {
+        for (int i = 0; i < 160; i++) {
+            if (drawWindow && i < initX) {
+                continue;
+            }
             scanRow[i] = tilemap[tileIndex][y][x];
             var colour = bgPalette[tilemap[tileIndex][y][x]];
             display.setPixel(lineCounter, i, colour);
