@@ -59,7 +59,7 @@ public class CPU {
 //        var biosPath = args[1];
 //        var freq = Integer.parseInt(args[2]);
 
-        var filePath = "/home/mherda/github_repos/espressogb/roms/blaargs/09.gb";
+        var filePath = "/home/mherda/github_repos/espressogb/roms/blaargs/cpu_instrs.gb";
         var biosPath = "/home/mherda/github_repos/espressogb/roms/dmg_boot.bin";
         var freq = 1500;
 

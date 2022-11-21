@@ -67,7 +67,7 @@ class RotateInstructionsTest {
         assertEquals(1, instr.getCycles(instr.getContext()));
         assertEquals(0x00, registers.getA());
         assertEquals(0x2000, registers.getPC());
-        assertTrue(flags.isZFlag());
+        assertFalse(flags.isZFlag());
         assertFalse(flags.isNFlag());
         assertFalse(flags.isHFlag());
         assertFalse(flags.isCFlag());
@@ -200,7 +200,7 @@ class RotateInstructionsTest {
         assertEquals(1, instr.getCycles(instr.getContext()));
         assertEquals(0x00, registers.getA());
         assertEquals(0x2000, registers.getPC());
-        assertTrue(flags.isZFlag());
+        assertFalse(flags.isZFlag());
         assertFalse(flags.isNFlag());
         assertFalse(flags.isHFlag());
         assertTrue(flags.isCFlag());

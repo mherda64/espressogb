@@ -367,14 +367,17 @@ public class InstructionBuilder {
         return this;
     }
 
-    public InstructionBuilder rlc() {
+    public InstructionBuilder rlc(boolean setZeroFlag) {
         operations.add((registers, addressSpace, accumulator, context, interruptManager) -> {
             isByte(accumulator);
             var carry = ((accumulator >>> 7) & 0x1);
             var output = ((accumulator << 1) & 0xFF) | carry;
 
             var flags = registers.getFlags();
-            flags.setZFlag(output == 0);
+            if (setZeroFlag)
+                flags.setZFlag(output == 0);
+            else
+                flags.setZFlag(false);
             flags.setNFlag(false);
             flags.setHFlag(false);
             flags.setCFlag(carry == 1);
@@ -384,7 +387,7 @@ public class InstructionBuilder {
         return this;
     }
 
-    public InstructionBuilder rl() {
+    public InstructionBuilder rl(boolean setZeroFlag) {
         operations.add((registers, addressSpace, accumulator, context, interruptManager) -> {
             var flags = registers.getFlags();
 
@@ -392,7 +395,10 @@ public class InstructionBuilder {
             var carry = ((accumulator >>> 7) & 0x1);
             var output = ((accumulator << 1) & 0xFF) | (flags.isCFlag() ? 1 : 0);
 
-            flags.setZFlag(output == 0);
+            if (setZeroFlag)
+                flags.setZFlag(output == 0);
+            else
+                flags.setZFlag(false);
             flags.setNFlag(false);
             flags.setHFlag(false);
             flags.setCFlag(carry == 1);
@@ -402,14 +408,18 @@ public class InstructionBuilder {
         return this;
     }
 
-    public InstructionBuilder rrc() {
+    public InstructionBuilder rrc(boolean setZeroFlag) {
         operations.add((registers, addressSpace, accumulator, context, interruptManager) -> {
+            var flags = registers.getFlags();
+
             isByte(accumulator);
             var carry = accumulator & 0x1;
             var output = ((accumulator >> 1) & 0xFF) | (carry << 7);
 
-            var flags = registers.getFlags();
-            flags.setZFlag(output == 0);
+            if (setZeroFlag)
+                flags.setZFlag(output == 0);
+            else
+                flags.setZFlag(false);
             flags.setNFlag(false);
             flags.setHFlag(false);
             flags.setCFlag(carry == 1);
@@ -419,7 +429,7 @@ public class InstructionBuilder {
         return this;
     }
 
-    public InstructionBuilder rr() {
+    public InstructionBuilder rr(boolean setZeroFlag) {
         operations.add((registers, addressSpace, accumulator, context, interruptManager) -> {
             var flags = registers.getFlags();
 
@@ -427,7 +437,10 @@ public class InstructionBuilder {
             var carry = accumulator & 0x1;
             var output = ((accumulator >> 1) & 0xFF) | ((flags.isCFlag() ? 1 : 0) << 7);
 
-            flags.setZFlag(output == 0);
+            if (setZeroFlag)
+                flags.setZFlag(output == 0);
+            else
+                flags.setZFlag(false);
             flags.setNFlag(false);
             flags.setHFlag(false);
             flags.setCFlag(carry == 1);
