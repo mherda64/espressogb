@@ -102,6 +102,7 @@ public class GPURegsManager {
     }
 
     public void updateStatMode(Mode mode) {
+        // TODO: update two read only fields not via set method
         addressSpace.set(GPURegs.STAT.address, (addressSpace.get(GPURegs.STAT.address) & 0xFC) | mode.statIndex);
     }
 

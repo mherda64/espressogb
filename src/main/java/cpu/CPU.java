@@ -1,5 +1,6 @@
 package cpu;
 
+import cpu.instruction.Instruction;
 import cpu.instruction.Instructions;
 import cpu.interrupt.InterruptManager;
 import cpu.timer.Timers;
@@ -58,14 +59,15 @@ public class CPU {
 //        var biosPath = args[1];
 //        var freq = Integer.parseInt(args[2]);
 
-        var filePath = "/home/mherda/github_repos/espressogb/roms/tennis.gb";
+        var filePath = "/home/mherda/github_repos/espressogb/roms/blaargs/09.gb";
         var biosPath = "/home/mherda/github_repos/espressogb/roms/dmg_boot.bin";
         var freq = 1500;
 
 //        var DISPLAY_SCALE = 1;
         var DISPLAY_SCALE = 3;
-        if (args.length >= 4 && args[3] != null)
+        if (args.length >= 4 && args[3] != null) {
             DISPLAY_SCALE = Integer.parseInt(args[3]);
+        }
 
         var inputManager = new InputManager();
         var tiles = new Tiles();
@@ -76,6 +78,8 @@ public class CPU {
         var gpuRegsManager = new GPURegsManager(memory);
         var cpu = new CPU(registers, memory, freq);
         var timers = new Timers(memory, cpu.getCycles());
+        var interruptManager = new InterruptManager(cpu, registers, memory);
+        inputManager.setAddressSpace(memory);
 
         tiles.setAddressSpace(memory);
 
@@ -93,7 +97,7 @@ public class CPU {
         tileSetWindow.setVisible(true);
         tileSetWindow.pack();
 
-        var mapDisplay = new MapDisplay(memory, gpuRegsManager, tiles, BGMAP_SCALE, true);
+        var mapDisplay = new MapDisplay(memory, gpuRegsManager, tiles, BGMAP_SCALE, false);
         mapDisplay.setPreferredSize(new Dimension(260 * BGMAP_SCALE, 260 * BGMAP_SCALE));
 
         var tileMapWindow = new JFrame("tilemap");
@@ -119,7 +123,6 @@ public class CPU {
         new Thread(tileSetDisplay).start();
         new Thread(mapDisplay).start();
 
-        var interruptManager = new InterruptManager(cpu, registers, memory);
 
         int currentCycles = 0;
         int desiredCycles = cpu.freq;
@@ -130,29 +133,35 @@ public class CPU {
                 memory.setAfterBios();
 
             interruptManager.updateEnableInterruptsFlag();
+            interruptManager.updateHaltedState();
 
             if (interruptManager.isInterruptsEnabled()) {
                 interruptManager.handleInterrupts();
             }
 
-            boolean prefixed = false;
-            int opcode = memory.get(registers.incPC());
+            Instruction instr = Instructions.get(0x00);
+            Context context = instr.getContext();
 
-            if (opcode == 0xCB) {
-                prefixed = true;
-                opcode = memory.get(registers.incPC());
-            }
+            if (!interruptManager.isHalted()) {
+                boolean prefixed = false;
+                int opcode = memory.get(registers.incPC());
 
-            var instr = prefixed ? Instructions.getPrefixed(opcode) : Instructions.get(opcode);
-            var context = instr.getContext();
+                if (opcode == 0xCB) {
+                    prefixed = true;
+                    opcode = memory.get(registers.incPC());
+                }
+
+                instr = prefixed ? Instructions.getPrefixed(opcode) : Instructions.get(opcode);
+                context = instr.getContext();
 
 //            System.out.println(
 //                    String.format("PC %04X - %s", prefixed ? registers.getPC() - 1 : registers.getPC(), instr.getLabel())
 //            );
 
-            int accumulator = 0;
-            for (var operation : instr.getOperations()) {
-                accumulator = operation.execute(registers, memory, accumulator, context, interruptManager);
+                int accumulator = 0;
+                for (var operation : instr.getOperations()) {
+                    accumulator = operation.execute(registers, memory, accumulator, context, interruptManager);
+                }
             }
 
             var cycles = instr.getCycles(context);

@@ -1,7 +1,5 @@
 package memory.regions;
 
-import cpu.interrupt.InterruptEnum;
-import cpu.interrupt.InterruptRegs;
 import input.InputManager;
 
 public class HighMem extends BaseMemory {
@@ -20,7 +18,6 @@ public class HighMem extends BaseMemory {
 
         if (address == 0xFF00) {
             inputManager.setInputColumn(value & 0x30);
-            set(InterruptRegs.IF.getAddress(), get(InterruptRegs.IF.getAddress()) | InterruptEnum.JOYPAD.get());
         }
     }
 
@@ -28,6 +25,8 @@ public class HighMem extends BaseMemory {
     public int get(int address) {
         if (address == 0xFF00)
             return inputManager.getKeys();
+        if (address == 0xFF41)
+            return memory[address - firstAddress] | 0x80;
 
         return memory[address - firstAddress];
     }

@@ -19,4 +19,8 @@ public enum GPURegs {
     GPURegs(int address) {
         this.address = address;
     }
+
+    public int address() {
+        return address;
+    }
 }

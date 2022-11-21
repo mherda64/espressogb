@@ -103,4 +103,11 @@ public class InterruptManager {
         cpu.addCycles(12);
     }
 
+    public void updateHaltedState() {
+        var intEnable = addressSpace.get(InterruptRegs.IE.getAddress());
+        var intFlag = addressSpace.get(InterruptRegs.IF.getAddress());
+        var enabled = intEnable & intFlag;
+        if (enabled > 0 && isHalted)
+            setHalted(false);
+    }
 }
