@@ -55,16 +55,16 @@ public class CPU {
     }
 
     public static void main(String[] args) throws IOException, InterruptedException {
-//        var filePath = args[0];
-//        var biosPath = args[1];
-//        var freq = Integer.parseInt(args[2]);
+        var filePath = args[0];
+        var biosPath = args[1];
+        var freq = Integer.parseInt(args[2]);
 
-        var filePath = "/home/mherda/github_repos/espressogb/roms/blaargs/cpu_instrs.gb";
-        var biosPath = "/home/mherda/github_repos/espressogb/roms/dmg_boot.bin";
-        var freq = 1500;
+//        var filePath = "/home/mherda/github_repos/espressogb/roms/ball.GB";
+//        var biosPath = "/home/mherda/github_repos/espressogb/roms/dmg_boot.bin";
+//        var freq = 1500;
 
-//        var DISPLAY_SCALE = 1;
-        var DISPLAY_SCALE = 3;
+        var DISPLAY_SCALE = 1;
+//        var DISPLAY_SCALE = 4;
         if (args.length >= 4 && args[3] != null) {
             DISPLAY_SCALE = Integer.parseInt(args[3]);
         }
@@ -86,27 +86,27 @@ public class CPU {
         var display = new Display(DISPLAY_SCALE);
         display.setPreferredSize(new Dimension(160 * DISPLAY_SCALE, 144 * DISPLAY_SCALE));
 
-        var tileSetDisplay = new TileDisplay(tiles, gpuRegsManager, TILESET_SCALE);
-        tileSetDisplay.setPreferredSize(new Dimension(150 * TILESET_SCALE, 200 * TILESET_SCALE));
-//
-        var tileSetWindow = new JFrame("tileset");
-        tileSetWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        tileSetWindow.setLocation(100, 100);
-        tileSetWindow.setContentPane(tileSetDisplay);
-        tileSetWindow.setResizable(false);
-        tileSetWindow.setVisible(true);
-        tileSetWindow.pack();
+//        var tileSetDisplay = new TileDisplay(tiles, gpuRegsManager, TILESET_SCALE);
+//        tileSetDisplay.setPreferredSize(new Dimension(150 * TILESET_SCALE, 200 * TILESET_SCALE));
+////
+//        var tileSetWindow = new JFrame("tileset");
+//        tileSetWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        tileSetWindow.setLocation(100, 100);
+//        tileSetWindow.setContentPane(tileSetDisplay);
+//        tileSetWindow.setResizable(false);
+//        tileSetWindow.setVisible(true);
+//        tileSetWindow.pack();
 
-        var mapDisplay = new MapDisplay(memory, gpuRegsManager, tiles, BGMAP_SCALE, false);
-        mapDisplay.setPreferredSize(new Dimension(260 * BGMAP_SCALE, 260 * BGMAP_SCALE));
+//        var mapDisplay = new MapDisplay(memory, gpuRegsManager, tiles, BGMAP_SCALE, false);
+//        mapDisplay.setPreferredSize(new Dimension(260 * BGMAP_SCALE, 260 * BGMAP_SCALE));
 
-        var tileMapWindow = new JFrame("tilemap");
-        tileMapWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        tileMapWindow.setLocationRelativeTo(tileSetWindow);
-        tileMapWindow.setContentPane(mapDisplay);
-        tileMapWindow.setResizable(false);
-        tileMapWindow.setVisible(true);
-        tileMapWindow.pack();
+//        var tileMapWindow = new JFrame("tilemap");
+//        tileMapWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        tileMapWindow.setLocationRelativeTo(tileSetWindow);
+//        tileMapWindow.setContentPane(mapDisplay);
+//        tileMapWindow.setResizable(false);
+//        tileMapWindow.setVisible(true);
+//        tileMapWindow.pack();
 
         var mainWindow = new JFrame("screen");
         mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -120,8 +120,8 @@ public class CPU {
         var ppu = new PPU(memory, gpuRegsManager, sprites, display, tiles);
 
         new Thread(display).start();
-        new Thread(tileSetDisplay).start();
-        new Thread(mapDisplay).start();
+//        new Thread(tileSetDisplay).start();
+//        new Thread(mapDisplay).start();
 
 
         int currentCycles = 0;
@@ -171,11 +171,11 @@ public class CPU {
             currentCycles += cycles;
 
             if (currentCycles > desiredCycles) {
-//                if (desiredCycles != 0)
-//                    Thread.sleep(0, 20);
+                if (desiredCycles != 0)
+                    Thread.sleep(0, desiredCycles);
 
-                mapDisplay.updateMap();
-                tileSetDisplay.updateMap();
+//                mapDisplay.updateMap();
+//                tileSetDisplay.updateMap();
 
                 currentCycles = 0;
             }
