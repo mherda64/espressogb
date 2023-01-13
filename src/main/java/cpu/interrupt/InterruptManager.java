@@ -46,7 +46,6 @@ public class InterruptManager {
                 callInt(0x0060);
             }
 
-
         }
     }
 

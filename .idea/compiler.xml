@@ -12,7 +12,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="espressogb" options="--add-modules java.desktop" />
+      <module name="espressogb" options="" />
     </option>
   </component>
 </project>

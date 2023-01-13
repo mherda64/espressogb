@@ -18,7 +18,6 @@ import java.nio.file.Files;
 
 public class CPU {
 
-    private Registers registers;
     private AddressSpace memory;
 
     private long cycleCounter;
@@ -28,8 +27,7 @@ public class CPU {
     private static final int TILESET_SCALE = 1;
     private static final int BGMAP_SCALE = 1;
 
-    public CPU(Registers registers, MMU mmu, int freq) {
-        this.registers = registers;
+    public CPU(MMU mmu, int freq) {
         this.memory = mmu;
         this.freq = freq;
     }
@@ -76,7 +74,7 @@ public class CPU {
         var registers = new Registers();
         var memory = new MMU(inputManager, sprites, tiles, filePath, biosPath);
         var gpuRegsManager = new GPURegsManager(memory);
-        var cpu = new CPU(registers, memory, freq);
+        var cpu = new CPU(memory, freq);
         var timers = new Timers(memory, cpu.getCycles());
         var interruptManager = new InterruptManager(cpu, registers, memory);
         inputManager.setAddressSpace(memory);
@@ -88,7 +86,6 @@ public class CPU {
 
 //        var tileSetDisplay = new TileDisplay(tiles, gpuRegsManager, TILESET_SCALE);
 //        tileSetDisplay.setPreferredSize(new Dimension(150 * TILESET_SCALE, 200 * TILESET_SCALE));
-////
 //        var tileSetWindow = new JFrame("tileset");
 //        tileSetWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 //        tileSetWindow.setLocation(100, 100);
@@ -172,7 +169,7 @@ public class CPU {
 
             if (currentCycles > desiredCycles) {
                 if (desiredCycles != 0)
-                    Thread.sleep(0, desiredCycles);
+                    Thread.sleep(0, 100);
 
 //                mapDisplay.updateMap();
 //                tileSetDisplay.updateMap();

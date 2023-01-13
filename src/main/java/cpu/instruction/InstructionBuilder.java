@@ -70,7 +70,6 @@ public class InstructionBuilder {
     public InstructionBuilder storeRegAddressAccumulator(RegEnum reg) {
         operations.add((registers, addressSpace, accumulator, context, interruptManager) -> {
             addressSpace.set(registers.get(reg), accumulator);
-            //TODO what to return??
             return accumulator;
         });
         return this;
@@ -91,7 +90,6 @@ public class InstructionBuilder {
                     throw new IllegalStateException(String.format("Illegal register size %d", reg.size));
             }
 
-            //TODO what to return??
             return val;
         });
         return this;
@@ -114,7 +112,6 @@ public class InstructionBuilder {
 
     public InstructionBuilder incrementReg(RegEnum reg) {
         operations.add((registers, addressSpace, accumulator, context, interruptManager) -> {
-            //TODO: support for reg size
             registers.set(reg, registers.get(reg) + 1);
             return accumulator;
         });
